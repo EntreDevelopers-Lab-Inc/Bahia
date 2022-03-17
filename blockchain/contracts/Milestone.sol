@@ -7,41 +7,46 @@
 pragma solidity ^0.8.4;
 
 
-import "../interfaces/InvoiceInterface.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
+import "../interfaces/BahiaInterface.sol";
+import "../interfaces/MilestoneInterface.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 
 // use errors instead of requires, so it costs less gas for people to deploy
 error InsufficientFunds();
+error NonZeroInvoice();
 error AlreadyPaid();
 error NotProvider();
 error NotClient();
 error NotPaid();
-error FalseCurrency();
-
-// events for what happens
-event TransferReceived(address from_, uint amount_);
-event TransferSent(address from_, address destAddress_, uint amount_);
+error NotClosed();
 
 // contract that creates the  escrow for each transaction --> call them milestones
 contract Milestone is
+    MilestoneInterface,
     ReentrancyGuard
 {
+    // backref to get the invoice
+    uint256 invoiceId;
+
     string public name;
     uint256 public value;
+
     bool paid;
     bool public closed;
 
-    InvoiceDataInterface public invoice;
+    BahiaDataInterface public bahia;
 
-    // initialize with the name, value, and invoice address (don't want to be able to create escrows without invoices, as that would make it impossible to get payment data)
-    constructor (string memory name_, string memory value_, address invoiceAddress_)
+    // initialize with the name, value, and bahia address (don't want to be able to create escrows without invoices, as that would make it impossible to get payment data)
+    constructor (string memory name_, uint256 value_, uint256 invoiceId_, address bahiaAddress_)
     {
         // set up the contract
         name = name_;
         value = value_;
-        invoice = InvoiceDataInterface(invoiceAddress_);
+        invoiceId = invoiceId;
+
+        // set the backref to the contract using the bahia address
+        bahia = BahiaDataInterface(bahiaAddress_);
     }
 
     /**
@@ -50,16 +55,19 @@ contract Milestone is
     function release() external payable nonReentrant
     {
         // only the client can call
-        if(tx.origin != invoice.cientAddress()) revert NotClient();
+        if(tx.origin != bahia.invoices(invoiceId).clientAddress) revert NotClient();
 
-        // only if the invoice is paid
+        // only if the milestone is paid
         if (!isPaid()) revert NotPaid();
+
+        // only if the milestone is not closed
+        if (!isClosed()) revert NotClosed();
 
         // pay the devs
         uint256 devPayment = _payDevs();
 
         // send the funds to the provider
-        invoice.token.safeTransfer(invoice.providerAddress(), (value - devPayment));
+        bahia.invoices(invoiceId).token.transfer(bahia.invoices(invoiceId).providerAddress, (value - devPayment));
 
         // refund the rest (good practice)
         _refundExcess();
@@ -69,26 +77,38 @@ contract Milestone is
     }
 
     /**
-     * @notice a function for refunding (only the provider OR invoice can call)
+     * @notice a function for refunding (only the provide can call)
     */
     function refund() external nonReentrant
     {
         // make sure the milestone has been paid first
         if (!isPaid()) revert NotPaid();
 
-        // make sure that either the invoice or the provider is calling it
-        if(tx.origin != invoice.providerAddress()) revert NotProvider();
+        // make sure that the provider is calling it
+        if(tx.origin != bahia.invoices(invoiceId).providerAddress) revert NotProvider();
 
         // pay the devs
-        uint256 devPayment = _payDevs();
+        _payDevs();
 
         // refund the money
-        invoice.token.transfer(invoice.clientAddress(), (invoice.token.balanceOf(address(this))));
+        bahia.invoices(invoiceId).token.transfer(bahia.invoices(invoiceId).clientAddress, (bahia.invoices(invoiceId).token.balanceOf(address(this))));
 
         // set paid to false
         paid = false;
 
         // set closed to true
+        closed = true;
+    }
+
+    /**
+     * @notice close the milestone (only available by the invoice address)
+    */
+    function close() external nonReentrant
+    {
+        // check if it is the owner
+        if (tx.origin != bahia.invoices(invoiceId).providerAddress) revert NotProvider();
+
+        // close the contract
         closed = true;
     }
 
@@ -101,7 +121,7 @@ contract Milestone is
         {
             return true;
         }
-        else if (invoice.token.balanceOf(address(this)) >= value)
+        else if (bahia.invoices(invoiceId).token.balanceOf(address(this)) >= value)
         {
             return true;
         }
@@ -112,14 +132,22 @@ contract Milestone is
     }
 
     /**
+     * @notice is closed function for reading on invoice contract
+    */
+    function isClosed() public view returns (bool)
+    {
+        return closed;
+    }
+
+    /**
      * @notice refund the rest of the funds if too many
     */
     function _refundExcess() internal
     {
         // if the msg value is too much, refund it
-        if (invoice.token.balanceOf(address(this)) > value)
+        if (bahia.invoices(invoiceId).token.balanceOf(address(this)) > value)
         {
-            invoice.token.safeTransfer(invoice.token.balanceOf(address(this) - value));  // pay user the excess
+            bahia.invoices(invoiceId).token.transfer(bahia.invoices(invoiceId).clientAddress, bahia.invoices(invoiceId).token.balanceOf(address(this)) - value);  // pay user the excess
         }
         // make sure the deposit meets the transaction value
         else if (msg.value < value)
@@ -131,10 +159,13 @@ contract Milestone is
     /**
      * @notice function to pay the devs
     */
-    function _payDevs(uint256 amount) internal returns (uint256)
+    function _payDevs() internal returns (uint256)
     {
-        uint256 devPayment = value * invoice.devRoyalty() / 100;
-        invoice.token.safeTransfer(invoice.token, invoice.devAddress(), devPayment);
+        uint256 devPayment = value * bahia.devRoyalty() / 100;
+
+        bahia.invoices(invoiceId).token.transfer(bahia.devAddress(), devPayment);
+
+        return devPayment;
     }
 
 }

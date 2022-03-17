@@ -1,0 +1,27 @@
+dependencies:
+  - chiru-labs/ERC721A@3.0.0
+  - OpenZeppelin/openzeppelin-contracts@4.5.0
+
+# remap using the compiler
+compiler:
+  solc:
+    remappings:
+      - '@chiru-labs=chiru-labs/ERC721A@3.0.0'
+      - '@openzeppelin=OpenZeppelin/openzeppelin-contracts@4.4.2'
+
+# set the wallet
+wallets:
+  from_key: ${PRIVATE_KEY}  # can get the key from the environment variables
+  DEVELOPMENT_KEY: testAccount
+  password: 'password'
+
+networks:
+  default: development
+  rinkeby:
+    vrf_coordinator: '0xb3dCcb4Cf7a26f6cf6B120Cf5A73875B7BBc655B'
+    link_token: '0x01be23585060835e02b77ef475b0cc51aa1e0709'
+    keyhash: '0x2ed0feb3e7fd2022120aa84fab1945545a9f2ffc9076fd6156fa96eaff4c1311'  # used to check randomness
+  kovan:
+    vrf_coordinator: '0xdD3782915140c8f3b190B5D67eAc6dc5760C46E9'
+    link_token: '0xa36085F69e2889c224210F603D836748e7dC0088'
+    keyhash: '0x6c3699283bda56ad74f6b855546325b68d482e983852a7a82979cc4807b641f4'

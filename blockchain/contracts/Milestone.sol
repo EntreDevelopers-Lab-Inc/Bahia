@@ -43,7 +43,7 @@ contract Milestone is
         // set up the contract
         name = name_;
         value = value_;
-        invoiceId = invoiceId;
+        invoiceId = invoiceId_;
 
         // set the backref to the contract using the bahia address
         bahia = BahiaDataInterface(bahiaAddress_);
@@ -61,7 +61,7 @@ contract Milestone is
         if (!isPaid()) revert NotPaid();
 
         // only if the milestone is not closed
-        if (!isClosed()) revert NotClosed();
+        if (!closed) revert NotClosed();
 
         // pay the devs
         uint256 devPayment = _payDevs();
@@ -129,14 +129,6 @@ contract Milestone is
         {
             return false;
         }
-    }
-
-    /**
-     * @notice is closed function for reading on invoice contract
-    */
-    function isClosed() public view returns (bool)
-    {
-        return closed;
     }
 
     /**

@@ -12,6 +12,12 @@ interface MilestoneInterface
     function release() external payable;
     function refund() external;
     function close() external;
-    function isPaid() external returns (bool);
-    function isClosed() external returns (bool);
+    function isPaid() external view returns (bool);
 }
+
+interface MilestoneDataInterface is MilestoneInterface
+{
+    function value() external view returns (uint256);
+    function closed() external view returns (bool);
+}
+

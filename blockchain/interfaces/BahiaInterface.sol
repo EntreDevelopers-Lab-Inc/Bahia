@@ -15,10 +15,10 @@ interface BahiaInterface is BasicDataInterface
         uint256 value;
     }
 
-    function createInvoice(string memory, address, address, MilestoneEntry[] calldata) external;
+    function createInvoice(string memory, address, address) external;
 
     // add/drop a milestone
-    function addMilestones(uint256, MilestoneEntry[] calldata) external;
+    function addMilestone(uint256, MilestoneEntry calldata) external;
     function removeMilestones(uint256, uint256[] memory) external;
 
     // milestone data

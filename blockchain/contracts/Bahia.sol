@@ -71,18 +71,11 @@ contract Bahia is
      * @param name for setting the name
      * @param clientAddress for setting the client
      * @param tokenAddress for setting the token
-     * @param milestoneEntries indicate the initial settings
     */
-    function createInvoice(string memory name, address clientAddress, address tokenAddress, MilestoneEntry[] calldata milestoneEntries) external
+    function createInvoice(string memory name, address clientAddress, address tokenAddress) external
     {
-        // make all the milestones
-        Milestone[] memory milestones;
-
-        // iterate over the entries to make the milestones
-        for (uint256 i = 0; i < milestoneEntries.length; i += 1)
-        {
-            milestones[i] = new Milestone(milestoneEntries[i].name, milestoneEntries[i].value, invoices.length, address(this));
-        }
+        // create blank milestones
+        address[] memory milestones;
 
         // make a new invoice
         Invoice memory newInvoice = Invoice({
@@ -92,8 +85,7 @@ contract Bahia is
             tokenAddress: tokenAddress,
             milestones: milestones,
             token: IERC20(tokenAddress),
-            id: invoices.length,
-            milestoneCount: milestones.length
+            id: invoices.length
             });
 
         // add the invoice to both the provider and client invoices
@@ -107,25 +99,13 @@ contract Bahia is
     /**
      * @notice adds milestones
      * actually need to check the provider here, so best to allow adding many milestones
-     * @param newMilestoneEntries for the milestone information
+     * @param newMilestoneEntry for the milestone information
     */
-    function addMilestones(uint256 invoiceId, MilestoneEntry[] calldata newMilestoneEntries) external onlyProvider(invoiceId)
+    function addMilestone(uint256 invoiceId, MilestoneEntry calldata newMilestoneEntry) external onlyProvider(invoiceId)
     {
-        // get the milestone count
-        uint256 milestoneCount = invoices[invoiceId].milestoneCount;
 
-        // iterate over all the milestones that you want to add
-        for (uint256 i = 0; i < newMilestoneEntries.length; i += 1)
-        {
-            // add the milestone to the list of milestones
-            invoices[invoiceId].milestones[milestoneCount] = new Milestone(newMilestoneEntries[i].name, newMilestoneEntries[i].value, invoiceId, address(this));
-
-            // increment the milestone count
-            milestoneCount += 1;
-        }
-
-        // set the invoice milestone count again
-        invoices[invoiceId].milestoneCount = milestoneCount;
+        // add the milestone to the list of milestones
+        invoices[invoiceId].milestones.push(address(new Milestone(newMilestoneEntry.name, newMilestoneEntry.value, invoiceId, address(this))));
     }
 
     /**
@@ -149,14 +129,17 @@ contract Bahia is
     */
     function _removeMilestone(uint256 invoiceId, uint256 milestoneId) internal
     {
+        // make the milestone
+        MilestoneDataInterface milestone = MilestoneDataInterface(invoices[invoiceId].milestones[milestoneId]);
+
         // if the milestone is paid, refund it
-        if (invoices[invoiceId].milestones[milestoneId].isPaid())
+        if (milestone.isPaid())
         {
-            invoices[invoiceId].milestones[milestoneId].refund();
+            milestone.refund();
         }
 
         // no matter what, close the milestone, but don't delete it (as this provides no value)
-        invoices[invoiceId].milestones[milestoneId].close();
+        milestone.close();
     }
 
     /**
@@ -168,7 +151,7 @@ contract Bahia is
         for (uint256 i = 0; i < invoices[invoiceId].milestones.length; i += 1)
         {
             // if any milestone is not paid, return false
-            if (!MilestoneInterface(invoices[invoiceId].milestones[i]).isPaid())
+            if (!MilestoneDataInterface(invoices[invoiceId].milestones[i]).isPaid())
             {
                 return false;
             }
@@ -187,12 +170,12 @@ contract Bahia is
         bool foundOpen;
 
         // keep a milestone interface
-        MilestoneInterface milestone;
+        MilestoneDataInterface milestone;
 
         // iterate over the milestones and add their values
         for (uint256 i = 0; i < invoices[invoiceId].milestones.length; i += 1)
         {
-            milestone = MilestoneInterface(invoices[invoiceId].milestones[i]);
+            milestone = MilestoneDataInterface(invoices[invoiceId].milestones[i]);
 
             // if any milestone is paid, return false
             if (milestone.isPaid())
@@ -200,7 +183,7 @@ contract Bahia is
                 return false;
             }
             // if the contract is not paid, but is not closed, it is open
-            else if (!milestone.isClosed())
+            else if (!milestone.closed())
             {
                 foundOpen = true;
             }
@@ -220,15 +203,15 @@ contract Bahia is
         uint256 invoiceValue;
 
         // keep a milestone interface
-        MilestoneInterface milestone;
+        MilestoneDataInterface milestone;
 
         // iterate over the milestones and add their values
         for (uint256 i = 0; i < invoices[invoiceId].milestones.length; i += 1)
         {
-            milestone = MilestoneInterface(invoices[invoiceId].milestones[i]);
+            milestone = MilestoneDataInterface(invoices[invoiceId].milestones[i]);
 
             // don't count if the milestone is closed and not paid --> use logical equivalent to save gas
-            if (!milestone.isClosed() || milestone.isPaid())
+            if (!milestone.closed() || milestone.isPaid())
             {
                 invoiceValue += milestone.value();
             }
@@ -247,14 +230,14 @@ contract Bahia is
         uint256 outstandingAmount;
 
         // keep a milestone interface
-        MilestoneInterface milestone;
+        MilestoneDataInterface milestone;
 
         // iterate over the milestones and add their values
         for (uint256 i = 0; i < invoices[invoiceId].milestones.length; i += 1)
         {
-            milestone = MilestoneInterface(invoices[invoiceId].milestones[i]);
+            milestone = MilestoneDataInterface(invoices[invoiceId].milestones[i]);
 
-            if (!milestone.isPaid() && !milestone.isClosed())
+            if (!milestone.isPaid() && !milestone.closed())
             {
                 outstandingAmount += milestone.value();
             }

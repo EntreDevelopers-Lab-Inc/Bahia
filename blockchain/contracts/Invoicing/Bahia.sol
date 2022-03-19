@@ -6,18 +6,18 @@
 
 pragma solidity ^0.8.4;
 
-import "../interfaces/BahiaInterface.sol";
-import "../interfaces/MilestoneInterface.sol";
+import "../../interfaces/Invoicing/BahiaInterface.sol";
+import "../../interfaces/Invoicing/MilestoneInterface.sol";
 import "./Milestone.sol";
 
 
 error NotDev();
 
-contract Bahia is
-    BahiaInterface
+contract BahiaInvoice is
+    BahiaInvoiceInterface
 {
     address public devAddress;
-    uint256 public devRoyalty;
+    uint256 public devRoyalty;  // out of 100,000
 
     // track each invoice internally
     Invoice[] public invoices;

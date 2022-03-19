@@ -7,8 +7,8 @@
 pragma solidity ^0.8.4;
 
 
-import "../interfaces/BahiaInterface.sol";
-import "../interfaces/MilestoneInterface.sol";
+import "../../interfaces/Invoicing/BahiaInterface.sol";
+import "../../interfaces/Invoicing/MilestoneInterface.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 
@@ -35,7 +35,7 @@ contract Milestone is
     bool paid;
     bool public closed;
 
-    BahiaDataInterface public bahia;
+    BahiaInvoiceDataInterface public bahia;
 
     // initialize with the name, value, and bahia address (don't want to be able to create escrows without invoices, as that would make it impossible to get payment data)
     constructor (string memory name_, uint256 value_, uint256 invoiceId_, address bahiaAddress_)
@@ -46,7 +46,7 @@ contract Milestone is
         invoiceId = invoiceId_;
 
         // set the backref to the contract using the bahia address
-        bahia = BahiaDataInterface(bahiaAddress_);
+        bahia = BahiaInvoiceDataInterface(bahiaAddress_);
     }
 
     /**
@@ -153,7 +153,7 @@ contract Milestone is
     */
     function _payDevs() internal returns (uint256)
     {
-        uint256 devPayment = value * bahia.devRoyalty() / 100;
+        uint256 devPayment = value * bahia.devRoyalty() / 100000;
 
         bahia.invoices(invoiceId).token.transfer(bahia.devAddress(), devPayment);
 

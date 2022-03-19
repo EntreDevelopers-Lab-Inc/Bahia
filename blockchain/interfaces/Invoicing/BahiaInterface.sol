@@ -6,9 +6,9 @@
 
 pragma solidity ^0.8.4;
 
-import "../interfaces/BasicDataInterface.sol";
+import "../../interfaces/Invoicing/BasicDataInterface.sol";
 
-interface BahiaInterface is BasicDataInterface
+interface BahiaInvoiceInterface is BasicInvoiceDataInterface
 {
     struct MilestoneEntry {
         string name;
@@ -31,7 +31,7 @@ interface BahiaInterface is BasicDataInterface
 
 }
 
-interface BahiaDataInterface is BahiaInterface
+interface BahiaInvoiceDataInterface is BahiaInvoiceInterface
 {
     // get the invoice from the array
     function invoices(uint256) external view returns (Invoice memory);

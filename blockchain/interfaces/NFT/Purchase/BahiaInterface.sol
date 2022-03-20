@@ -1,24 +1,18 @@
 // SPDX-License-Identifier: MIT
 
 /**
- * @title bahia data interface
+ * @title bahia nft interface
 */
 
-pragma solidity ^0.8.4;
+pragma solidity ^0.8.12;
 
 interface BahiaNFTPurchaseInterface
 {
-    struct NFTPurchaseEntry {
-        address buyerAddress;
-        address sellerAddress;
-        uint256 expirationTime;
-        address collectionAddress;
-        uint256 nftId;
-        uint256 cost;
-    }
+    // create a new nft uint256
+    function createTransaction(uint256, address, uint256, uint256, address, address) external;
 }
 
-interface BahiaInvoiceDataInterface is BahiaInvoiceInterface
+interface BahiaNFTPurchaseDataInterface is BahiaNFTPurchaseInterface
 {
     // ability to view the public addresses
     function devAddress() external view returns (address);

@@ -21,6 +21,14 @@ error NotClient();
 error NotPaid();
 error NotClosed();
 
+
+/*
+NOTES
+- need to add notes to each contract
+- need to figure out safeTransferFrom and ERC20Holder (like nft purchase)
+    - this will make it easier for users to transfer money in and out
+*/
+
 // contract that creates the  escrow for each transaction --> call them milestones
 contract Milestone is
     MilestoneInterface,
@@ -32,10 +40,11 @@ contract Milestone is
     string public name;
     uint256 public value;
 
+    // don't show to limit confusion with getter functions
     bool paid;
     bool public closed;
 
-    BahiaInvoiceDataInterface public bahia;
+    BahiaInvoiceDataInterface bahia;
 
     // initialize with the name, value, and bahia address (don't want to be able to create escrows without invoices, as that would make it impossible to get payment data)
     constructor (string memory name_, uint256 value_, uint256 invoiceId_, address bahiaAddress_)
@@ -140,11 +149,6 @@ contract Milestone is
         if (bahia.invoices(invoiceId).token.balanceOf(address(this)) > value)
         {
             bahia.invoices(invoiceId).token.transfer(bahia.invoices(invoiceId).clientAddress, bahia.invoices(invoiceId).token.balanceOf(address(this)) - value);  // pay user the excess
-        }
-        // make sure the deposit meets the transaction value
-        else if (msg.value < value)
-        {
-            revert InsufficientFunds();
         }
     }
 

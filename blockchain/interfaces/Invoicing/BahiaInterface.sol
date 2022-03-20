@@ -25,10 +25,6 @@ interface BahiaInvoiceInterface is BasicInvoiceDataInterface
     function paid(uint256) external view returns(bool);
     function value(uint256) external view returns(uint256);
     function outstanding(uint256) external view returns(uint256);
-
-    function changeDevAddress(address) external;
-    function changeDevRoyalty(uint256) external;
-
 }
 
 interface BahiaInvoiceDataInterface is BahiaInvoiceInterface

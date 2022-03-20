@@ -1,13 +1,13 @@
-from brownie import Bahia, Agua, accounts
+from brownie import BahiaInvoice, Agua, accounts
 
 
 # test creating an invoice
 def test_gas():
     # deploy contracts
     admin_account = accounts[0]
-    Bahia.deploy(1000, {'from': admin_account})
+    BahiaInvoice.deploy(1000, {'from': admin_account})
     Agua.deploy({'from': admin_account})
-    bahia = Bahia[-1]
+    bahia = BahiaInvoice[-1]
     agua = Agua[-1]
 
     # get accounts

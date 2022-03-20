@@ -1,0 +1,1 @@
+DEV_ROYALTY = 1000

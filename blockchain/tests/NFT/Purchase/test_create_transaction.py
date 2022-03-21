@@ -35,7 +35,16 @@ def test_create_transaction():
     # check if the transaction list has incremented correctly
     purchase_id = 0
     purchase_contract_address = bahia_contract.transactions(purchase_id)
-    print(purchase_contract_address)
+
+    # check the mappings
+    assert bahia_contract.purchases(buyer, 0) == 0
+    assert bahia_contract.sales(seller, 0) == 0
+
+    # check mapping lengths
+    assert bahia_contract.purchaseCount(buyer) == 1
+    assert bahia_contract.saleCount(seller) == 1
+    assert bahia_contract.purchaseCount(seller) == 0
+    assert bahia_contract.saleCount(buyer) == 0
 
     # get an nft purchase
     purchase_contract = NFTPurchase.at(

@@ -6,7 +6,7 @@
 
 pragma solidity ^0.8.12;
 
-import "../../../interfaces/NFT/Purchase/BahiaInterface.sol";
+import "../../../interfaces/NFT/Purchase/BahiaNFTPurchaseInterface.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
@@ -48,7 +48,7 @@ contract NFTPurchase is
     address public sellerAddress;
 
     // keep track of the nft data
-    IERC721 nftManager;
+    IERC721 public nftManager;
 
     // keep track of the purchase data interface
     BahiaNFTPurchaseDataInterface bahia;

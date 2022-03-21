@@ -1,4 +1,5 @@
 from brownie import BahiaNFTPurchase, Fish, NFTPurchase, accounts, Wei, chain
+from brownie import interface
 from scripts.accounts import get_admin_account
 from scripts.constants import DEV_ROYALTY
 
@@ -56,7 +57,12 @@ def deploy_purchase_deposit_assets(added_exp_time=100):
     purchase_contract.depositETH(
         {'from': buyer, 'value': purchase_contract.cost()})
 
+    # approve the contract to deposit nfts
+    nft_contract = interface.IERC721(purchase_contract.nftManager())
+    nft_contract.approve(
+        purchase_contract.address, purchase_contract.nftId(), {'from': seller})
+
     # have the seller deposit the nft
     purchase_contract.depositNFT({'from': seller})
 
-    return purchase_contract
+    return purchase_contract, buyer, seller

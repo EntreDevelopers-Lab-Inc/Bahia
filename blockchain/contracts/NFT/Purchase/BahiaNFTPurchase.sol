@@ -6,7 +6,7 @@
 
 pragma solidity ^0.8.12;
 
-import "../../../interfaces/NFT/Purchase/BahiaInterface.sol";
+import "../../../interfaces/NFT/Purchase/BahiaNFTPurchaseInterface.sol";
 import "../../Bahia.sol";
 import "./NFTPurchase.sol";
 
@@ -53,6 +53,24 @@ contract BahiaNFTPurchase is
             sellerAddress,
             address(this)
             )));
+    }
+
+    /**
+     * @notice count the purchases for frontend iteration
+     * @param address_ to locate the address for which we are tracking purchases
+    */
+    function purchaseCount(address address_) external view returns (uint256)
+    {
+        return purchases[address_].length;
+    }
+
+    /**
+     * @notice count the sales for frontend iteration
+     * @param address_ to locate the address for which we are tracking sales
+    */
+    function saleCount(address address_) external view returns (uint256)
+    {
+        return sales[address_].length;
     }
 
 }

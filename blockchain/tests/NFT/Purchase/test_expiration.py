@@ -51,4 +51,4 @@ def test_buyer_transfer_initiated():
     time.sleep(4)
 
     # the contract should not be expired
-    purhcoin_contract.isExpired() == False
+    purchase_contract.isExpired() == False

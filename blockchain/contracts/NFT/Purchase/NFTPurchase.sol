@@ -171,6 +171,9 @@ contract NFTPurchase is
     {
         // check that the deposit is the correct amount
         if (msg.value < cost) revert InsufficientFunds();
+
+        // refund the excess to the buyer
+        _refundExcess();
     }
 
     /**
@@ -190,9 +193,6 @@ contract NFTPurchase is
     */
     function claimETH() external onlySeller transferrable nonReentrant
     {
-        // refund the excess to the buyer
-        _refundExcess();
-
         // pay the devs
         _payDevs();
 

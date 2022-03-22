@@ -1,3 +1,4 @@
+import brownie
 from brownie import BahiaNFTPurchase, Fish, NFTPurchase, accounts, Wei
 from scripts.NFT.Purchase.helpful_scripts import deploy
 from scripts.accounts import get_admin_account
@@ -57,3 +58,31 @@ def test_create_transaction():
     assert purchase_contract.cost() == cost
     assert purchase_contract.buyerAddress() == buyer
     assert purchase_contract.sellerAddress() == seller
+
+
+# test creating a transaction with a non-owner
+def test_create_false_transaction():
+    # deploy the contracts
+    deploy()
+
+    # get the nft purchase contract
+    bahia_contract = BahiaNFTPurchase[-1]
+    fish_contract = Fish[-1]
+
+    # get the buyer and seller
+    buyer = accounts[1]
+    seller = accounts[2]
+
+    # give the seller an nft
+    fish_contract.safeMint({'from': seller})
+
+    # set up the transaction
+    exp_time = time.time() + 100
+    nft_id = 0  # the first nft in the collection
+
+    cost = Wei("1 ether")
+
+    # create a transaction with the reversed roles
+    with brownie.reverts():
+        bahia_contract.createTransaction(
+            exp_time, Fish[-1].address, nft_id, cost, seller, buyer)

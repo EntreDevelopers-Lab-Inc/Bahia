@@ -1,17 +1,16 @@
 from brownie import chain
-from scripts.NFT.Purchase.helpful_scripts import deploy_and_purchase, deploy_purchase_deposit_assets
-import time
+from scripts.NFT.Purchase.helpful_scripts import deploy_and_create, deploy_purchase_deposit_assets
 
 
-def test_non_expired():
-    purchase_contract, buyer, seller = deploy_and_purchase()
+def test_not_expired():
+    purchase_contract, buyer, seller = deploy_and_create()
 
     assert purchase_contract.isExpired() == False
 
 
 def test_expired():
     # set added time to 0 seconds to expire
-    purchase_contract, buyer, seller = deploy_and_purchase(added_exp_time=0)
+    purchase_contract, buyer, seller = deploy_and_create(added_exp_time=0)
 
     chain.sleep(20)
     chain.mine(1)
@@ -36,7 +35,7 @@ def test_seller_transfer_initiated():
     chain.mine(1)
 
     # the contract should not be expired
-    purchase_contract.isExpired() == False
+    assert purchase_contract.isExpired() == False
 
 
 def test_buyer_transfer_initiated():
@@ -48,7 +47,7 @@ def test_buyer_transfer_initiated():
     purchase_contract.claimNFT({'from': buyer})
 
     # wait 4 seconds
-    time.sleep(4)
+    chain.sleep(4)
 
     # the contract should not be expired
-    purchase_contract.isExpired() == False
+    assert purchase_contract.isExpired() == False

@@ -13,7 +13,7 @@ def deploy():
 
 
 # a function for creating a purchase
-def deploy_and_purchase(added_exp_time=100):
+def deploy_and_create(added_exp_time=100):
     # deploy the contract
     deploy()
 
@@ -38,7 +38,7 @@ def deploy_and_purchase(added_exp_time=100):
     bahia_contract.createTransaction(
         exp_time, Fish[-1].address, nft_id, cost, buyer, seller)
 
-    # check if the transaction list has incremented correctly
+    # get the purchase contract
     purchase_id = 0
     purchase_contract_address = bahia_contract.transactions(purchase_id)
 
@@ -50,7 +50,7 @@ def deploy_and_purchase(added_exp_time=100):
 
 
 def deploy_purchase_deposit_assets(added_exp_time=100):
-    purchase_contract, buyer, seller = deploy_and_purchase(
+    purchase_contract, buyer, seller = deploy_and_create(
         added_exp_time=added_exp_time)
 
     # have the buyer pay the price

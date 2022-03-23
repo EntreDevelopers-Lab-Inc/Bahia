@@ -15,10 +15,8 @@ import "@openzeppelin/contracts/token/ERC721/utils/ERC721Holder.sol";
 
 error InsufficientFunds();
 error ExceesReimbursementFailed();
-error NotPaid();
 error Expired();
-error NotExpired();
-error NoNFT();
+error NFTNotApproved();
 error NotOwner();
 error NotBuyer();
 error NotSeller();
@@ -39,9 +37,6 @@ contract NFTPurchase is
 
     // keep track of the cost (in gwei)
     uint256 public cost;
-
-    // need to see if transfer is initiated
-    bool public transferInitiated;
 
     // keep track of buyer, seller addresses
     address public buyerAddress;
@@ -77,7 +72,7 @@ contract NFTPurchase is
     */
     modifier onlyBuyer()
     {
-        if (tx.origin != buyerAddress) revert NotBuyer();
+        if ((tx.origin != buyerAddress) && (buyerAddress != address(0))) revert NotBuyer();
         _;
     }
 
@@ -95,13 +90,10 @@ contract NFTPurchase is
     */
     modifier transferrable()
     {
-        // only allow if paid, not expired, and contains NFT
-        if (!transferInitiated)
-        {
-            if (!isPaid()) revert NotPaid();
-            if (isExpired()) revert Expired();
-            if (!receivedNFT()) revert NoNFT();
-        }
+        // only allow if it contains NFT and is not expired
+        if (isExpired()) revert Expired();
+        if (nftManager.getApproved(nftId) != address(this)) revert NFTNotApproved();
+        if (nftManager.ownerOf(nftId) != sellerAddress) revert NotOwner();
 
         _;
     }
@@ -111,123 +103,50 @@ contract NFTPurchase is
     */
     function isExpired() public view returns (bool)
     {
-        if (transferInitiated)
-        {
-            return false;
-        }
-        else
-        {
-            return (block.timestamp > expirationTime);
-        }
-    }
-
-    /**
-     * @notice a function to see if the contract has been paid
-    */
-    function isPaid() public view returns (bool)
-    {
-        if (transferInitiated)
-        {
-            return true;
-        }
-        else
-        {
-            return (address(this).balance >= cost);
-        }
-    }
-
-    /**
-     * @notice a function to check if the nft is in the contract
-    */
-    function receivedNFT() public view returns (bool)
-    {
-        if (transferInitiated)
-        {
-            return true;
-        }
-        else
-        {
-            // check if the owner of the NFT is this address
-            return (nftManager.ownerOf(nftId) == address(this));
-        }
-    }
-
-    /**
-     * @notice a function to deposit the nft --> caller will be the owner --> no need to worry about setting approvals
-    */
-    function depositNFT() external onlySeller nonReentrant
-    {
-        // make sure that the seller is still the owner
-        if (nftManager.ownerOf(nftId) != sellerAddress) revert NotOwner();
-
-        // transfer the nft
-        nftManager.safeTransferFrom(sellerAddress, address(this), nftId);
-    }
-
-    /**
-     * @notice a function to deposit funds for the nft purchase
-    */
-    function depositETH() external payable onlyBuyer nonReentrant
-    {
-        // check that the deposit is the correct amount
-        if (msg.value < cost) revert InsufficientFunds();
-
-        // refund the excess to the buyer
-        _refundExcess();
+        return (block.timestamp > expirationTime);
     }
 
     /**
      * @notice a function for the buyer to receive the nft
     */
-    function claimNFT() external onlyBuyer transferrable nonReentrant
+    function buy() external payable onlyBuyer transferrable nonReentrant
     {
+        // cannot be expired  (other iterms will be checked in safe transfer)
+        if (isExpired()) revert Expired();
+
         // now that the nft is transferrable, transfer it out of this wallet
         nftManager.safeTransferFrom(address(this), buyerAddress, nftId);
 
-        // mark the transfer as initiated, as this is the case
-        transferInitiated = true;
-    }
-
-    /**
-     * @notice a function for the seller to claim the eth
-    */
-    function claimETH() external onlySeller transferrable nonReentrant
-    {
-        // pay the devs
-        _payDevs();
-
-        // pay the seller the remaining amount
-        sellerAddress.call{value: address(this).balance}("");
-
-        // initiate the transfer
-        transferInitiated = true;
-    }
-
-    /**
-     * @notice a function for the buyer to reclaim the eth after it is expired
-    */
-    function reclaimETH() external onlyBuyer nonReentrant
-    {
-        if (!isExpired()) revert NotExpired();
-        if (!isPaid()) revert NotPaid();
+        // make sure that the message value exceeds the cost
+        _refundExcess();
 
         // pay the devs
         _payDevs();
 
-        // since it is expired, refund the buyer everything
-        buyerAddress.call{value: address(this).balance}("");
+        // pay the seller the remainder
+        _paySeller();
+
+        // add the purchase to the parent contract
+        bahia.addPurchase(msg.sender, purchaseId);
+
     }
 
     /**
-     * @notice a function for the seller to reclaim the nft after it is expired
+     * @notice a setter function for the cost
+     * @param cost_ for the new cost
     */
-    function reclaimNFT() external onlySeller nonReentrant
+    function setCost(uint256 cost_) external onlySeller transferrable
     {
-        if (!isExpired()) revert NotExpired();
-        if (!receivedNFT()) revert NoNFT();
+        cost = cost_;
+    }
 
-        // transfer the nft back to the seller
-        nftManager.safeTransferFrom(address(this), sellerAddress, nftId);
+    /**
+     * @notice a setter function for the buyerAddress
+     * @param buyerAddress_ for setting the buyer
+    */
+    function setBuyer(address buyerAddress_) external onlySeller transferrable
+    {
+        buyerAddress = buyerAddress_;
     }
 
     /**
@@ -254,6 +173,14 @@ contract NFTPurchase is
         bahia.devAddress().call{value: devPayment}("");
 
         return devPayment;
+    }
+
+    /**
+     * @notice a function to pay the seller
+    */
+    function _paySeller() internal
+    {
+        sellerAddress.call{value: address(this).balance}("");
     }
 
 }

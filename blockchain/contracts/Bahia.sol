@@ -7,11 +7,15 @@
 pragma solidity ^0.8.4;
 
 error NotDev();
+error NotAllowed();
 
 contract Bahia
 {
     address public devAddress;
     uint256 public devRoyalty;  // out of 100,000
+
+    // allow certain contracts
+    mapping(address => bool) internal allowedContracts;
 
     constructor (uint256 devRoyalty_)
     {
@@ -28,6 +32,15 @@ contract Bahia
     modifier onlyDev()
     {
         if (tx.origin != devAddress) revert NotDev();
+        _;
+    }
+
+    /**
+     * @notice a modified that only allowed contracts can access
+    */
+    modifier onlyAllowed()
+    {
+        if (!allowedContracts[msg.sender]) revert NotAllowed();
         _;
     }
 

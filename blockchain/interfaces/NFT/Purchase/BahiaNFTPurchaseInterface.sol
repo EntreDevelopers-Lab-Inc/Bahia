@@ -10,6 +10,9 @@ interface BahiaNFTPurchaseInterface
 {
     // create a new nft uint256
     function createTransaction(uint256, address, uint256, uint256, address, address) external;
+
+    // add a purchase (for external tracking)
+    function addPurchase(address, uint256) external;
 }
 
 interface BahiaNFTPurchaseDataInterface is BahiaNFTPurchaseInterface

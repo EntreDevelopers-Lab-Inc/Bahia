@@ -39,11 +39,9 @@ contract BahiaNFTPurchase is
     function createTransaction(uint256 expirationTime, address collectionAddress, uint256 nftId, uint256 cost, address buyerAddress, address sellerAddress) external
     {
         // add the new nft purchase to the mapping (use the transactions array length)
-        purchases[buyerAddress].push(transactions.length);
         sales[sellerAddress].push(transactions.length);
 
-        // create a new nft purchase
-        transactions.push(address(new NFTPurchase(
+        address newPurchaseAddress = address(new NFTPurchase(
             transactions.length,
             expirationTime,
             collectionAddress,
@@ -52,7 +50,14 @@ contract BahiaNFTPurchase is
             buyerAddress,
             sellerAddress,
             address(this)
-            )));
+            ));
+
+        // create a new nft purchase
+        transactions.push(newPurchaseAddress);
+
+        // add the nft purchase to the allowed list
+        allowedContracts[newPurchaseAddress] = true;
+
     }
 
     /**
@@ -71,6 +76,17 @@ contract BahiaNFTPurchase is
     function saleCount(address address_) external view returns (uint256)
     {
         return sales[address_].length;
+    }
+
+    /**
+     * @notice a function to add a sale to the mapping
+     * @param buyerAddress for who bought it
+     * @param purchaseId for the purchase to be linked
+    */
+    function addPurchase(address buyerAddress, uint256 purchaseId) external onlyAllowed
+    {
+        // add the purchase to the buyer's list (in the mapping)
+        purchases[buyerAddress].push(purchaseId);
     }
 
 }

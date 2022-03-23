@@ -36,7 +36,7 @@ def deploy_and_create(added_exp_time=100):
 
     # create one transaction that lasts for 100 seconds
     bahia_contract.createTransaction(
-        exp_time, Fish[-1].address, nft_id, cost, buyer, seller)
+        exp_time, Fish[-1].address, nft_id, cost, buyer, {'from': seller})
 
     # get the purchase contract
     purchase_id = 0
@@ -45,6 +45,21 @@ def deploy_and_create(added_exp_time=100):
     # get an nft purchase
     purchase_contract = NFTPurchase.at(
         purchase_contract_address)
+
+    return purchase_contract, buyer, seller
+
+
+# function for approving an address to move stuff
+def deploy_create_approve(added_exp_time=100):
+    purchase_contract, buyer, seller = deploy_and_create(
+        added_exp_time=added_exp_time)
+
+    # approve the contract to deposit nfts
+    nft_contract = interface.IERC721(purchase_contract.nftManager())
+    nft_contract.approve(
+        purchase_contract.address, purchase_contract.nftId(), {'from': seller})
+
+    print(nft_contract.getApproved(purchase_contract.nftId()))
 
     return purchase_contract, buyer, seller
 

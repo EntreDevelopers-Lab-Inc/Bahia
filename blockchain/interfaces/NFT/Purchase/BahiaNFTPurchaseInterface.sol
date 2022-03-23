@@ -9,7 +9,7 @@ pragma solidity ^0.8.12;
 interface BahiaNFTPurchaseInterface
 {
     // create a new nft uint256
-    function createTransaction(uint256, address, uint256, uint256, address, address) external;
+    function createTransaction(uint256, address, uint256, uint256, address) external;
 
     // add a purchase (for external tracking)
     function addPurchase(address, uint256) external;

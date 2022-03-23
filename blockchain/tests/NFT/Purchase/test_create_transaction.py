@@ -31,21 +31,18 @@ def test_create_transaction():
 
     # create one transaction that lasts for 100 seconds
     bahia_contract.createTransaction(
-        exp_time, Fish[-1].address, nft_id, cost, buyer, seller)
+        exp_time, Fish[-1].address, nft_id, cost, buyer, {'from': seller})
 
     # check if the transaction list has incremented correctly
     purchase_id = 0
     purchase_contract_address = bahia_contract.transactions(purchase_id)
 
     # check the mappings
-    assert bahia_contract.purchases(buyer, 0) == 0
     assert bahia_contract.sales(seller, 0) == 0
 
     # check mapping lengths
-    assert bahia_contract.purchaseCount(buyer) == 1
     assert bahia_contract.saleCount(seller) == 1
     assert bahia_contract.purchaseCount(seller) == 0
-    assert bahia_contract.saleCount(buyer) == 0
 
     # get an nft purchase
     purchase_contract = NFTPurchase.at(
@@ -82,7 +79,7 @@ def test_create_false_transaction():
 
     cost = Wei("1 ether")
 
-    # create a transaction with the reversed roles
+    # create a faulty transaction from a buyer
     with brownie.reverts():
         bahia_contract.createTransaction(
-            exp_time, Fish[-1].address, nft_id, cost, seller, buyer)
+            exp_time, Fish[-1].address, nft_id, cost, buyer, {'from': buyer})

@@ -29,17 +29,16 @@ contract BahiaNFTPurchase is
 
     /**
      * @notice a function to create a new transaction
-     * @param buyerAddress to determine the buyer
-     * @param sellerAddress to determine the sellet
      * @param expirationTime to set when the contract expires
      * @param collectionAddress to determine the nft collection
      * @param nftId to determine which nft is going to be traded
      * @param cost to determine how much to pay for the nft
+     * @param buyerAddress to determine the buyer
     */
-    function createTransaction(uint256 expirationTime, address collectionAddress, uint256 nftId, uint256 cost, address buyerAddress, address sellerAddress) external
+    function createTransaction(uint256 expirationTime, address collectionAddress, uint256 nftId, uint256 cost, address buyerAddress) external
     {
         // add the new nft purchase to the mapping (use the transactions array length)
-        sales[sellerAddress].push(transactions.length);
+        sales[msg.sender].push(transactions.length);
 
         address newPurchaseAddress = address(new NFTPurchase(
             transactions.length,
@@ -48,7 +47,7 @@ contract BahiaNFTPurchase is
             nftId,
             cost,
             buyerAddress,
-            sellerAddress,
+            msg.sender,  // use the message sender as the seller
             address(this)
             ));
 

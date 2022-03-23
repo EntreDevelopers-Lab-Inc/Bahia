@@ -20,11 +20,12 @@ error NFTNotApproved();
 error NotOwner();
 error NotBuyer();
 error NotSeller();
+error Completed();
 
 // contract that creates the  escrow for each transaction --> call them milestones
 contract NFTPurchase is
-    ERC721Holder,
-    ReentrancyGuard
+    ReentrancyGuard,
+    ERC721Holder
 {
     // keep the id of the purchase, so this backlinks to the NFTPurchasePlatform
     uint256 public purchaseId;
@@ -41,6 +42,9 @@ contract NFTPurchase is
     // keep track of buyer, seller addresses
     address public buyerAddress;
     address public sellerAddress;
+
+    // keep track of whether or not this have been completed
+    bool public completed;
 
     // keep track of the nft data
     IERC721 public nftManager;
@@ -90,10 +94,11 @@ contract NFTPurchase is
     */
     modifier transferrable()
     {
-        // only allow if it contains NFT and is not expired
+        // only allow if it contains NFT, is not expired, and is not completed
         if (isExpired()) revert Expired();
         if (nftManager.getApproved(nftId) != address(this)) revert NFTNotApproved();
         if (nftManager.ownerOf(nftId) != sellerAddress) revert NotOwner();
+        if (completed) revert Completed();
 
         _;
     }
@@ -109,13 +114,16 @@ contract NFTPurchase is
     /**
      * @notice a function for the buyer to receive the nft
     */
-    function buy() external payable onlyBuyer transferrable nonReentrant
+    function buy() external payable onlyBuyer nonReentrant
     {
         // cannot be expired  (other iterms will be checked in safe transfer)
         if (isExpired()) revert Expired();
 
-        // now that the nft is transferrable, transfer it out of this wallet
-        nftManager.safeTransferFrom(address(this), buyerAddress, nftId);
+        // cannot be completed
+        if (completed) revert Completed();
+
+        // now that the nft is transferrable, transfer it out of this wallet (will check other require statements)
+        nftManager.safeTransferFrom(sellerAddress, msg.sender, nftId);
 
         // make sure that the message value exceeds the cost
         _refundExcess();
@@ -128,6 +136,9 @@ contract NFTPurchase is
 
         // add the purchase to the parent contract
         bahia.addPurchase(msg.sender, purchaseId);
+
+        // set completed to true
+        completed = true;
 
     }
 
@@ -170,7 +181,8 @@ contract NFTPurchase is
     {
         uint256 devPayment = cost * bahia.devRoyalty() / 100000;
 
-        bahia.devAddress().call{value: devPayment}("");
+        (bool sent, ) = bahia.devAddress().call{value: devPayment}("");
+        if (!sent) revert InsufficientFunds();
 
         return devPayment;
     }
@@ -180,7 +192,8 @@ contract NFTPurchase is
     */
     function _paySeller() internal
     {
-        sellerAddress.call{value: address(this).balance}("");
+        (bool sent, ) = sellerAddress.call{value: address(this).balance}("");
+        if (!sent) revert InsufficientFunds();
     }
 
 }

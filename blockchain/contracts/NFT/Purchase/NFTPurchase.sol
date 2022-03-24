@@ -134,8 +134,11 @@ contract NFTPurchase is
         // pay the seller the remainder
         _paySeller();
 
+        // log the sender as the buyer address
+        buyerAddress = msg.sender;
+
         // add the purchase to the parent contract
-        bahia.addPurchase(msg.sender, purchaseId);
+        bahia.addPurchase(buyerAddress, purchaseId);
 
         // set completed to true
         completed = true;

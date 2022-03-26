@@ -1,0 +1,9 @@
+eth-brownie
+ipfshttpclient
+flask
+flask-cors
+flask-bcrypt
+phonenumbers
+flask-jwt-extended
+eth-account
+web3

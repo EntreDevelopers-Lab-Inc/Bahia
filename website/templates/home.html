@@ -32,6 +32,8 @@
   <link href="{{url_for('static', filename='assets/css/responsive.css')}}" rel="stylesheet"/>
   <!-- Color CSS -->
   <link href="{{url_for('static', filename='assets/color/theme.css')}}" id="layoutstyle" rel="stylesheet"/>
+  <script src="{{url_for('static', filename='assets/js/constants.js')}}">
+  </script>
  </head>
  <body class="v_royal_blue" data-offset="110" data-spy="scroll">
   <!-- START LOADER -->
@@ -86,7 +88,7 @@
        </li>
       -->
        <li class="animation" data-animation="fadeInDown" data-animation-delay="2s">
-        <a class="btn btn-default btn-radius nav_item">
+        <a class="btn btn-default btn-radius nav_item" id="connect-btn" onClick="connect();">
          Connect Wallet
         </a>
        </li>
@@ -844,6 +846,9 @@
   </script>
   <!-- scripts js -->
   <script src="{{url_for('static', filename='assets/js/scripts.js')}}">
+  </script>
+  <!-- connect-wallet js -->
+  <script src="{{url_for('static', filename='assets/js/connect-wallet.js')}}">
   </script>
  </body>
 </html>

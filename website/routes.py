@@ -9,6 +9,11 @@ def home():
     return render_template('home.html')
 
 
-# @app.route('/mint')
-def mint():
-    return render_template('mint.html')
+@app.route('/buy')
+def buy():
+    return render_template('sell.html')
+
+
+@app.route('/sell')
+def sell():
+    return render_template('sell.html')

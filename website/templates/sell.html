@@ -1,0 +1,56 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<!-- START SECTION LOGIN -->
+<section>
+ <div class="container">
+  <div class="row">
+   <div class="col-lg-12">
+    <div class="authorize_box">
+     <div class="title_default_dark title_border text-center">
+      <h4 class="animation" data-animation="fadeInUp" data-animation-delay="0.2s">
+       Welcome
+      </h4>
+      <p class="animation" data-animation="fadeInUp" data-animation-delay="0.4s">
+       Sign in to your account
+      </p>
+     </div>
+     <div class="field_form authorize_form">
+      <form>
+       <div class="form-group col-md-12 animation" data-animation="fadeInUp" data-animation-delay="0.6s">
+        <input class="form-control" name="username" placeholder="User Name" required="" type="text"/>
+       </div>
+       <div class="form-group col-md-12 animation" data-animation="fadeInUp" data-animation-delay="0.7s">
+        <input class="form-control" name="password" placeholder="Password" required="" type="password"/>
+       </div>
+       <div class="form-group col-md-12 text-center animation" data-animation="fadeInUp" data-animation-delay="0.8s">
+        <button class="btn btn-default btn-radius" type="submit">
+         Submit
+        </button>
+       </div>
+       <div class="form-group col-md-12 text-center animation" data-animation="fadeInUp" data-animation-delay="0.9s">
+        <a class="forgot_pass" href="#">
+         Forgot Password?
+        </a>
+       </div>
+      </form>
+     </div>
+    </div>
+    <div class="divider small_divider">
+    </div>
+    <div class="text-center">
+     <span class="animation" data-animation="fadeInUp" data-animation-delay="1s">
+      Don't have an account?
+      <a href="signup.html">
+       Register
+      </a>
+     </span>
+    </div>
+   </div>
+  </div>
+ </div>
+</section>
+<!-- END SECTION LOGIN -->
+<script src="{{url_for('static', filename='assets/js/vendor/moralis.min.js')}}"></script>
+<script src="{{url_for('static', filename='assets/js/sell/sell.js')}}"></script>
+{% endblock content %}

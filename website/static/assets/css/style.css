@@ -57,7 +57,7 @@ h3,
 h4,
 h5,
 h6 {
-	color: #5957cd;
+	color: #fff;
 }
 p {
 	color:#7a7a7a;
@@ -1381,7 +1381,6 @@ header a:hover,
 	background-position: left bottom;
 	background-size: cover;
 	padding: 200px 0 100px;
-	position: relative;
 	overflow:hidden;
 }
 .banner_full_height {
@@ -5110,13 +5109,13 @@ header a:hover,
 	position:relative;
 }
 .top_footer {
-	padding: 100px 0;
+	padding: 10px 0;
 }
 .footer_title {
 	color: #ffffff;
 	font-size: 22px;
 	font-weight: 600;
-	margin-bottom: 30px;
+	margin-bottom: 10px;
 	position:relative;
 	text-transform:uppercase;
 }
@@ -5228,8 +5227,7 @@ button.btn-white:hover {
 	padding: 20px 0;
 }
 .footer_bottom {
-	border-top: 1px solid #fff;
-	padding: 20px 0;
+	padding: 10px 0;
 }
 .copyright {
 	color: #ffffff;
@@ -5254,7 +5252,7 @@ button.btn-white:hover {
 .footer_menu li a:hover,
 .footer_link a:hover,
 .footer_social li a:hover {
-	color: #ff69c9;
+	/*color: #ff69c9;*/
 }
 .footer_link.list_arrow li {
 	list-style: none;
@@ -5297,7 +5295,7 @@ button.btn-white:hover {
 	font-size: 14px
 }
 .footer_link_s2 li a:hover {
-	color: #ff69c9;
+	/*color: #ff69c9;*/
 }
 .footer_pattern {
 	background-image: url('../images/footer_pattern.png');

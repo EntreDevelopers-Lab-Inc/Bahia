@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+ <head>
+  <!-- Meta -->
+  <meta content="IE=edge" http-equiv="X-UA-Compatible"/>
+  <meta content="width=device-width, initial-scale=1" name="viewport"/>
+  <meta content="Cryptocash is Professional Creative Template" name="description"/>
+  <!-- SITE TITLE -->
+  <title>
+   Bahia {% if title %}<span> - {{title}}</span>{% endif %}
+  </title>
+  <!-- Favicon Icon -->
+  <link href="{{url_for('static', filename='assets/images/favicon.png')}}" rel="shortcut icon" type="image/x-icon"/>
+  <!-- Animation CSS -->
+  <link href="{{url_for('static', filename='assets/css/animate.css')}}" rel="stylesheet"/>
+  <!-- Latest Bootstrap min CSS -->
+  <link href="{{url_for('static', filename='assets/bootstrap/css/bootstrap.min.css')}}" rel="stylesheet"/>
+  <!-- Google Font -->
+  <link href="https://fonts.googleapis.com/css?family=Poppins:100,200,300,400,500,600,700,800,900" rel="stylesheet"/>
+  <!-- Font Awesome CSS -->
+  <link href="{{url_for('static', filename='assets/css/font-awesome.min.css')}}" rel="stylesheet"/>
+  <!-- ionicons CSS -->
+  <link href="{{url_for('static', filename='assets/css/ionicons.min.css')}}" rel="stylesheet"/>
+  <!--- owl carousel CSS-->
+  <link href="{{url_for('static', filename='assets/owlcarousel/css/owl.carousel.min.css')}}" rel="stylesheet"/>
+  <link href="{{url_for('static', filename='assets/owlcarousel/css/owl.theme.default.min.css')}}" rel="stylesheet"/>
+  <!-- Magnific Popup CSS -->
+  <link href="{{url_for('static', filename='assets/css/magnific-popup.css')}}" rel="stylesheet"/>
+  <link href="{{url_for('static', filename='assets/css/spop.min.css')}}" rel="stylesheet"/>
+  <!-- Style CSS -->
+  <link href="{{url_for('static', filename='assets/css/style.css')}}" rel="stylesheet"/>
+  <link href="{{url_for('static', filename='assets/css/responsive.css')}}" rel="stylesheet"/>
+  <!-- Color CSS -->
+  <link href="{{url_for('static', filename='assets/color/theme.css')}}" id="layoutstyle" rel="stylesheet"/>
+  <script src="{{url_for('static', filename='assets/js/constants.js')}}">
+  </script>
+ </head>
+ <body class="v_royal_blue" data-offset="110" data-spy="scroll">
+  <!-- START LOADER -->
+  <div id="loader-wrapper">
+   <div id="loading-center-absolute">
+    <div class="object" id="object_four">
+    </div>
+    <div class="object" id="object_three">
+    </div>
+    <div class="object" id="object_two">
+    </div>
+    <div class="object" id="object_one">
+    </div>
+   </div>
+   <div class="loader-section section-left">
+   </div>
+   <div class="loader-section section-right">
+   </div>
+  </div>
+  <!-- END LOADER -->
+  <!-- START HEADER -->
+  <header class="header_wrap fixed-top">
+   <div class="container-fluid">
+    <nav class="navbar navbar-expand-lg">
+     <a class="navbar-brand page-scroll animation" data-animation="fadeInDown" data-animation-delay="1s" href="#home_section">
+      <img alt="logo" class="logo_light" src="{{url_for('static', filename='assets/images/logo.png')}}"/>
+      <img alt="logo" class="logo_dark" src="{{url_for('static', filename='assets/images/logo_dark.png')}}"/>
+     </a>
+     <button aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation" class="navbar-toggler animation" data-animation="fadeInDown" data-animation-delay="1.1s" data-target="#navbarSupportedContent" data-toggle="collapse" type="button">
+      <span class="ion-android-menu">
+      </span>
+     </button>
+     <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav m-auto">
+      </ul>
+      <ul class="navbar-nav nav_btn align-items-center">
+       <li class="animation" data-animation="fadeInDown" data-animation-delay="1.3s">
+        <a class="nav-link page-scroll nav_item" href="#how-bahia-works">
+         How Bahia Works
+        </a>
+       </li>
+       <li class="animation" data-animation="fadeInDown" data-animation-delay="1.4s">
+        <a class="nav-link page-scroll nav_item" href="#security">
+         Security
+        </a>
+       </li>
+       <!--
+       <li class="animation" data-animation="fadeInDown" data-animation-delay="1.5s">
+        <a class="nav-link page-scroll nav_item" href="#faq">
+         FAQ
+        </a>
+       </li>
+      -->
+       <li class="animation" data-animation="fadeInDown" data-animation-delay="2s">
+        <a class="btn btn-default btn-radius nav_item" id="connect-btn" onClick="connect();">
+         Connect Wallet
+        </a>
+       </li>
+      </ul>
+     </div>
+    </nav>
+   </div>
+  </header>
+  <!-- END HEADER -->
+  {% block content %}{% endblock %}
+  <footer>
+   <div class="top_footer blue_dark_bg">
+    <div class="container">
+     <div class="row">
+      <div class="col-12">
+       <div class="newsletter_form newslattter_small text-md-center">
+       </div>
+       <div class="footer_social_s2">
+        <h4 class="footer_title text-md-center">
+         Follow Us
+        </h4>
+        <ul class="list_none social_icon d-md-flex justify-content-center text-center">
+         <li>
+          <a href="#">
+           <i class="">
+            <img src="https://img.icons8.com/ios-filled/15/ffffff/twitter--v1.png">
+           </i>
+          </a>
+         </li>
+         <li>
+          <a href="#">
+           <i class="">
+            <img src="https://img.icons8.com/ios-filled/20/ffffff/discord-logo.png">
+           </i>
+          </a>
+         </li>
+        </ul>
+       </div>
+      </div>
+     </div>
+    </div>
+   </div>
+  </footer>
+  <!-- END FOOTER SECTION -->
+  <a class="scrollup btn-default" href="#">
+   <i class="ion-ios-arrow-up">
+   </i>
+  </a>
+  <!-- Latest jQuery -->
+  <script src="{{url_for('static', filename='assets/js/jquery-3.6.0.min.js')}}">
+  </script>
+  <!-- Latest compiled and minified Bootstrap -->
+  <script src="{{url_for('static', filename='assets/bootstrap/js/bootstrap.min.js')}}">
+  </script>
+  <!-- owl-carousel min js  -->
+  <script src="{{url_for('static', filename='assets/owlcarousel/js/owl.carousel.min.js')}}">
+  </script>
+  <!-- magnific-popup min js  -->
+  <script src="{{url_for('static', filename='assets/js/magnific-popup.min.js')}}">
+  </script>
+  <!-- waypoints min js  -->
+  <script src="{{url_for('static', filename='assets/js/waypoints.min.js')}}">
+  </script>
+  <!-- parallax js  -->
+  <script src="{{url_for('static', filename='assets/js/parallax.js')}}">
+  </script>
+  <!-- countdown js  -->
+  <script src="{{url_for('static', filename='assets/js/jquery.countdown.min.js')}}">
+  </script>
+  <!-- particles min js  -->
+  <script src="{{url_for('static', filename='assets/js/particles.min.js')}}">
+  </script>
+  <!-- scripts js -->
+  <script src="{{url_for('static', filename='assets/js/jquery.dd.min.js')}}">
+  </script>
+  <!-- jquery.counterup.min js -->
+  <script src="{{url_for('static', filename='assets/js/jquery.counterup.min.js')}}">
+  </script>
+  <!-- chart js  -->
+  <script src="{{url_for('static', filename='assets/js/Chart.bundle.js')}}">
+  </script>
+  <script src="{{url_for('static', filename='assets/js/Chart.PieceLabel.min.js')}}">
+  </script>
+  <script src="{{url_for('static', filename='assets/js/chart_script3.js')}}">
+  </script>
+  <!-- modern_canvas js -->
+  <script src="{{url_for('static', filename='assets/js/modern_canvas.js')}}">
+  </script>
+  <script src="{{url_for('static', filename='assets/js/spop.min.js')}}">
+  </script>
+  <script src="{{url_for('static', filename='assets/js/notification.js')}}">
+  </script>
+  <!-- scripts js -->
+  <script src="{{url_for('static', filename='assets/js/scripts.js')}}">
+  </script>
+  <!-- connect-wallet js -->
+  <script src="{{url_for('static', filename='assets/js/connect-wallet.js')}}">
+  </script>
+ </body>
+</html>

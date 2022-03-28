@@ -21,7 +21,7 @@ def test_create_transaction():
     seller = accounts[2]
 
     # give the seller an nft
-    fish_contract.safeMint({'from': seller})
+    fish_contract.safeMint(1, {'from': seller})
 
     # set up the transaction
     exp_time = time.time() + 100
@@ -70,7 +70,7 @@ def test_create_transaction_with_blank_buyer():
     seller = accounts[2]
 
     # give the seller an nft
-    fish_contract.safeMint({'from': seller})
+    fish_contract.safeMint(1, {'from': seller})
 
     # set up the transaction
     exp_time = time.time() + 100
@@ -121,7 +121,7 @@ def test_create_false_transaction():
     seller = accounts[2]
 
     # give the seller an nft
-    fish_contract.safeMint({'from': seller})
+    fish_contract.safeMint(1, {'from': seller})
 
     # set up the transaction
     exp_time = time.time() + 100

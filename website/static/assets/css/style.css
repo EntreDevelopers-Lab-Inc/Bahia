@@ -309,10 +309,10 @@ button:focus {
 }
 .blue_bg,
 .v_royal_blue {
-	background-color: #193dc0;
+	background-color: #0074fc;
 }
 .blue_dark_bg {
-	background-color: #081990;
+	background-color: #0000AE;
 }
 .purple_bg {
 	background-color: #6000b5;
@@ -525,7 +525,7 @@ button:focus {
 }
 .v_blue_light #loader-wrapper .loader-section,
 .v_royal_blue #loader-wrapper .loader-section {
-	background-color: #081990;
+	background-color: #0000AE;
 }
 .v_light_purple #loader-wrapper .loader-section {
 	background-color: #4e0094;
@@ -1319,7 +1319,7 @@ header a:hover,
 .v_royal_blue .navbar-nav .dropdown-menu,
 .v_royal_blue .lng_dropdown .ddChild,
 .v_royal_blue .spop   {
-	background-color: #081990;
+	background-color: #0000AE;
 }
 .v_light_purple .nav-fixed, 
 .v_light_purple header.active,
@@ -2521,7 +2521,7 @@ header a:hover,
 	overflow: hidden;
 }
 .token_list_shape::before {
-	background-color: #193dc0;
+	background-color: #0074fc ;
 	bottom: 0;
 	content: "";
 	left: -20px;
@@ -2633,7 +2633,7 @@ header a:hover,
 	margin-bottom: 0px;
 }
 .token_info_table_s2 .table td {
-	border-color: #193dc0;
+	border-color: #0074fc ;
 	font-size: 14px;
 	font-weight: 500;
 	padding: 10px 15px;
@@ -2983,7 +2983,7 @@ header a:hover,
 }
 .v_blue_light .tk_counter_inner .progress, 
 .v_blue_light .tk_counter_inner .progress-bar {
-	color: #081990;
+	color: #0000AE;
 }
 .v_light_dark .tk_countdown {
 	background-color: rgba(18, 24, 51, 0.9);
@@ -3568,11 +3568,11 @@ header a:hover,
 .v_blue_light .single_roadmap::before,
 .v_blue_light .single_roadmap .roadmap_icon::before,
 .v_blue_light .roadmap_list::before {
-	border-color: #193dc0;
+	border-color: #0074fc ;
 }
 .v_blue_light .single_roadmap .roadmap_icon,
 .v_blue_light .single_roadmap::after {
-	background-color: #193dc0;
+	background-color: #0074fc ;
 }
 .v_dark .timeline .owl-nav i {
 	color: #0c0e27;
@@ -3873,7 +3873,7 @@ header a:hover,
 	font-size: 14px;
 }
 .team_box_s1 .team_box::before {
-	background-color: #02126e;
+	background-color: #0000AE;
 	bottom: 0;
 	content: "";
 	left: 0;
@@ -3944,7 +3944,7 @@ header a:hover,
 }
 .v_blue_light .mfp-bg,
 .v_royal_blue .mfp-bg {
-	background-color: #193dc0;
+	background-color: #0074fc ;
 }
 .v_blue .social_single_team li a,
 .v_blue .mfp-close-btn-in .team_pop .mfp-close,
@@ -4595,7 +4595,7 @@ header a:hover,
 	background-color: #ff68ca;
 }
 .v_royal_blue .tab-link {
-	background-color: #02126e;
+	background-color: #0000AE;
 }
 .v_navy_blue .faq_content2 .card {
 	border: 1px solid #0043bb;
@@ -5325,7 +5325,7 @@ button.btn-white:hover {
 }
 .v_blue_light .btn-info,
 .v_royal_blue .btn-info {
-	background-color: #193dc0;
+	background-color: #0074fc ;
 }
 .v_blue_light .btn-info:hover,
 .v_blue_light .btn-info.active, 
@@ -5344,7 +5344,7 @@ button.btn-white:hover {
 	background-color: #071890;
 }
 .v_blue_light .social_icon li a {
-	color: #193dc0;
+	color: #0074fc ;
 }
 .v_blue_light .social_icon li a:hover {
 	color: #ff69c9;
@@ -5353,7 +5353,7 @@ button.btn-white:hover {
 	background-color: #071890;
 }
 .v_royal_blue .social_icon li a i {
-	background-color: #193dc0;
+	background-color: #0074fc ;
 }
 .v_royal_blue .social_icon li a{
 	color: #ffffff;
@@ -5362,7 +5362,7 @@ button.btn-white:hover {
 	color: #ff69c9;
 }
 .v_royal_blue .bottom_footer {
-	background-color: #193dc0;
+	background-color: #0074fc ;
 }
 .v_light_purple .social_icon li a {
 	color: #6000b5;
@@ -6174,7 +6174,7 @@ button.btn-white:hover {
 	position: relative;
 }
 .border_line li::before {
-	background-color: #081990;
+	background-color: #0000AE;
 	content: "";
 	height: 100%;
 	left: 31px;
@@ -6188,7 +6188,7 @@ button.btn-white:hover {
 }
 
 .v_blue_light .list_icon {
-	background-color: #081990;
+	background-color: #0000AE;
 }
 .v_light_dark .list_icon {
 	background-color: #121833;

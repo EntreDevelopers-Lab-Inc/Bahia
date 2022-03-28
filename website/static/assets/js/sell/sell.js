@@ -243,23 +243,118 @@ function createSale()
 
 
     // create a transaction
+    var tradeAddress;
     CONTRACT.createTransaction(expTime, collectionAddress, nftId, cost, buyerAddress).then(function (txResp) {
         // clear the form
         $('#sell-form')[0].reset();
+
+        // add the sale to the log
+        CONTRACT.saleCount(window.ethereum.selectedAddress).then(function (length) {
+            CONTRACT.sales(window.ethereum.selectedAddress, length).then(function (txId) {
+                // resp is an integer --> go get the actual address of the transaction
+                CONTRACT.transactions(txId).then(function (address) {
+                    // save the trade address
+                    tradeAddress = address;
+
+                    // now, go add the sale
+                    addSale(address);
+                });
+            });
+        });
 
         // close the modal
         toggleModal();
 
         // scroll to this nft in the log
+        $('[trade-address="' + tradeAddress + '"]').scroll()
+
 
         // call approve with the erc721 contract
-
+        approve(tradeAddress);
 
     });
 
     // get the number of transactions
     // add the new sale the transaction log --> use prepend
     return false;
+}
+
+
+// function to approve a transaction to occur
+async function approve(contractAddress)
+{
+    // store the nft id
+    var nftId;
+
+    // get the purchase contract
+    var saleContract = new ethers.Contract(contractAddress, PURCHASE_CONTRACT_ABI, SIGNER);
+
+    // get the nft id
+    await saleContract.nftId().then(function (id) {
+        nftId = id;
+    });
+
+    // get the nft manager
+    saleContract.nftManager().then(function (collectionAddress) {
+       var nftContract = new ethers.Contract(collectionAddress, ERC721_ABI, SIGNER);
+        nftContract.approve(contractAddress, nftId).then(function (resp) {
+            // change the button from unapproved to approved
+            var approvedBtn = $('a[type="approval-btn"][trade-address="' + contractAddress + '"]');
+            approvedBtn.text('Cancel');
+            approvedBtn.attr('approved', 'true');
+        });
+    });
+
+}
+
+
+// fuction to unapprove the contract
+async function unapprove(contractAddress)
+{
+    // store the nft id
+    var nftId;
+
+    // get the purchase contract
+    var saleContract = new ethers.Contract(contractAddress, PURCHASE_CONTRACT_ABI, SIGNER);
+
+    // get the nft id
+    await saleContract.nftId().then(function (id) {
+        nftId = id;
+    });
+
+    // get the nft manager
+    saleContract.nftManager().then(function (collectionAddress) {
+       var nftContract = new ethers.Contract(collectionAddress, ERC721_ABI, SIGNER);
+        nftContract.approve(NULL_ADDRESS, nftId).then(function (resp) {
+            // change the button from unapproved to approved
+            var approvedBtn = $('a[type="approval-btn"][trade-address="' + contractAddress + '"]');
+            approvedBtn.text('Activate');
+            approvedBtn.attr('approved', 'false');
+        });
+    });
+}
+
+
+// function to toggle approval
+function toggleApproval(contractAddress)
+{
+    // get the approval btn
+    var approvedBtn = $('a[type="approval-btn"][trade-address="' + contractAddress + '"]');
+
+    // check the approval status
+    var approved = (approvedBtn.attr('approved') == 'true');
+
+    // if it is approved, unapprove it
+    if (approved)
+    {
+        unapprove(contractAddress);
+    }
+    // else, approve it
+    else
+    {
+        approve(contractAddress);
+    }
+
 }
 
 
@@ -300,9 +395,9 @@ function showSellModal()
 
     // set the etherscan
     $('#sell-nft-etherscan').attr('href', ETHERSCAN_BASE + saleData['address']);
-    $('#sell-nft-looksrare').attr('href', LOOKSRARE_BASE + saleData['address']);
 
     // set the looksrare
+    $('#sell-nft-looksrare').attr('href', LOOKSRARE_BASE + saleData['address']);
 
     // show the modal
     toggleModal();

@@ -41,15 +41,6 @@
                   <td class="text-center"><h5>Active</h5></td>
                 </tr>
                 <tbody id="sale-objects">
-                  <tr class="animation animated fadeInUp" data-animation="fadeInUp" data-animation-delay="0.2s" style="animation-delay: 0.2s; opacity: 1;">
-                    <td>Name</td>
-                    <td>Cost</td>
-                    <td>Expiration</td>
-                    <td>Oxnarsfssdgf</td>
-                    <td>Oxnarsfssdgf</td>
-                    <td>Oxnarsfssdgf</td>
-                    <td><a class="btn btn-info btn-radius"target="_blank">Approve</a></td>
-                  </tr>
                 </tbody>
               </table>
             </div>
@@ -136,7 +127,7 @@
       <a onclick="copyAddress('{{tradeAddress}}');"><span trade-address="{{tradeAddress}}">{{tradeAddress}}</span><span> </span><i trade-address="{{tradeAddress}}" class="fa fa-copy" style="font-size:12px"></i></a>
     </td>
     <td>{{completed}}</td>
-    <td><a class="btn btn-info btn-radius" approved="{{approved}}">{{approvedString}}</a></td>
+    <td><a type="approval-btn" class="btn btn-info btn-radius" approved="{{approved}}" trade-address="{{tradeAddress}}" onclick="toggleApproval('{{tradeAddress}}');">{{approvedString}}</a></td>
   </tr>
 </template>
 {% endraw %}

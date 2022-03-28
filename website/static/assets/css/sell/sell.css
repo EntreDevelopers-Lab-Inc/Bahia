@@ -28,3 +28,10 @@ input[type="date"]::-webkit-calendar-picker-indicator
     margin: 0px;
     margin-right: 20px !important;
 }
+
+
+div.scroll
+{
+        overflow: auto;
+        white-space: nowrap;
+}

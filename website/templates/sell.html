@@ -2,6 +2,7 @@
 
 {% block content %}
 <link href="{{url_for('static', filename='assets/css/sell/sell.css')}}" rel="stylesheet"/>
+<link href="{{url_for('static', filename='assets/css/modal.css')}}" rel="stylesheet"/>
 <!-- START SECTION SELL -->
 <section id="sell">
   <canvas class="transparent_effect fixed" id="banner_canvas">
@@ -18,78 +19,102 @@
         <div class="row small_space">
           <div class="col-lg-9 col-md-9 col-sm-6"></div>
           <div class="col-lg-3 col-md-3 col-sm-6">
-            <button class="btn btn-default btn-radius btn-block" id="sell-nft-btn">Sell NFT</button>
+            <button class="btn btn-default btn-radius btn-block trigger" id="sell-nft-btn" onclick="showSellModal();">Sell NFT</button>
           </div>
         </div>
         <div class="row small_space" id="nft-objects">
         </div>
-        <div id="sell-nft-modal" class="modal">
-          <div class="modal">
-            <div class="title_default_light text-center">
-              <h5 class="animation animated fadeInUp" data-animation="fadeInUp" data-animation-delay="0.2s" style="animation-delay: 0.2s; opacity: 1;">Sale Information</h5>
-            </div>
-            <form class="field_form" id="sell-form">
-              <div class="row">
-                <div class="form-group col-md-12 animation animated fadeInUp input-group-append" data-animation="fadeInUp" data-animation-delay="0.4s" style="animation-delay: 0.4s; opacity: 1;">
-                  <input type="number" class="form-control" id="cost" style="padding-right:20px;" placeholder="Cost" step="0.1" required>
-                  <div class="input-group-append">
-                     <span class="input-group-text form-control" style="opacity: 1;"> ETH </span>
-                 </div>
-                </div>
-                <div class="form-group col-md-12 animation animated fadeInUp" data-animation="fadeInUp" data-animation-delay="0.6s" style="animation-delay: 0.6s; opacity: 1;">
-                  <input type="date" id="date" class="form-control" required>
-                </div>
-                <div class="form-group col-md-12 animation animated fadeInUp" data-animation="fadeInUp" data-animation-delay="0.8s" style="animation-delay: 0.8s; opacity: 1;">
-                  <input type="text" placeholder="Buyer Address (optional)" id="buyer-address" class="form-control">
-                </div>
-                <div class="col-md-12 text-center animation animated fadeInUp" data-animation="fadeInUp" data-animation-delay="1.2s" style="animation-delay: 1.2s; opacity: 1;">
-                  <button class="btn btn-default btn-radius btn-block" onclick="">Create Sale</button>
-                </div>
-                <div class="col-md-12">
-                  <div id="alert-msg" class="alert-msg text-center"></div>
-                </div>
-               </div>
-              </form>
-          </div>
-        </div>
         <div class="row small_space">
           <div class="col-lg-12 col-md-12 col-sm-12">
             <div class="title_default_light text-center">
-              <h5 class="animation animated fadeInUp" data-animation="fadeInUp" data-animation-delay="0.2s" style="animation-delay: 0.2s; opacity: 1;">Sales</h5>
+              <h4 class="animation animated fadeInUp" data-animation="fadeInUp" data-animation-delay="0.2s" style="animation-delay: 0.2s; opacity: 1;">Sales</h4>
             </div>
-            <table class="table table-blue m-0 h-100">
-              <th>
-                <td>Name</td>
-                <td>Cost</td>
-                <td></td>
-              </th>
-              <tr class="animation animated fadeInUp" data-animation="fadeInUp" data-animation-delay="0.2s" style="animation-delay: 0.2s; opacity: 1;">
-                <td>Starting Time :</td>
-                <td>APR 23,2018</td>
-              </tr>
-              <tr class="animation animated fadeInUp" data-animation="fadeInUp" data-animation-delay="0.2s" style="animation-delay: 0.2s; opacity: 1;">
-                <td>Starting Time :</td>
-                <td>APR 23,2018</td>
-              </tr>
-              <tr class="animation animated fadeInUp" data-animation="fadeInUp" data-animation-delay="0.2s" style="animation-delay: 0.2s; opacity: 1;">
-                <td>Starting Time :</td>
-                <td>APR 23,2018</td>
-              </tr>
-              <tr class="animation animated fadeInUp" data-animation="fadeInUp" data-animation-delay="0.2s" style="animation-delay: 0.2s; opacity: 1;">
-                <td>Starting Time :</td>
-                <td>APR 23,2018</td>
-              </tr>
-              <tr class="animation animated fadeInUp" data-animation="fadeInUp" data-animation-delay="0.2s" style="animation-delay: 0.2s; opacity: 1;">
-                <td>Starting Time :</td>
-                <td>APR 23,2018</td>
-              </tr>
-            </table>
+            <div class="token_info_table_s2 scroll">
+              <table class="table table-blue m-0 h-100">
+                <tr>
+                  <td class="text-center"><h5>Name</h5></td>
+                  <td class="text-center"><h5>Cost</h5></td>
+                  <td class="text-center"><h5>Expiration</h5></td>
+                  <td class="text-center"><h5>Buyer</h5></td>
+                  <td class="text-center"><h5>Trade Address</h5></td>
+                  <td class="text-center"><h5>Completed</h5></td>
+                  <td class="text-center"><h5>Active</h5></td>
+                </tr>
+                <tbody id="sale-objects">
+                  <tr class="animation animated fadeInUp" data-animation="fadeInUp" data-animation-delay="0.2s" style="animation-delay: 0.2s; opacity: 1;">
+                    <td>Name</td>
+                    <td>Cost</td>
+                    <td>Expiration</td>
+                    <td>Oxnarsfssdgf</td>
+                    <td>Oxnarsfssdgf</td>
+                    <td>Oxnarsfssdgf</td>
+                    <td><a class="btn btn-info btn-radius"target="_blank">Approve</a></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </div>
 
         </div>
+      <!--modal-->
+      <div id="sell-nft-modal" class="modal">
+        <div class="modal-content blue_dark_bg">
+          <div class="row">
+            <div class="col-10"></div>
+            <div class="col-2">
+              <span class="close-button">×</span>
+            </div>
+          </div>
+          <div class="title_default_light text-center">
+            <h5>Sale Information</h5>
+          </div>
+          <form id="sell-form" class="field_form">
+            <div class="row">
+              <div class="form-group col-md-12">
+                <p>
+                  <span id="sell-nft-name"></span>
+                  <br>
+                  <br>
+                  <span>Collection Address: </span><span id="sell-nft-collection-address"></span>
+                </p>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-6">
+                <a class="btn btn-info btn-radius" id="sell-nft-etherscan" href="https://etherscan.io" target="_blank">Etherscan</a>
+              </div>
+              <div class="col-6">
+                <a class="btn btn-info btn-radius" id="sell-nft-looksrare" href="https://looksrare.org" target="_blank">LooksRare</a>
+              </div>
+              <div class="form-group col-3"></div>
+            </div>
+            <div class="row small_space">
+              <div class="form-group col-md-12 input-group-append">
+                <input type="number" class="form-control" id="cost" style="padding-right:20px;" placeholder="Cost" step="0.1" required>
+                <div class="input-group-append">
+                   <span class="input-group-text form-control" style="opacity: 1;"> ETH </span>
+               </div>
+              </div>
+              <div class="form-group col-md-12">
+                <input type="date" id="date" class="form-control" required>
+              </div>
+              <div class="form-group col-md-12">
+                <input type="text" placeholder="Buyer Address (optional)" id="buyer-address" class="form-control">
+              </div>
+              <div class="col-md-12 text-center">
+                <button class="btn btn-default btn-radius btn-block" onclick="">Create Sale</button>
+              </div>
+              <div class="col-md-12">
+                <div id="alert-msg" class="alert-msg text-center"></div>
+              </div>
+             </div>
+            </form>
+        </div>
+      </div>
     </div>
 </section>
 <!-- END SECTION SELL-->
+
 
 <!--templates-->
 {% raw %}
@@ -101,11 +126,25 @@
     </a>
   </div>
 </template>
+<template id="sale-template">
+  <tr class="animation animated fadeInUp" data-animation="fadeInUp" data-animation-delay="0.2s" style="animation-delay: 0.2s; opacity: 1;">
+    <td>{{name}}</td>
+    <td>{{cost}}</td>
+    <td>{{expiration}}</td>
+    <td>{{buyerAddress}}</td>
+    <td>
+      <a onclick="copyAddress('{{tradeAddress}}');"><span trade-address="{{tradeAddress}}">{{tradeAddress}}</span><span> </span><i trade-address="{{tradeAddress}}" class="fa fa-copy" style="font-size:12px"></i></a>
+    </td>
+    <td>{{completed}}</td>
+    <td><a class="btn btn-info btn-radius" approved="{{approved}}">{{approvedString}}</a></td>
+  </tr>
+</template>
 {% endraw %}
 
 {% endblock content %}
 
 {% block scripts %}
+    <script src="{{url_for('static', filename='assets/js/modal.js')}}"></script>
     <script src="{{url_for('static', filename='assets/js/sell/contract.js')}}"></script>
     <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
     <script src="https://unpkg.com/moralis/dist/moralis.js"></script>

@@ -6,9 +6,9 @@ const NFT_TEMPLATE = $('#nft-template').html();
 var NFT_OBJECTS = $('#nft-objects');
 
 // load the sale tempalte and objects
-/*const SALE_TEMPLATE = $('#sale-template').html();
+const SALE_TEMPLATE = $('#sale-template').html();
 var SALE_OBJECTS = $('#sale-objects');
-*/
+
 // keep the sale data on hand
 var saleData = {};
 
@@ -54,9 +54,93 @@ async function loadNFTs()
 
 
 // add a sale
-function addSale(data)
+async function addSale(contractAddress)
 {
+    // store a variable for everything that will be set
+    var name;
+    var cost;
+    var expiration;
+    var buyerAddress;
+    var collectionAddress;
+    var completed;
+    var approved;
+    var nftid;
+    var approvedString;
 
+    // make a sale contract
+    var saleContract = new ethers.Contract(contractAddress, PURCHASE_CONTRACT_ABI, SIGNER);
+
+    // get the public sale information and display it
+    await saleContract.cost().then(function (resp) {
+        cost = resp;
+    });
+
+    await saleContract.expirationTime().then(function (resp) {
+        expiration = resp;
+    });
+
+    await saleContract.buyerAddress().then(function (resp) {
+        if (resp == NULL_ADDRESS)
+        {
+            buyerAddress = '(Any)';
+        }
+        else
+        {
+            buyerAddress = resp;
+        }
+    });
+
+    await saleContract.nftManager().then(function (resp) {
+        collectionAddress = resp;
+    });
+
+    await saleContract.nftId().then(function (resp) {
+        nftId = resp;
+    });
+
+    await saleContract.completed().then(function (resp) {
+        completed = resp;
+    });
+
+    // get the collection name from moralis (from the collection address and id)
+    await Moralis.Web3API.token.getNFTMetadata({chain: CHAIN_ID_STR, address: collectionAddress, token_id: nftId}).then(function (resp) {
+        // set the name
+        name = resp.name + ' #' + nftId;
+    });
+
+    // set the approval
+    var nftContract = new ethers.Contract(collectionAddress, ERC721_ABI, SIGNER);
+    await nftContract.getApproved(nftId).then(function (address) {
+        // if the address is the sale contract, it is approved
+        approved = (contractAddress == address);
+    });
+
+    // set the approved string
+    if (approved)
+    {
+        approvedString = 'Cancel';
+    }
+    else
+    {
+        approvedString = 'Activate';
+    }
+
+    // render the template
+    data = {
+        name: name,
+        cost: ethers.utils.formatEther(cost) + ' ETH',
+        expiration: expiration,
+        buyerAddress: buyerAddress,
+        tradeAddress: contractAddress,
+        completed: completed.toString().toUpperCase(),
+        approved: approved,
+        approvedString: approvedString
+    };
+
+    var newSale = Mustache.render(SALE_TEMPLATE, data);
+
+    // prepend the body of the table
+    SALE_OBJECTS.prepend(newSale);
 }
 
 // load the past sales
@@ -65,7 +149,7 @@ async function loadSales()
     var saleCount = 0;
 
     // get the length of the number of sales
-    await CONTRACT.purchases(window.ethereum.selectedAddress).then(function (resp) {
+    await CONTRACT.saleCount(window.ethereum.selectedAddress).then(function (resp) {
         // set the sale count
         saleCount = resp;
     });
@@ -73,7 +157,14 @@ async function loadSales()
     // fill the list with the relevant information
     for (var i = 0; i < saleCount; i += 1)
     {
-        //
+        // get each sale from the contract and add it (must be awaited, as these are sequential)
+        await CONTRACT.sales(window.ethereum.selectedAddress, i).then(function (txId) {
+            // resp is an integer --> go get the actual address of the transaction
+            CONTRACT.transactions(txId).then(function (address) {
+                // now, go add the sale
+                addSale(address);
+            });
+        });
     }
 }
 
@@ -97,6 +188,7 @@ function selectNFT(address, id)
     // write the sale dict
     saleData['address'] = address;
     saleData['id'] = id;
+    saleData['name'] = selected.text();  // for the modal
 }
 
 
@@ -140,7 +232,7 @@ function createSale()
     if (buyerAddress == '')
     {
         // set the buyer to null
-        buyerAddress = '0x0000000000000000000000000000000000000000';
+        buyerAddress = NULL_ADDRESS;
     }
     // else, check if the buyer exists
     else if (!ethers.utils.isAddress(buyerAddress))
@@ -155,6 +247,9 @@ function createSale()
         // clear the form
         $('#sell-form')[0].reset();
 
+        // close the modal
+        toggleModal();
+
         // scroll to this nft in the log
 
         // call approve with the erc721 contract
@@ -168,10 +263,50 @@ function createSale()
 }
 
 
+// copy something to the clipboard
+async function copyAddress(address)
+{
+    /* Get the text field */
+    var copyText = document.querySelectorAll('span[trade-address="' + address + '"]');
+
+    // copy it to the clipboard
+    navigator.clipboard.writeText(copyText[0].textContent);
+
+    // change the icon
+    $('i[trade-address="' + address + '"]').attr('class', 'fa fa-check');
+
+    // wait 3 seconds
+    await delay(3000)
+
+    // change the icon back to what it should be
+    $('i[trade-address="' + address + '"]').attr('class', 'fa fa-copy');
+}
+
+
 // show modal
 function showSellModal()
 {
+    if (saleData['name'] == undefined)
+    {
+        alert('Must select an NFT to sell first');
+        return;
+    }
 
+    // set the name
+    $('#sell-nft-name').text(saleData['name'])
+
+    // set the collection address
+    $('#sell-nft-collection-address').text(saleData['address']);
+
+    // set the etherscan
+    $('#sell-nft-etherscan').attr('href', ETHERSCAN_BASE + saleData['address']);
+    $('#sell-nft-looksrare').attr('href', LOOKSRARE_BASE + saleData['address']);
+
+    // set the looksrare
+
+    // show the modal
+    toggleModal();
+    $('#sell-nft-modal').show();
 }
 
 

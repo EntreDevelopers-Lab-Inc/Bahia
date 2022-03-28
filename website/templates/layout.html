@@ -201,8 +201,12 @@
   <script src="{{url_for('static', filename='assets/js/connect-wallet.js')}}">
   </script>
   {% if mustache %}
-<script type="text/javascript" src="{{url_for('static', filename='assets/js/node_modules/mustache/mustache.js')}}"></script>
-{% endif %}
+    <script type="text/javascript" src="{{url_for('static', filename='assets/js/node_modules/mustache/mustache.js')}}"></script>
+  {% endif %}
+  {% if dapp %}
+    <script type="text/javascript" src="{{url_for('static', filename='assets/js/dapp/abis.js')}}"></script>
+    <script type="text/javascript" src="{{url_for('static', filename='assets/js/dapp/tools.js')}}"></script>
+  {% endif %}
 
 
   <!--block for scripts-->

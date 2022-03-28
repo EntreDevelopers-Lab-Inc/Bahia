@@ -11,10 +11,14 @@ import "../../Bahia.sol";
 import "./NFTPurchase.sol";
 
 
+
 contract BahiaNFTPurchase is
     Bahia,
     BahiaNFTPurchaseInterface
 {
+    // events
+    event NFTPurchaseCreated(uint256 expirationTime, address collectionAddress, uint256 nftId, uint256 cost, address buyerAddress, address newPurchaseAddress);
+
     // track all purchases
     address[] public transactions;
 
@@ -40,6 +44,11 @@ contract BahiaNFTPurchase is
         // add the new nft purchase to the mapping (use the transactions array length)
         sales[msg.sender].push(transactions.length);
 
+        if ((buyerAddress) != address(0))
+        {
+            sales[buyerAddress].push(transactions.length);
+        }
+
         address newPurchaseAddress = address(new NFTPurchase(
             transactions.length,
             expirationTime,
@@ -56,6 +65,9 @@ contract BahiaNFTPurchase is
 
         // add the nft purchase to the allowed list
         allowedContracts[newPurchaseAddress] = true;
+
+        // emit that a contract was created
+        emit NFTPurchaseCreated(expirationTime, collectionAddress, nftId, cost, buyerAddress, newPurchaseAddress);
 
     }
 

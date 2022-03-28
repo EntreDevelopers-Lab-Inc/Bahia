@@ -27,6 +27,11 @@ contract NFTPurchase is
     ReentrancyGuard,
     ERC721Holder
 {
+    // relevant events
+    event SetCost(uint256 cost);
+    event SetBuyer(address buyerAddress);
+    event CompleteTransaction();
+
     // keep the id of the purchase, so this backlinks to the NFTPurchasePlatform
     uint256 public purchaseId;
 
@@ -69,6 +74,10 @@ contract NFTPurchase is
 
         // set the backref to the contract using the bahia address
         bahia = BahiaNFTPurchaseDataInterface(bahiaAddress_);
+
+        // emit that the cost and address have been set
+        emit SetCost(cost);
+        emit SetBuyer(buyerAddress);
     }
 
     /**
@@ -143,6 +152,8 @@ contract NFTPurchase is
         // set completed to true
         completed = true;
 
+        emit CompleteTransaction();
+
     }
 
     /**
@@ -152,6 +163,8 @@ contract NFTPurchase is
     function setCost(uint256 cost_) external onlySeller transferrable
     {
         cost = cost_;
+
+        emit SetCost(cost);
     }
 
     /**
@@ -161,6 +174,8 @@ contract NFTPurchase is
     function setBuyer(address buyerAddress_) external onlySeller transferrable
     {
         buyerAddress = buyerAddress_;
+
+        emit SetBuyer(buyerAddress);
     }
 
     /**

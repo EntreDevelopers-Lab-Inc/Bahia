@@ -1,6 +1,9 @@
 # constants js
 constants.js
 
+# setup file
+setup.bat
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

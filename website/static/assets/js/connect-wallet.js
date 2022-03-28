@@ -1,4 +1,5 @@
 let CURRENT_ACCOUNT = null;
+let DAPP_LINK_IDS = ['#navSell'];
 
 // set the chain
 async function setChain() {
@@ -45,6 +46,28 @@ async function setButtonName()
   $('#connect-btn').text(name);
 }
 
+
+// function for showing correct nav bar links once logged in (hidden by default, reloaded on disconnect)
+async function showLinks()
+{
+    // get the nav bar
+    var navBar = $('nav');
+
+  // iterate over the dapp links
+  for (var i = 0; i < DAPP_LINK_IDS.length; i += 1)
+  {
+    // show the link
+    navBar.find(DAPP_LINK_IDS[i]).attr('hidden', false);
+  }
+}
+
+async function launchDapp()
+{
+  setButtonName();
+  showLinks();
+}
+
+
 /*********************************************/
 /* Access the user's accounts (per EIP-1102) */
 /*********************************************/
@@ -75,6 +98,9 @@ function connect() {
     });
 
     setChain();
+
+    // launch the dapp
+    launchDapp();
 }
 
 
@@ -103,10 +129,14 @@ async function handleChainChanged(_chainId) {
 
 // make a document load function
 async function loadDocument() {
+  // wait until you are connected
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    let currentBlock = await provider.getBlockNumber();
+
     // hide the conenct wallet button if the user is already logged in
     if (window.ethereum.selectedAddress != null)
     {
-      setButtonName();
+      launchDapp();
     }
 
     // prompt the user to change their chain if it is incorrect

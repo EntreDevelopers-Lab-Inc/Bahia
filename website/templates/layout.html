@@ -85,13 +85,13 @@
          Buy
         </a>
        </li>
-      <li class="animation" data-animation="fadeInDown" data-animation-delay="1.6s">
+      <li class="animation" data-animation="fadeInDown" data-animation-delay="1.6s" id="navSell" hidden>
         <a class="nav-link page-scroll nav_item" href="/sell">
          Sell
         </a>
        </li>
        <!--
-       <li class="animation" data-animation="fadeInDown" data-animation-delay="1.5s">
+       <li class="animation" data-animation="fadeInDown" data-animation-delay="1.7s">
         <a class="nav-link page-scroll nav_item" href="#faq">
          FAQ
         </a>
@@ -194,8 +194,15 @@
   <!-- scripts js -->
   <script src="{{url_for('static', filename='assets/js/scripts.js')}}">
   </script>
+  <!--Ethers, if necessary-->
+  <script src="https://cdn.ethers.io/lib/ethers-5.0.umd.min.js" type="text/javascript">
+  </script>
   <!-- connect-wallet js -->
   <script src="{{url_for('static', filename='assets/js/connect-wallet.js')}}">
   </script>
+
+  <!--block for scripts-->
+  {block scripts}{endblock}
+
  </body>
 </html>

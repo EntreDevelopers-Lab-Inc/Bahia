@@ -1,56 +1,65 @@
 {% extends "layout.html" %}
 
 {% block content %}
-<!-- START SECTION LOGIN -->
-<section>
- <div class="container">
-  <div class="row">
-   <div class="col-lg-12">
-    <div class="authorize_box">
-     <div class="title_default_dark title_border text-center">
-      <h4 class="animation" data-animation="fadeInUp" data-animation-delay="0.2s">
-       Welcome
-      </h4>
-      <p class="animation" data-animation="fadeInUp" data-animation-delay="0.4s">
-       Sign in to your account
-      </p>
-     </div>
-     <div class="field_form authorize_form">
-      <form>
-       <div class="form-group col-md-12 animation" data-animation="fadeInUp" data-animation-delay="0.6s">
-        <input class="form-control" name="username" placeholder="User Name" required="" type="text"/>
-       </div>
-       <div class="form-group col-md-12 animation" data-animation="fadeInUp" data-animation-delay="0.7s">
-        <input class="form-control" name="password" placeholder="Password" required="" type="password"/>
-       </div>
-       <div class="form-group col-md-12 text-center animation" data-animation="fadeInUp" data-animation-delay="0.8s">
-        <button class="btn btn-default btn-radius" type="submit">
-         Submit
-        </button>
-       </div>
-       <div class="form-group col-md-12 text-center animation" data-animation="fadeInUp" data-animation-delay="0.9s">
-        <a class="forgot_pass" href="#">
-         Forgot Password?
-        </a>
-       </div>
-      </form>
-     </div>
+<link href="{{url_for('static', filename='assets/css/sell/sell.css')}}" rel="stylesheet"/>
+<!-- START SECTION SELL -->
+<section id="sell">
+  <canvas class="transparent_effect fixed" id="banner_canvas">
+   </canvas>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-md-12 offset-lg-2">
+            <div class="title_default_light title_border text-center">
+              <h4 class="animation animated fadeInUp" data-animation="fadeInUp" data-animation-delay="0.2s" style="animation-delay: 0.2s; opacity: 1;">Sell</h4>
+              <p class="animation animated fadeInUp" data-animation="fadeInUp" data-animation-delay="0.4s" style="animation-delay: 0.4s; opacity: 1;">Select an NFT, enter the terms of the transaction, and click sell! You will receive a trade address for your buyer immediately after.</p>
+            </div>
+          </div>
+        </div>
+        <div class="row small_space" id="nft-objects">
+            <div class="col-lg-3 col-md-6 col-sm-6 res_md_mb_30 res_sm_mb_20">
+              <a class="tab-link">
+                <img class="center" src="/static/assets/images/placeholder9.png" alt="placeholder9">
+                <h4><span name="collection-address">COLLECTION ADDRESS</span> #<span name="collection-id">1234</h4>
+              </a>
+            </div>
+        </div>
+        <div class="row">
+          <form class="field_form">
+            <div class="row">
+              <div class="form-group col-md-12 animation animated fadeInUp" data-animation="fadeInUp" data-animation-delay="0.4s" style="animation-delay: 0.4s; opacity: 1;">
+                <input type="number" placeholder="Cost" id="cost" class="form-control"required>
+              </div>
+              <div class="form-group col-md-12 animation animated fadeInUp" data-animation="fadeInUp" data-animation-delay="0.6s" style="animation-delay: 0.6s; opacity: 1;">
+                <input type="date" id="date" class="form-control" required>
+              </div>
+              <div class="form-group col-md-12 animation animated fadeInUp" data-animation="fadeInUp" data-animation-delay="0.8s" style="animation-delay: 0.8s; opacity: 1;">
+                <input type="text" placeholder="Buyer Address (optional)" id="buyer-address" class="form-control">
+              </div>
+              <div class="col-md-12 text-center animation animated fadeInUp" data-animation="fadeInUp" data-animation-delay="1.2s" style="animation-delay: 1.2s; opacity: 1;">
+                <button class="btn btn-default btn-radius btn-block">Create Sale <i class="ion-ios-arrow-thin-right"></i></button>
+              </div>
+              <div class="col-md-12">
+                <div id="alert-msg" class="alert-msg text-center"></div>
+              </div>
+             </div>
+            </form>
+        </div>
     </div>
-    <div class="divider small_divider">
-    </div>
-    <div class="text-center">
-     <span class="animation" data-animation="fadeInUp" data-animation-delay="1s">
-      Don't have an account?
-      <a href="signup.html">
-       Register
-      </a>
-     </span>
-    </div>
-   </div>
-  </div>
- </div>
 </section>
-<!-- END SECTION LOGIN -->
+<!-- END SECTION SELL-->
+
+<!--templates-->
+{% raw %}
+<template id="nft-template">
+  <div class="col-lg-3 col-md-6 col-sm-6 res_md_mb_30 res_sm_mb_20">
+    <a class="tab-link" onclick="selectNFT('{{token_address}}', {{token_id}});">
+      <img class="center" src="{{link}}" alt="placeholder9">
+      <h4><span>{{name}}</span> #<span>{{token_id}}</h4>
+    </a>
+  </div>
+</template>
+{% endraw %}
+
 {% endblock content %}
 
 {% block scripts %}

@@ -200,9 +200,13 @@
   <!-- connect-wallet js -->
   <script src="{{url_for('static', filename='assets/js/connect-wallet.js')}}">
   </script>
+  {% if mustache %}
+<script type="text/javascript" src="{{url_for('static', filename='assets/js/node_modules/mustache/mustache.js')}}"></script>
+{% endif %}
+
 
   <!--block for scripts-->
-  {block scripts}{endblock}
+  {% block scripts %}{% endblock %}
 
  </body>
 </html>

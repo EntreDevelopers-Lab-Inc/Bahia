@@ -77,11 +77,43 @@ function selectNFT(address, id)
 async function createSale()
 {
     // get all the information necessary for the sale from the frontend
-    var exp_time = Date.parse($('#date').val()) / 1000;  // originally in miliseconds --> need seconds for eth evm
+    var expTime = Date.parse($('#date').val()) / 1000;  // originally in miliseconds --> need seconds for eth evm
+    var collectionAddress - saleData['address'];
+    var nftId = saleData['id'];
+    var cost = $('#cost').val();
+    var buyerAddress = $('#buyer-address').val();
+
+    // if the cost is < 0, return (need to convert from null)
+    if (!Boolean(parseFloat(cost)))
+    {
+        alert('Must sell nft for more than 0 ETH.')
+        return;
+    }
+
+    // set the buyer to null if there is no value
+    if (buyerAddress == '')
+    {
+        // set the buyer to null
+        buyerAddress = '0x0000000000000000000000000000000000000000';
+    }
+    // else, check if the buyer exists
+    else if (!ethers.utils.isAddress(buyerAddress))
+    {
+        alert('Invalid Buyer Address: ' + buyerAddress);
+        return;
+    }
+
 
     // create a transaction
-        // get the number of transactions
-        // add the new sale the transaction log at the bottom of the page
+    CONTRACT.createTransaction(expTime, collectionAddress, nftId, cost, buyerAddress).then(function (txResp) {
+        // scroll to this nft in the log
+
+        // call approve with the erc721 contract
+
+    });
+
+    // get the number of transactions
+    // add the new sale the transaction log --> use prepend
 
 }
 

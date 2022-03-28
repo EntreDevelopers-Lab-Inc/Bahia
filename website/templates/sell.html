@@ -21,7 +21,7 @@
           <form class="field_form">
             <div class="row">
               <div class="form-group col-md-12 animation animated fadeInUp input-group-append" data-animation="fadeInUp" data-animation-delay="0.4s" style="animation-delay: 0.4s; opacity: 1;">
-                <input type="number" class="form-control" style="padding-right:20px;" placeholder="Cost" step="0.1" required>
+                <input type="number" class="form-control" id="cost" style="padding-right:20px;" placeholder="Cost" step="0.1" required>
                 <div class="input-group-append">
                    <span class="input-group-text form-control" style="opacity: 1;"> ETH </span>
                </div>
@@ -60,6 +60,7 @@
 {% endblock content %}
 
 {% block scripts %}
+    <script src="{{url_for('static', filename='assets/js/sell/contract.js')}}"></script>
     <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
     <script src="https://unpkg.com/moralis/dist/moralis.js"></script>
     <script src="{{url_for('static', filename='assets/js/sell/sell.js')}}"></script>

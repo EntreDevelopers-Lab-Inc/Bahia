@@ -15,31 +15,77 @@
             </div>
           </div>
         </div>
+        <div class="row small_space">
+          <div class="col-lg-9 col-md-9 col-sm-6"></div>
+          <div class="col-lg-3 col-md-3 col-sm-6">
+            <button class="btn btn-default btn-radius btn-block" id="sell-nft-btn">Sell NFT</button>
+          </div>
+        </div>
         <div class="row small_space" id="nft-objects">
         </div>
-        <div class="row small_space">
-          <form class="field_form">
-            <div class="row">
-              <div class="form-group col-md-12 animation animated fadeInUp input-group-append" data-animation="fadeInUp" data-animation-delay="0.4s" style="animation-delay: 0.4s; opacity: 1;">
-                <input type="number" class="form-control" id="cost" style="padding-right:20px;" placeholder="Cost" step="0.1" required>
-                <div class="input-group-append">
-                   <span class="input-group-text form-control" style="opacity: 1;"> ETH </span>
+        <div id="sell-nft-modal" class="modal">
+          <div class="modal">
+            <div class="title_default_light text-center">
+              <h5 class="animation animated fadeInUp" data-animation="fadeInUp" data-animation-delay="0.2s" style="animation-delay: 0.2s; opacity: 1;">Sale Information</h5>
+            </div>
+            <form class="field_form" id="sell-form">
+              <div class="row">
+                <div class="form-group col-md-12 animation animated fadeInUp input-group-append" data-animation="fadeInUp" data-animation-delay="0.4s" style="animation-delay: 0.4s; opacity: 1;">
+                  <input type="number" class="form-control" id="cost" style="padding-right:20px;" placeholder="Cost" step="0.1" required>
+                  <div class="input-group-append">
+                     <span class="input-group-text form-control" style="opacity: 1;"> ETH </span>
+                 </div>
+                </div>
+                <div class="form-group col-md-12 animation animated fadeInUp" data-animation="fadeInUp" data-animation-delay="0.6s" style="animation-delay: 0.6s; opacity: 1;">
+                  <input type="date" id="date" class="form-control" required>
+                </div>
+                <div class="form-group col-md-12 animation animated fadeInUp" data-animation="fadeInUp" data-animation-delay="0.8s" style="animation-delay: 0.8s; opacity: 1;">
+                  <input type="text" placeholder="Buyer Address (optional)" id="buyer-address" class="form-control">
+                </div>
+                <div class="col-md-12 text-center animation animated fadeInUp" data-animation="fadeInUp" data-animation-delay="1.2s" style="animation-delay: 1.2s; opacity: 1;">
+                  <button class="btn btn-default btn-radius btn-block" onclick="">Create Sale</button>
+                </div>
+                <div class="col-md-12">
+                  <div id="alert-msg" class="alert-msg text-center"></div>
+                </div>
                </div>
-              </div>
-              <div class="form-group col-md-12 animation animated fadeInUp" data-animation="fadeInUp" data-animation-delay="0.6s" style="animation-delay: 0.6s; opacity: 1;">
-                <input type="date" id="date" class="form-control" required>
-              </div>
-              <div class="form-group col-md-12 animation animated fadeInUp" data-animation="fadeInUp" data-animation-delay="0.8s" style="animation-delay: 0.8s; opacity: 1;">
-                <input type="text" placeholder="Buyer Address (optional)" id="buyer-address" class="form-control">
-              </div>
-              <div class="col-md-12 text-center animation animated fadeInUp" data-animation="fadeInUp" data-animation-delay="1.2s" style="animation-delay: 1.2s; opacity: 1;">
-                <button class="btn btn-default btn-radius btn-block">Create Sale <i class="ion-ios-arrow-thin-right"></i></button>
-              </div>
-              <div class="col-md-12">
-                <div id="alert-msg" class="alert-msg text-center"></div>
-              </div>
-             </div>
-            </form>
+              </form>
+          </div>
+        </div>
+        <div class="row small_space">
+          <div class="col-lg-12 col-md-12 col-sm-12">
+            <div class="title_default_light text-center">
+              <h5 class="animation animated fadeInUp" data-animation="fadeInUp" data-animation-delay="0.2s" style="animation-delay: 0.2s; opacity: 1;">Sales</h5>
+            </div>
+            <table class="table table-blue m-0 h-100">
+              <th>
+                <td>Name</td>
+                <td>Cost</td>
+                <td></td>
+              </th>
+              <tr class="animation animated fadeInUp" data-animation="fadeInUp" data-animation-delay="0.2s" style="animation-delay: 0.2s; opacity: 1;">
+                <td>Starting Time :</td>
+                <td>APR 23,2018</td>
+              </tr>
+              <tr class="animation animated fadeInUp" data-animation="fadeInUp" data-animation-delay="0.2s" style="animation-delay: 0.2s; opacity: 1;">
+                <td>Starting Time :</td>
+                <td>APR 23,2018</td>
+              </tr>
+              <tr class="animation animated fadeInUp" data-animation="fadeInUp" data-animation-delay="0.2s" style="animation-delay: 0.2s; opacity: 1;">
+                <td>Starting Time :</td>
+                <td>APR 23,2018</td>
+              </tr>
+              <tr class="animation animated fadeInUp" data-animation="fadeInUp" data-animation-delay="0.2s" style="animation-delay: 0.2s; opacity: 1;">
+                <td>Starting Time :</td>
+                <td>APR 23,2018</td>
+              </tr>
+              <tr class="animation animated fadeInUp" data-animation="fadeInUp" data-animation-delay="0.2s" style="animation-delay: 0.2s; opacity: 1;">
+                <td>Starting Time :</td>
+                <td>APR 23,2018</td>
+              </tr>
+            </table>
+          </div>
+
         </div>
     </div>
 </section>

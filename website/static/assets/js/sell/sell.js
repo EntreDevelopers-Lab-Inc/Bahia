@@ -3,7 +3,7 @@ Moralis.start({serverUrl: MORALIS_SERVER_URL, appId: MORALIS_APP_ID});
 
 // load the nft template and objects
 const NFT_TEMPLATE = $('#nft-template').html();
-var NFT_OBJECTS = $('$nft-objects');
+var NFT_OBJECTS = $('#nft-objects');
 
 // keep the sale data on hand
 var saleData = {};
@@ -12,6 +12,11 @@ var saleData = {};
 // synchronous function for adding an nft (will want to do this sequentially to maintain structure for the user)
 function addNFT(data)
 {
+    // add the link
+    var metadata = JSON.parse(data.metadata);
+
+    data['link'] = metadata.image;
+
     // render the template
     var newNft = Mustache.render(NFT_TEMPLATE, data);
 
@@ -50,12 +55,21 @@ async function loadSales()
 function selectNFT(address, id)
 {
     // deselect the other selections
+    var selections = NFT_OBJECTS.find('a');
 
     // select this tab as active
+    for (var i = 0; i < selections.length; i += 1)
+    {
+        $(selections[i]).attr('class', 'tab-link')
+    }
+
+    // enable the selected
+    var selected = NFT_OBJECTS.find("a[nft-id='" + id + "']");
+    selected.attr('class', 'tab-link active');
 
     // write the sale dict
-    saleDict['address'] = address;
-    saleDict['id'] = id;
+    saleData['address'] = address;
+    saleData['id'] = id;
 }
 
 
@@ -63,6 +77,7 @@ function selectNFT(address, id)
 async function createSale()
 {
     // get all the information necessary for the sale from the frontend
+    var exp_time = Date.parse($('#date').val()) / 1000;  // originally in miliseconds --> need seconds for eth evm
 
     // create a transaction
         // get the number of transactions
@@ -71,7 +86,7 @@ async function createSale()
 }
 
 // load document function
-async function loadDocument()
+function loadDocument()
 {
     // set the date attribute
     var today = new Date();

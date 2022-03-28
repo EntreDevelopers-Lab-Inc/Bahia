@@ -16,12 +16,6 @@
           </div>
         </div>
         <div class="row small_space" id="nft-objects">
-            <div class="col-lg-3 col-md-6 col-sm-6 res_md_mb_30 res_sm_mb_20">
-              <a class="tab-link">
-                <img class="center" src="/static/assets/images/placeholder9.png" alt="placeholder9">
-                <h4><span name="collection-address">COLLECTION ADDRESS</span> #<span name="collection-id">1234</h4>
-              </a>
-            </div>
         </div>
         <div class="row small_space">
           <form class="field_form">
@@ -54,8 +48,8 @@
 <!--templates-->
 {% raw %}
 <template id="nft-template">
-  <div class="col-lg-3 col-md-6 col-sm-6 res_md_mb_30 res_sm_mb_20">
-    <a class="tab-link" onclick="selectNFT('{{token_address}}', {{token_id}});">
+  <div class="col-lg-3 col-md-6 col-sm-6 res_md_mb_30 res_sm_mb_20 text-center">
+    <a class="tab-link" onclick="selectNFT('{{token_address}}', {{token_id}});" nft-id="{{token_id}}">
       <img class="center" src="{{link}}" alt="placeholder9">
       <h4><span>{{name}}</span> #<span>{{token_id}}</h4>
     </a>

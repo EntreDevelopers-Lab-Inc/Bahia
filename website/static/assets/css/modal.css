@@ -45,3 +45,16 @@
 .modal-content p {
     word-wrap: break-word;
 }
+
+.spinner-border {
+    width: 3rem;
+    height:  3rem;
+    margin-top: 50%;
+    margin-bottom: 50%;
+}
+
+
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+}

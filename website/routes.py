@@ -11,7 +11,7 @@ def home():
 
 @app.route('/buy')
 def buy():
-    return render_template('sell.html', mustache=True, dapp=True)
+    return render_template('buy.html', mustache=True, dapp=True)
 
 
 @app.route('/sell')

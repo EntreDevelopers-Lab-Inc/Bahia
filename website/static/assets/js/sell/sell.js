@@ -6,7 +6,7 @@ const NFT_TEMPLATE = $('#nft-template').html();
 var NFT_OBJECTS = $('#nft-objects');
 
 // load the sale tempalte and objects
-const SALE_TEMPLATE = $('#sale-template').html();
+const SALE_TEMPLATE = '';
 var SALE_OBJECTS = $('#sale-objects');
 
 // keep the sale data on hand
@@ -76,7 +76,11 @@ async function addSale(contractAddress)
     });
 
     await saleContract.expirationTime().then(function (resp) {
-        expiration = resp;
+        expiration = new Date(resp * 1000).toLocaleDateString({
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+            });
     });
 
     await saleContract.buyerAddress().then(function (resp) {
@@ -104,6 +108,8 @@ async function addSale(contractAddress)
 
     // get the collection name from moralis (from the collection address and id)
     await Moralis.Web3API.token.getNFTMetadata({chain: CHAIN_ID_STR, address: collectionAddress, token_id: nftId}).then(function (resp) {
+        console.log(resp);
+
         // set the name
         name = resp.name + ' #' + nftId;
     });
@@ -137,7 +143,7 @@ async function addSale(contractAddress)
         approvedString: approvedString
     };
 
-    var newSale = Mustache.render(SALE_TEMPLATE, data);
+    var newSale = Mustache.render($('#sale-template').html(), data);
 
     // prepend the body of the table
     SALE_OBJECTS.prepend(newSale);
@@ -241,16 +247,17 @@ function createSale()
         return;
     }
 
+    // remove the button and add a spinning icon
+    $('#create-sale').hide();
+    $('#sale-loading').show();
 
     // create a transaction
     var tradeAddress;
     CONTRACT.createTransaction(expTime, collectionAddress, nftId, cost, buyerAddress).then(function (txResp) {
-        // clear the form
-        $('#sell-form')[0].reset();
 
         // add the sale to the log
         CONTRACT.saleCount(window.ethereum.selectedAddress).then(function (length) {
-            CONTRACT.sales(window.ethereum.selectedAddress, length).then(function (txId) {
+            CONTRACT.sales(window.ethereum.selectedAddress, (length - 1)).then(function (txId) {
                 // resp is an integer --> go get the actual address of the transaction
                 CONTRACT.transactions(txId).then(function (address) {
                     // save the trade address
@@ -258,19 +265,23 @@ function createSale()
 
                     // now, go add the sale
                     addSale(address);
+
+                    // call approve with the erc721 contract
+                    approve(tradeAddress);
+
+                    // close the modal
+                    toggleModal();
+
+                    // clear the form
+                    $('#sell-form')[0].reset();
+
+                    // put the button back
+                    $('#create-sale').show();
+                    $('#sale-loading').hide();
                 });
             });
         });
 
-        // close the modal
-        toggleModal();
-
-        // scroll to this nft in the log
-        $('[trade-address="' + tradeAddress + '"]').scroll()
-
-
-        // call approve with the erc721 contract
-        approve(tradeAddress);
 
     });
 
@@ -402,6 +413,10 @@ function showSellModal()
     // show the modal
     toggleModal();
     $('#sell-nft-modal').show();
+
+    // show the right stuff
+    $('#create-sale').show();
+    $('#sale-loading').hide();
 }
 
 
@@ -428,12 +443,5 @@ function loadDocument()
     loadNFTs();
     loadSales();
 }
-
-// bind the frm
-$('#sell-form').submit(function (e) {
-    e.preventDefault();
-
-    createSale();
-});
 
 loadDocument();

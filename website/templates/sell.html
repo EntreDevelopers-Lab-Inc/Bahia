@@ -118,7 +118,7 @@
 <template id="nft-template">
   <div class="col-lg-3 col-md-6 col-sm-6 res_md_mb_30 res_sm_mb_20 text-center">
     <a class="tab-link" onclick="selectNFT('{{token_address}}', {{token_id}});" nft-id="{{token_id}}">
-      <img class="center" src="{{link}}" alt="placeholder9">
+      <img class="center" src="{{link}}">
       <h4><span>{{name}}</span> #<span>{{token_id}}</h4>
     </a>
   </div>
@@ -143,7 +143,5 @@
 {% block scripts %}
     <script src="{{url_for('static', filename='assets/js/modal.js')}}"></script>
     <script src="{{url_for('static', filename='assets/js/sell/contract.js')}}"></script>
-    <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
-    <script src="https://unpkg.com/moralis/dist/moralis.js"></script>
     <script src="{{url_for('static', filename='assets/js/sell/sell.js')}}"></script>
 {% endblock %}

@@ -171,7 +171,10 @@
     <script type="text/javascript" src="{{url_for('static', filename='assets/js/node_modules/mustache/mustache.js')}}"></script>
   {% endif %}
   {% if dapp %}
+    <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
+    <script src="https://unpkg.com/moralis/dist/moralis.js"></script>
     <script type="text/javascript" src="{{url_for('static', filename='assets/js/dapp/abis.js')}}"></script>
+    <script type="text/javascript" src="{{url_for('static', filename='assets/js/dapp/nftPurchase.js')}}"></script>
     <script type="text/javascript" src="{{url_for('static', filename='assets/js/dapp/tools.js')}}"></script>
   {% endif %}
 

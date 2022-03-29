@@ -1,6 +1,3 @@
-// load moralis
-Moralis.start({serverUrl: MORALIS_SERVER_URL, appId: MORALIS_APP_ID});
-
 // load the nft template and objects
 const NFT_TEMPLATE = $('#nft-template').html();
 var NFT_OBJECTS = $('#nft-objects');
@@ -56,92 +53,7 @@ async function loadNFTs()
 // add a sale
 async function addSale(contractAddress)
 {
-    // store a variable for everything that will be set
-    var name;
-    var cost;
-    var expiration;
-    var buyerAddress;
-    var collectionAddress;
-    var completed;
-    var approved;
-    var nftid;
-    var approvedString;
-
-    // make a sale contract
-    var saleContract = new ethers.Contract(contractAddress, PURCHASE_CONTRACT_ABI, SIGNER);
-
-    // get the public sale information and display it
-    await saleContract.cost().then(function (resp) {
-        cost = resp;
-    });
-
-    await saleContract.expirationTime().then(function (resp) {
-        expiration = new Date(resp * 1000).toLocaleDateString({
-                day: '2-digit',
-                month: '2-digit',
-                year: 'numeric',
-            });
-    });
-
-    await saleContract.buyerAddress().then(function (resp) {
-        if (resp == NULL_ADDRESS)
-        {
-            buyerAddress = '(Any)';
-        }
-        else
-        {
-            buyerAddress = resp;
-        }
-    });
-
-    await saleContract.nftManager().then(function (resp) {
-        collectionAddress = resp;
-    });
-
-    await saleContract.nftId().then(function (resp) {
-        nftId = resp;
-    });
-
-    await saleContract.completed().then(function (resp) {
-        completed = resp;
-    });
-
-    // get the collection name from moralis (from the collection address and id)
-    await Moralis.Web3API.token.getNFTMetadata({chain: CHAIN_ID_STR, address: collectionAddress, token_id: nftId}).then(function (resp) {
-        console.log(resp);
-
-        // set the name
-        name = resp.name + ' #' + nftId;
-    });
-
-    // set the approval
-    var nftContract = new ethers.Contract(collectionAddress, ERC721_ABI, SIGNER);
-    await nftContract.getApproved(nftId).then(function (address) {
-        // if the address is the sale contract, it is approved
-        approved = (contractAddress == address);
-    });
-
-    // set the approved string
-    if (approved)
-    {
-        approvedString = 'Cancel';
-    }
-    else
-    {
-        approvedString = 'Activate';
-    }
-
-    // render the template
-    data = {
-        name: name,
-        cost: ethers.utils.formatEther(cost) + ' ETH',
-        expiration: expiration,
-        buyerAddress: buyerAddress,
-        tradeAddress: contractAddress,
-        completed: completed.toString().toUpperCase(),
-        approved: approved,
-        approvedString: approvedString
-    };
+    var data = await getSaleData(contractAddress);
 
     var newSale = Mustache.render($('#sale-template').html(), data);
 

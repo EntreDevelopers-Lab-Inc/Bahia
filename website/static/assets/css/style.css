@@ -58,11 +58,13 @@ h4,
 h5,
 h6 {
 	color: #fff;
+	overflow-wrap: break-word;
 }
 p {
 	color:#fff;
 	margin-bottom:30px;
 }
+
 a {
 	color: #5957cd;
 	text-decoration: none;

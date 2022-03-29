@@ -7,7 +7,7 @@
   </canvas>
   <div class="container">
     <div class="row">
-      <div class="col-12 offset-lg-2">
+      <div class="col-12">
         <div class="title_default_light title_border text-center">
           <h4 class="animation animated fadeInUp" data-animation="fadeInUp" data-animation-delay="0.2s" style="animation-delay: 0.2s; opacity: 1;">Buy</h4>
           <p class="animation animated fadeInUp" data-animation="fadeInUp" data-animation-delay="0.4s" style="animation-delay: 0.4s; opacity: 1;">Enter trade address. Verify details. Purchase.</p>
@@ -15,34 +15,33 @@
       </div>
    </div>
     <div class="row field_form">
-      <div class="form-group col-9 animation animated fadeInUp" data-animation="fadeInUp" data-animation-delay="0.4s" style="animation-delay: 0.4s; opacity: 1;">
-        <input type="text" required="required" placeholder="Trade Address" id="first-name" class="form-control" name="name">
+      <div class="form-group col-9 animation animated fadeInUp" data-animation="fadeInUp" data-animation-delay="0.46" style="animation-delay: 0.4s; opacity: 1;">
+        <input type="text" required="required" placeholder="Trade Address" id="trade-address" class="form-control" name="name">
       </div>
-      <div class="form-group col-3 animation animated fadeInUp" data-animation="fadeInUp" data-animation-delay="0.4s" style="animation-delay: 0.4s; opacity: 1;">
-        <a class="btn btn-default btn-radius btn-block">View Trade</a>
+      <div class="form-group col-3 animation animated fadeInUp" data-animation="fadeInUp" data-animation-delay="0.6s" style="animation-delay: 0.4s; opacity: 1;">
+        <a class="btn btn-default btn-radius btn-block" onclick="viewTrade();">View Trade</a>
       </div>
     </div>
     <div class="row">
       <div class="col-lg-6 col-md-6 col-sm-12">
-        <h5>
-          Collection Address:<br><span id="collection-address">0xsfgadsfaasd</span>
-        </h5>
+          <a id="collection-copy" onclick="copyAddress();">
+            <h5>Collection Address:<br><span id="collection-address"></span><span> </span><i class="fa fa-copy" id="copy-icon" style="font-size:24px" hidden></i></h5></a>
       </div>
      <div class="col-lg-3 col-md-3 col-sm-6">
-        <a class="btn btn-border-white btn-radius" id="sell-nft-etherscan" href="https://etherscan.io" target="_blank">Etherscan</a>
+        <a class="btn btn-border-white btn-radius" id="etherscan-link" href="https://etherscan.io" target="_blank">Etherscan</a>
       </div>
       <div class="col-lg-3 col-md-3 col-sm-6">
-        <a class="btn btn-border-white btn-radius" id="sell-nft-looksrare" href="https://looksrare.org" target="_blank">LooksRare</a>
+        <a class="btn btn-border-white btn-radius" id="looksrare-link" href="https://looksrare.org" target="_blank">LooksRare</a>
       </div>
     </div>
     <div class="row small_space">
       <div class="col-lg-6 col-md-6 col-sm-12 res_md_mb_30 res_sm_mb_20 text-center">
-        <a class="tab-link" onclick="selectNFT('0xbf19192cacfa157a630d4d30642d6db7e4df977f', 199);" nft-id="199">
-          <img class="center" src="https://ikzttp.mypinata.cloud/ipfs/QmYDvPAXtiJg7s8JdRBSLWdgSphQdac8j1YuQNNxcGE1hg/199.png" alt="placeholder9">
-          <h4 class="small_space"><span>Fish</span> #<span>199</span></h4>
+        <a class="tab-link">
+          <img class="center" src="" id="image">
+          <h4 class="small_space" id="name"></h4>
           <div class="row text-center">
             <div class="col-12">
-              <p class="small_space">[NOT COMPLETED] [ACTIVE]</p>
+              <p class="small_space"><span id="completed"></span><span> </span><span id="activity"></span></p>
             </div>
           </div>
         </a>
@@ -51,39 +50,32 @@
         <div class="row small_space">
           <div class="col-6">
             <h5>
-              Cost: <span id="collection-address">0.075 ETH</span>
+              Cost: <span id="cost"></span>
             </h5>
           </div>
           <div class="col-6">
             <h5>
-              Expiration: <span id="collection-address">3/29/2022</span>
+              Expiration: <span id="expiration"></span>
             </h5>
           </div>
         </div>
         <div class="row small_space">
           <div class="col-12">
             <h5>
-              Seller Address:<br><span id="collection-address">0xsfgadsfaasd</span>
+              Seller Address:<br><span id="seller-address"></span>
             </h5>
           </div>
         </div>
         <div class="row small_space">
           <div class="col-12">
             <h5>
-              Buyer Address:<br><span id="collection-address">0xsfgadsfaasd</span>
+              Buyer Address:<br><span id="buyer-address"></span>
             </h5>
           </div>
         </div>
         <div class="row small_space">
           <div class="col-12">
-            <h5>
-              Expiration:<br><span id="collection-address">0xsfgadsfaasd</span>
-            </h5>
-          </div>
-        </div>
-        <div class="row small_space">
-          <div class="col-12">
-            <a class="btn btn-default btn-radius btn-block">Buy
+            <a class="btn btn-default btn-radius btn-block disabled" id="buy-btn" trade-address="">Buy
             <i class="ion-ios-arrow-thin-right"></i></a>
           </div>
         </div>
@@ -100,4 +92,6 @@
 {% endblock content %}
 
 {% block scripts %}
+    <script src="{{url_for('static', filename='assets/js/sell/contract.js')}}"></script>
+    <script src="{{url_for('static', filename='assets/js/buy/buy.js')}}"></script>
 {% endblock %}

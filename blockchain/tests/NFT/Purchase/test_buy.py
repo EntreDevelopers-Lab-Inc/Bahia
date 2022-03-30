@@ -184,3 +184,67 @@ def test_excess_purchase():
 
     # make sure that completed is true
     assert purchase_contract.completed()
+
+
+# test empty buyer
+def test_empty_buyer():
+    purchase_contract, buyer, seller = deploy_create_approve()
+
+    # set the buyer to a null address
+    new_buyer_addr = '0x0000000000000000000000000000000000000000'
+    purchase_contract.setBuyer(
+        brownie.convert.to_address(new_buyer_addr), {'from': seller})
+
+    # make sure the change went through
+    assert new_buyer_addr == purchase_contract.buyerAddress()
+
+    # set the seller to a new accoutn
+    buyer = accounts[3]
+
+    # keep the bahia contract for dev royalty
+    bahia_contract = BahiaNFTPurchase[-1]
+
+    # track the nft contract
+    nft_contract = interface.IERC721(purchase_contract.nftManager())
+
+    # get the admin
+    admin = get_admin_account()
+    dev = accounts[5]
+
+    # check the balances of all parties (buyer, seller, dev)
+    old_dev_balance = dev.balance()
+    old_buyer_balance = buyer.balance()
+    old_seller_balance = seller.balance()
+
+    print(f"Old seller balance: {seller.balance()}")
+
+    # get the dev payment
+    dev_payment = (bahia_contract.devRoyalty() *
+                   purchase_contract.cost() / 100000)
+
+    # set the dev address
+    BahiaNFTPurchase[-1].changeDevAddress(dev.address, {"from": admin});
+
+    # buy it the first time
+    purchase_contract.buy(
+        {'from': buyer, 'value': purchase_contract.cost()})
+
+    # check to see if the balances updated properly
+    print(f"Contract seller: {purchase_contract.sellerAddress()}")
+    print(f"Actual seller: {seller.address}")
+    print(f"New seller balance: {seller.balance()}")
+    assert seller.balance() == (old_seller_balance +
+                                purchase_contract.cost() - dev_payment)
+    assert buyer.balance() == (old_buyer_balance - purchase_contract.cost())
+    assert dev.balance() == (old_dev_balance + dev_payment)
+
+    # make sure that the buyer now owns the nft
+    assert nft_contract.ownerOf(purchase_contract.nftId()) == buyer.address
+
+    # make sure that the buyer now has the purchase
+    assert bahia_contract.purchaseCount(buyer) == 1
+    assert bahia_contract.purchases(buyer, 0) == 0
+    assert purchase_contract.buyerAddress() == buyer.address
+
+    # make sure that completed is true
+    assert purchase_contract.completed()

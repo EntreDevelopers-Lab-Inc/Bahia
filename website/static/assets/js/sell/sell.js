@@ -222,11 +222,11 @@ async function createSale()
 
                   // resp is an integer --> go add the sale
                   addSale(txId);
+
+                  $('#sale-objects')[0].scrollIntoView();
               });
           });
     });
-
-    console.log(newTransaction);
 
     // catch any errors
     newTransaction.catch((error) => {
@@ -261,7 +261,7 @@ async function approve(purchaseId)
     // get the nft manager
      var nftContract = new ethers.Contract(collectionAddress, ERC721_ABI, SIGNER);
 
-      const contractApproval = nftContract.approve(CONTRACT, nftId).then(function (resp) {
+      const contractApproval = nftContract.approve(CONTRACT_ADDRESS, nftId).then(function (resp) {
           // change the button from unapproved to approved
           var approvedBtn = $('a[type="approval-btn"][trade-address="' + purchaseHex + '"]');
           approvedBtn.text('Cancel');

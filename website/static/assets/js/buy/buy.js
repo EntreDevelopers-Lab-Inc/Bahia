@@ -18,14 +18,6 @@ async function viewTrade()
     // get the trade address
     var tradeAddress = $('#trade-address').val();
 
-    // check if the trade address is valid
-    if (!ethers.utils.isAddress(tradeAddress))
-    {
-        alert('Invalid Address: ' + tradeAddress);
-        $('#nft-loading').attr('hidden', true);
-        return;
-    }
-
     // load up the trade contract data
     var data = await getSaleData(tradeAddress);
 

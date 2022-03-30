@@ -24,11 +24,13 @@ pip3 install mysqlclient
 sudo apt-get install python3-dev default-libmysqlclient-dev build-essential
 sudo apt-get install python3-pymysql
 
-# certbot
+# certbot: https://certbot.eff.org/instructions?ws=apache&os=ubuntufocal
 sudo apt-get update
-sudo apt-get install software-properties-common
-sudo add-apt-repository universe
-sudo add-apt-repository ppa:certbot/certbot
+sudo snap install core; sudo snap refresh core
+sudo snap install --classic certbot
+sudo ln -s /snap/bin/certbot
+sudo certbot --apache
+sudo certbot renew --dry-run
 sudo apt-get update
 
 sudo apt-get install certbot python3-certbot-apache

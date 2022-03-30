@@ -90,6 +90,14 @@ contract BahiaNFTPurchase is
     }
 
     /**
+     * @notice a function to return the amount of total transactions
+    */
+    function totalTransactions() external view returns (uint256)
+    {
+        return transactions.length;
+    }
+
+    /**
      * @notice a function to add a sale to the mapping
      * @param buyerAddress for who bought it
      * @param purchaseId for the purchase to be linked

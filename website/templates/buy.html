@@ -22,66 +22,71 @@
         <a class="btn btn-default btn-radius btn-block" onclick="viewTrade();">View Trade</a>
       </div>
     </div>
-    <div class="row">
-      <div class="col-lg-6 col-md-6 col-sm-12">
-          <a id="collection-copy" onclick="copyAddress();">
-            <h5>Collection Address:<br><span id="collection-address"></span><span> </span><i class="fa fa-copy" id="copy-icon" style="font-size:24px" hidden></i></h5></a>
+    <div id="nft-data" hidden>
+      <div class="row">
+        <div class="col-lg-6 col-md-6 col-sm-12">
+            <a id="collection-copy" onclick="copyAddress();">
+              <h5>Collection Address:<br><span id="collection-address"></span><span> </span><i class="fa fa-copy" id="copy-icon" style="font-size:24px" hidden></i></h5></a>
+        </div>
+       <div class="col-lg-3 col-md-3 col-sm-6">
+          <a class="btn btn-border-white btn-radius" id="etherscan-link" href="https://etherscan.io" target="_blank">Etherscan</a>
+        </div>
+        <div class="col-lg-3 col-md-3 col-sm-6">
+          <a class="btn btn-border-white btn-radius" id="looksrare-link" href="https://looksrare.org" target="_blank">LooksRare</a>
+        </div>
       </div>
-     <div class="col-lg-3 col-md-3 col-sm-6">
-        <a class="btn btn-border-white btn-radius" id="etherscan-link" href="https://etherscan.io" target="_blank">Etherscan</a>
-      </div>
-      <div class="col-lg-3 col-md-3 col-sm-6">
-        <a class="btn btn-border-white btn-radius" id="looksrare-link" href="https://looksrare.org" target="_blank">LooksRare</a>
-      </div>
-    </div>
-    <div class="row small_space">
-      <div class="col-lg-6 col-md-6 col-sm-12 res_md_mb_30 res_sm_mb_20 text-center">
-        <a class="tab-link">
-          <img class="center" src="" id="image">
-          <h4 class="small_space" id="name"></h4>
-          <div class="row text-center">
-            <div class="col-12">
-              <p class="small_space"><span id="completed"></span><span> </span><span id="activity"></span></p>
+      <div class="row small_space">
+        <div class="col-lg-6 col-md-6 col-sm-12 res_md_mb_30 res_sm_mb_20 text-center">
+          <a class="tab-link">
+            <img class="center" src="" id="image">
+            <h4 class="small_space" id="name"></h4>
+            <div class="row text-center">
+              <div class="col-12">
+                <p class="small_space"><span id="completed"></span><span> </span><span id="activity"></span></p>
+              </div>
+            </div>
+          </a>
+        </div>
+        <div class="col-lg-6 col-md-6 col-sm-12">
+          <div class="row small_space">
+            <div class="col-6">
+              <h5>
+                Cost: <span id="cost" cost=""></span>
+              </h5>
+            </div>
+            <div class="col-6">
+              <h5>
+                Expiration: <span id="expiration"></span>
+              </h5>
             </div>
           </div>
-        </a>
-      </div>
-      <div class="col-lg-6 col-md-6 col-sm-12">
-        <div class="row small_space">
-          <div class="col-6">
-            <h5>
-              Cost: <span id="cost"></span>
-            </h5>
+          <div class="row small_space">
+            <div class="col-12">
+              <h5>
+                Seller Address:<br><span id="seller-address"></span>
+              </h5>
+            </div>
           </div>
-          <div class="col-6">
-            <h5>
-              Expiration: <span id="expiration"></span>
-            </h5>
+          <div class="row small_space">
+            <div class="col-12">
+              <h5>
+                Buyer Address:<br><span id="buyer-address"></span>
+              </h5>
+            </div>
           </div>
-        </div>
-        <div class="row small_space">
-          <div class="col-12">
-            <h5>
-              Seller Address:<br><span id="seller-address"></span>
-            </h5>
+          <div class="row small_space">
+            <div class="col-12">
+              <a class="btn btn-default btn-radius btn-block disabled" id="buy-btn" trade-address="" onclick="buyNFT();">Buy
+              <i class="ion-ios-arrow-thin-right"></i></a>
+            </div>
           </div>
-        </div>
-        <div class="row small_space">
-          <div class="col-12">
-            <h5>
-              Buyer Address:<br><span id="buyer-address"></span>
-            </h5>
-          </div>
-        </div>
-        <div class="row small_space">
-          <div class="col-12">
-            <a class="btn btn-default btn-radius btn-block disabled" id="buy-btn" trade-address="">Buy
-            <i class="ion-ios-arrow-thin-right"></i></a>
-          </div>
-        </div>
 
+        </div>
       </div>
     </div>
+    <div class="text-center" id="nft-loading" hidden>
+      <div class="spinner-border text-light" style="height: 10rem; width: 10rem;"></div>
+   </div>
 
 </section>
 

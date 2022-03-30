@@ -11,7 +11,7 @@ var saleData = {};
 
 // keep track of the offset
 var NFT_OFFSET = 0;
-var NFT_LIMIT = 20;
+var NFT_LIMIT = 100;
 
 
 // synchronous function for adding an nft (will want to do this sequentially to maintain structure for the user)
@@ -51,14 +51,50 @@ async function loadNFTs()
 
 
 // add a sale
-async function addSale(contractAddress)
+async function addSale(contractAddress, prepend=true)
 {
+    // track the button to disable
+    var disableBtn = false;
+
     var data = await getSaleData(contractAddress);
+
+    // set the approved string
+    if (data['completedBool'])
+    {
+        data['approvedString'] = 'Completed';
+        disableBtn = true;
+    }
+    else if (data['expired'])
+    {
+        data['approvedString'] = 'Expired';
+        disableBtn = true;
+    }
+    else if (data['approved'])
+    {
+        data['approvedString'] = 'Cancel';
+    }
+    else
+    {
+        data['approvedString'] = 'Activate';
+    }
 
     var newSale = Mustache.render($('#sale-template').html(), data);
 
     // prepend the body of the table
-    SALE_OBJECTS.prepend(newSale);
+    if (prepend)
+    {
+        SALE_OBJECTS.prepend(newSale);
+    }
+    else
+    {
+        SALE_OBJECTS.append(newSale);
+    }
+
+    // disable the approved button
+    if (disableBtn)
+    {
+        $('a[trade-address="' + data['tradeAddress'] + '"]').attr('class', 'btn btn-info btn-radius disabled');
+    }
 }
 
 // load the past sales
@@ -76,11 +112,11 @@ async function loadSales()
     for (var i = 0; i < saleCount; i += 1)
     {
         // get each sale from the contract and add it (must be awaited, as these are sequential)
-        await CONTRACT.sales(window.ethereum.selectedAddress, i).then(function (txId) {
+        await CONTRACT.sales(window.ethereum.selectedAddress, (saleCount - i - 1)).then(async function (txId) {
             // resp is an integer --> go get the actual address of the transaction
-            CONTRACT.transactions(txId).then(function (address) {
+            await CONTRACT.transactions(txId).then(async function (newContractAddress) {
                 // now, go add the sale
-                addSale(address);
+                await addSale(newContractAddress, prepend=false);
             });
         });
     }
@@ -111,7 +147,7 @@ function selectNFT(address, id)
 
 
 // create a sale
-function createSale()
+async function createSale()
 {
     // get all the information necessary for the sale from the frontend
     var expTime = Date.parse($('#date').val()) / 1000;  // originally in miliseconds --> need seconds for eth evmx
@@ -165,13 +201,14 @@ function createSale()
 
     // create a transaction
     var tradeAddress;
-    CONTRACT.createTransaction(expTime, collectionAddress, nftId, cost, buyerAddress).then(function (txResp) {
+
+    const newTransaction = await CONTRACT.createTransaction(expTime, collectionAddress, nftId, cost, buyerAddress).then(async function (txResp) {
 
         // add the sale to the log
-        CONTRACT.saleCount(window.ethereum.selectedAddress).then(function (length) {
-            CONTRACT.sales(window.ethereum.selectedAddress, (length - 1)).then(function (txId) {
+        await CONTRACT.saleCount(window.ethereum.selectedAddress).then(async function (length) {
+            await CONTRACT.sales(window.ethereum.selectedAddress, (length - 1)).then(async function (txId) {
                 // resp is an integer --> go get the actual address of the transaction
-                CONTRACT.transactions(txId).then(function (address) {
+                await CONTRACT.transactions(txId).then(async function (address) {
                     // save the trade address
                     tradeAddress = address;
 
@@ -179,7 +216,7 @@ function createSale()
                     addSale(address);
 
                     // call approve with the erc721 contract
-                    approve(tradeAddress);
+                    await approve(tradeAddress);
 
                     // close the modal
                     toggleModal();
@@ -193,9 +230,11 @@ function createSale()
                 });
             });
         });
-
-
     });
+
+    newTransaction.catch((error) => {
+        alert(error.message);
+    })
 
     // get the number of transactions
     // add the new sale the transaction log --> use prepend
@@ -218,14 +257,18 @@ async function approve(contractAddress)
     });
 
     // get the nft manager
-    saleContract.nftManager().then(function (collectionAddress) {
+    await saleContract.nftManager().then(function (collectionAddress) {
        var nftContract = new ethers.Contract(collectionAddress, ERC721_ABI, SIGNER);
-        nftContract.approve(contractAddress, nftId).then(function (resp) {
+        const contractApproval = nftContract.approve(contractAddress, nftId).then(function (resp) {
             // change the button from unapproved to approved
             var approvedBtn = $('a[type="approval-btn"][trade-address="' + contractAddress + '"]');
             approvedBtn.text('Cancel');
             approvedBtn.attr('approved', 'true');
         });
+
+        contractApproval.catch((error) => {
+            alert(error.message);
+        })
     });
 
 }

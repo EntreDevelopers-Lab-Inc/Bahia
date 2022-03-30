@@ -3,6 +3,7 @@ Moralis.start({serverUrl: MORALIS_SERVER_URL, appId: MORALIS_APP_ID});
 
 async function getSaleData(contractAddress)
 {
+
     // store a variable for everything that will be set
     var name;
     var cost;
@@ -14,7 +15,7 @@ async function getSaleData(contractAddress)
     var completed;
     var completedBool;
     var approved;
-    var nftid;
+    var nftId;
     var approvedString;
 
     // make a sale contract
@@ -65,7 +66,6 @@ async function getSaleData(contractAddress)
 
     // get the collection name from moralis (from the collection address and id)
     await Moralis.Web3API.token.getNFTMetadata({chain: CHAIN_ID_STR, address: collectionAddress, token_id: nftId}).then(function (resp) {
-        console.log(resp);
 
         // set the name
         name = resp.name + ' #' + nftId;
@@ -86,16 +86,6 @@ async function getSaleData(contractAddress)
     else
     {
         completed = '[INCOMPLETE]';
-    }
-
-    // set the approved string
-    if (approved)
-    {
-        approvedString = 'Cancel';
-    }
-    else
-    {
-        approvedString = 'Activate';
     }
 
     // add some logic to toggle activity
@@ -128,7 +118,6 @@ async function getSaleData(contractAddress)
         completed: completed,
         completedBool: completedBool,
         approved: approved,
-        approvedString: approvedString,
         activityString: activityString,
         active: active
     };

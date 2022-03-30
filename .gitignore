@@ -4,6 +4,9 @@ constants.js
 # setup file
 setup.bat
 
+# wsgi
+*.wsgi
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

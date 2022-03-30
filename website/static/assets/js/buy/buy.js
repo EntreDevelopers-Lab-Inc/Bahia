@@ -8,6 +8,13 @@ async function disableBuyBtn()
 }
 
 
+// enable the buy button
+async function enableBuyBtn()
+{
+    $('#buy-btn').attr('class', 'btn btn-default btn-radius btn-block');
+}
+
+
 // view a trade
 async function viewTrade()
 {
@@ -77,7 +84,7 @@ async function viewTrade()
     if (data['active'] && canPurchase)
     {
         // set the button as active
-        $('#buy-btn').attr('class', 'btn btn-default btn-radius btn-block');
+        enableBuyBtn();
 
         // set the button's trade address
         $('#buy-btn').attr('trade-address', tradeAddress);
@@ -123,11 +130,13 @@ async function buyNFT()
     disableBuyBtn();
 
     // run the contract
-    const purchase = buyContract.buy(purchaseHex, {value: cost, gasLimit: GAS_LIMIT}).then(function () {
+    const purchase = CONTRACT.buy(purchaseHex, {value: parseInt(cost), gasLimit: GAS_LIMIT}).then(function () {
         $('#completed').text('[COMPLETED]');
     });
 
     purchase.catch((error) => {
         alert(error.message);
+        enableBuyBtn();
+
     })
 }

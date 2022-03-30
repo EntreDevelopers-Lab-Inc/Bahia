@@ -66,7 +66,7 @@ async function getSaleData(purchaseHex)
     var nftContract = new ethers.Contract(collectionAddress, ERC721_ABI, SIGNER);
     await nftContract.getApproved(nftId).then(function (address) {
         // if the address is the sale contract, it is approved
-        approved = (CONTRACT == address);
+        approved = (CONTRACT_ADDRESS == address);
     });
 
     // set the completed information

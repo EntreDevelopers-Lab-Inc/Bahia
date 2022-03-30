@@ -1,15 +1,11 @@
-// disable file transfers
-Moralis.Cloud.beforeSaveFile((request) => {
-  throw "Not Allowed";
-});
-
 // load moralis
 Moralis.start({serverUrl: MORALIS_SERVER_URL, appId: MORALIS_APP_ID});
 
-async function getSaleData(contractAddress)
+async function getSaleData(purchaseHex)
 {
 
     // store a variable for everything that will be set
+    var purchaseHex;
     var name;
     var cost;
     var expiration;
@@ -23,51 +19,41 @@ async function getSaleData(contractAddress)
     var nftId;
     var approvedString;
 
-    // make a sale contract
-    var saleContract = new ethers.Contract(contractAddress, PURCHASE_CONTRACT_ABI, SIGNER);
-
-    // get the public sale information and display it
-    await saleContract.cost().then(function (resp) {
-        cost = resp;
+    // get the transaction data
+    await CONTRACT.transactions(parseInt(purchaseHex)).then(function (transaction) {
+        // in order of the struct on the smart contract
+        purchaseHex = transaction[0]._hex;
+        expiration = transaction[1];
+        nftId = transaction[2];
+        cost = transaction[3];
+        buyerAddress = transaction[4];
+        sellerAddress = transaction[5];
+        completed = transaction[6];
+        collectionAddress = transaction[7];
     });
 
-    await saleContract.expirationTime().then(function (resp) {
-        expiration = new Date(resp * 1000).toLocaleDateString({
+
+    // set the expiration
+    expiration = new Date(expiration * 1000).toLocaleDateString({
                 day: '2-digit',
                 month: '2-digit',
                 year: 'numeric',
             });
 
-        expired = (resp < (Date.now() / 1000));
-    });
+    expired = (expiration < (Date.now() / 1000));
 
-    await saleContract.buyerAddress().then(function (resp) {
-        if (resp == NULL_ADDRESS)
-        {
-            buyerAddress = '(Any)';
-        }
-        else
-        {
-            buyerAddress = resp;
-        }
-    });
+    // format the buyer address for the null address
+    if (buyerAddress == NULL_ADDRESS)
+    {
+        buyerAddress = '(Any)';
+    }
+    else
+    {
+        buyerAddress = resp;
+    }
 
-    await saleContract.sellerAddress().then(function (resp) {
-        sellerAddress = resp;
-    });
-
-    await saleContract.nftManager().then(function (resp) {
-        collectionAddress = resp;
-    });
-
-    await saleContract.nftId().then(function (resp) {
-        nftId = resp;
-    });
-
-    await saleContract.completed().then(function (resp) {
-        completedBool = resp;
-        completed = resp;
-    });
+    // save the completed bool
+    completedBool = completed;
 
     // get the collection name from moralis (from the collection address and id)
     await Moralis.Web3API.token.getNFTMetadata({chain: CHAIN_ID_STR, address: collectionAddress, token_id: nftId}).then(function (resp) {
@@ -80,7 +66,7 @@ async function getSaleData(contractAddress)
     var nftContract = new ethers.Contract(collectionAddress, ERC721_ABI, SIGNER);
     await nftContract.getApproved(nftId).then(function (address) {
         // if the address is the sale contract, it is approved
-        approved = (contractAddress == address);
+        approved = (CONTRACT == address);
     });
 
     // set the completed information
@@ -117,7 +103,7 @@ async function getSaleData(contractAddress)
         expired: expired,
         sellerAddress: sellerAddress,
         buyerAddress: buyerAddress,
-        tradeAddress: contractAddress,
+        tradeAddress: purchaseHex,
         collectionAddress: collectionAddress,
         nftId: nftId,
         completed: completed,

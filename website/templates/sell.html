@@ -95,7 +95,7 @@
               <div class="col-12">
                 <a class="btn btn-default btn-radius btn-block text-center" id="create-sale" onclick="createSale();">Create Sale</a>
                 <div class="row" id="sale-loading" hidden>
-                  <div class="col-9"><p>Creating contract. Please wait to activate transaction (do not close this popup)</p></div>
+                  <div class="col-9"><p>Creating trade. Please wait to activate transaction (do not close this popup)</p></div>
                   <div class="col-3">
                     <div class="spinner-border text-light"></div>
                   </div>
@@ -142,6 +142,5 @@
 
 {% block scripts %}
     <script src="{{url_for('static', filename='assets/js/modal.js')}}"></script>
-    <script src="{{url_for('static', filename='assets/js/sell/contract.js')}}"></script>
     <script src="{{url_for('static', filename='assets/js/sell/sell.js')}}"></script>
 {% endblock %}

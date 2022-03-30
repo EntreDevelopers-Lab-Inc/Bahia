@@ -51,12 +51,12 @@ async function loadNFTs()
 
 
 // add a sale
-async function addSale(contractAddress, prepend=true)
+async function addSale(purchaseHex, prepend=true)
 {
     // track the button to disable
     var disableBtn = false;
 
-    var data = await getSaleData(contractAddress);
+    var data = await getSaleData(purchaseHex);
 
     // set the approved string
     if (data['completedBool'])
@@ -113,11 +113,8 @@ async function loadSales()
     {
         // get each sale from the contract and add it (must be awaited, as these are sequential)
         await CONTRACT.sales(window.ethereum.selectedAddress, (saleCount - i - 1)).then(async function (txId) {
-            // resp is an integer --> go get the actual address of the transaction
-            await CONTRACT.transactions(txId).then(async function (newContractAddress) {
-                // now, go add the sale
-                await addSale(newContractAddress, prepend=false);
-            });
+            // now, go add the sale
+            await addSale(txId, prepend=false);
         });
     }
 }
@@ -196,44 +193,48 @@ async function createSale()
     }
 
     // remove the button and add a spinning icon
-    $('#create-sale').hide();
-    $('#sale-loading').show();
+    $('#create-sale').attr('hidden', true);
+    $('#sale-loading').attr('hidden', false);
 
     // create a transaction
     var tradeAddress;
 
-    const newTransaction = await CONTRACT.createTransaction(expTime, collectionAddress, nftId, cost, buyerAddress).then(async function (txResp) {
+    const newTransaction = await CONTRACT.createTransaction(expTime, collectionAddress, nftId, cost, buyerAddress).then(async function (resp) {
 
-        // add the sale to the log
         await CONTRACT.saleCount(window.ethereum.selectedAddress).then(async function (length) {
-            await CONTRACT.sales(window.ethereum.selectedAddress, (length - 1)).then(async function (txId) {
-                // resp is an integer --> go get the actual address of the transaction
-                await CONTRACT.transactions(txId).then(async function (address) {
-                    // save the trade address
-                    tradeAddress = address;
+              const addSaleData = await CONTRACT.sales(window.ethereum.selectedAddress, (length - 1)).then(async function (txId) {
+                  // call approve with the contract (directly, as the sale won't load for a while)
+                  var nftContract = new ethers.Contract(collectionAddress, ERC721_ABI, SIGNER);
+                  const contractApproval = nftContract.approve(CONTRACT, nftId);
+                  contractApproval.catch((error) => {
+                    alert(error.message);
+                  });
 
-                    // now, go add the sale
-                    addSale(address);
+                  // close the modal
+                  toggleModal();
 
-                    // call approve with the erc721 contract
-                    await approve(tradeAddress);
+                  // clear the form
+                  $('#sell-form')[0].reset();
 
-                    // close the modal
-                    toggleModal();
+                  // put the button back
+                  $('#create-sale').attr('hidden', false);
+                  $('#sale-loading').attr('hidden', true);
 
-                    // clear the form
-                    $('#sell-form')[0].reset();
-
-                    // put the button back
-                    $('#create-sale').show();
-                    $('#sale-loading').hide();
-                });
-            });
-        });
+                  // resp is an integer --> go add the sale
+                  addSale(txId);
+              });
+          });
     });
 
+    console.log(newTransaction);
+
+    // catch any errors
     newTransaction.catch((error) => {
-        alert(error.message);
+      alert(error.message);
+
+      // put the button back
+      $('#create-sale').attr('hidden', false);
+      $('#sale-loading').attr('hidden', true);
     })
 
     // get the number of transactions
@@ -243,69 +244,68 @@ async function createSale()
 
 
 // function to approve a transaction to occur
-async function approve(contractAddress)
+async function approve(purchaseId)
 {
-    // store the nft id
+    // store the nft id and collection address
     var nftId;
+    var collectionAddress;
+    var purchaseHex;
 
-    // get the purchase contract
-    var saleContract = new ethers.Contract(contractAddress, PURCHASE_CONTRACT_ABI, SIGNER);
-
-    // get the nft id
-    await saleContract.nftId().then(function (id) {
-        nftId = id;
+    // get the purchase info
+    await CONTRACT.transactions(purchaseId).then(function (resp) {
+        purchaseHex = resp[0];
+        nftId = resp[2];
+        collectionAddress = resp[7];
     });
 
     // get the nft manager
-    await saleContract.nftManager().then(function (collectionAddress) {
-       var nftContract = new ethers.Contract(collectionAddress, ERC721_ABI, SIGNER);
-        const contractApproval = nftContract.approve(contractAddress, nftId).then(function (resp) {
-            // change the button from unapproved to approved
-            var approvedBtn = $('a[type="approval-btn"][trade-address="' + contractAddress + '"]');
-            approvedBtn.text('Cancel');
-            approvedBtn.attr('approved', 'true');
-        });
+     var nftContract = new ethers.Contract(collectionAddress, ERC721_ABI, SIGNER);
 
-        contractApproval.catch((error) => {
-            alert(error.message);
-        })
-    });
+      const contractApproval = nftContract.approve(CONTRACT, nftId).then(function (resp) {
+          // change the button from unapproved to approved
+          var approvedBtn = $('a[type="approval-btn"][trade-address="' + purchaseHex + '"]');
+          approvedBtn.text('Cancel');
+          approvedBtn.attr('approved', 'true');
+      });
+
+      contractApproval.catch((error) => {
+          alert(error.message);
+      })
 
 }
 
 
 // fuction to unapprove the contract
-async function unapprove(contractAddress)
+async function unapprove(purchaseId)
 {
     // store the nft id
     var nftId;
-
-    // get the purchase contract
-    var saleContract = new ethers.Contract(contractAddress, PURCHASE_CONTRACT_ABI, SIGNER);
+    var collectionAddress;
+    var purchaseHex;
 
     // get the nft id
-    await saleContract.nftId().then(function (id) {
-        nftId = id;
+    await CONTRACT.transactions(purchaseId).then(function (resp) {
+        purchaseHex = resp[0];
+        nftId = resp[2];
+        collectionAddress = resp[7]
     });
 
     // get the nft manager
-    saleContract.nftManager().then(function (collectionAddress) {
-       var nftContract = new ethers.Contract(collectionAddress, ERC721_ABI, SIGNER);
-        nftContract.approve(NULL_ADDRESS, nftId).then(function (resp) {
-            // change the button from unapproved to approved
-            var approvedBtn = $('a[type="approval-btn"][trade-address="' + contractAddress + '"]');
-            approvedBtn.text('Activate');
-            approvedBtn.attr('approved', 'false');
-        });
-    });
+     var nftContract = new ethers.Contract(collectionAddress, ERC721_ABI, SIGNER);
+      nftContract.approve(NULL_ADDRESS, nftId).then(function (resp) {
+          // change the button from unapproved to approved
+          var approvedBtn = $('a[type="approval-btn"][trade-address="' + contractAddress + '"]');
+          approvedBtn.text('Activate');
+          approvedBtn.attr('approved', 'false');
+      });
 }
 
 
 // function to toggle approval
-function toggleApproval(contractAddress)
+function toggleApproval(purchaseHex)
 {
     // get the approval btn
-    var approvedBtn = $('a[type="approval-btn"][trade-address="' + contractAddress + '"]');
+    var approvedBtn = $('a[type="approval-btn"][trade-address="' + purchaseHex + '"]');
 
     // check the approval status
     var approved = (approvedBtn.attr('approved') == 'true');
@@ -313,12 +313,12 @@ function toggleApproval(contractAddress)
     // if it is approved, unapprove it
     if (approved)
     {
-        unapprove(contractAddress);
+        unapprove(purchaseHex);
     }
     // else, approve it
     else
     {
-        approve(contractAddress);
+        approve(purchaseHex);
     }
 
 }

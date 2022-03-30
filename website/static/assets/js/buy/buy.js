@@ -125,21 +125,13 @@ async function copyAddress()
 async function buyNFT()
 {
     // get the trade address
-    var contractAddress = $('#buy-btn').attr('trade-address');
-
-    // initialize a contract based on that trade address --> buy it for the correct amount of eth
-    var buyContract = new ethers.Contract(contractAddress, PURCHASE_CONTRACT_ABI, SIGNER);
-
-    // buy the nft for the correct cost
-    var cost = ethers.utils.parseEther($('#cost').attr('cost'));
-
-    // buy it with the contract
+    var purchaseHex = $('#buy-btn').attr('trade-address');
 
     // disable the button to make sure the user does not rebuy
     disableBuyBtn();
 
     // run the contract
-    const purchase = buyContract.buy({value: cost, gasLimit: GAS_LIMIT}).then(function () {
+    const purchase = buyContract.buy(purchaseHex, {value: cost, gasLimit: GAS_LIMIT}).then(function () {
         $('#completed').text('[COMPLETED]');
     });
 

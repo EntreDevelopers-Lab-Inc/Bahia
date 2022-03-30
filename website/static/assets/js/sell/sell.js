@@ -376,8 +376,12 @@ function showSellModal()
 
 
 // load document function
-function loadDocument()
+async function loadDocument()
 {
+    // wait until the wallet is connected
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    let currentBlock = await provider.getBlockNumber();
+
     // set the date attribute
     var today = new Date();
     var dd = today.getDate();

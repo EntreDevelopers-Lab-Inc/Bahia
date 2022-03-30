@@ -130,7 +130,7 @@ async function buyNFT()
     disableBuyBtn();
 
     // run the contract
-    const purchase = CONTRACT.buy(purchaseHex, {value: parseInt(cost), gasLimit: GAS_LIMIT}).then(function () {
+    const purchase = CONTRACT.buy(purchaseHex, {value: ethers.utils.parseEther(cost), gasLimit: GAS_LIMIT}).then(function () {
         $('#completed').text('[COMPLETED]');
     });
 

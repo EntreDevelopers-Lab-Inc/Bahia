@@ -1,3 +1,8 @@
+// disable file transfers
+Moralis.Cloud.beforeSaveFile((request) => {
+  throw "Not Allowed";
+});
+
 // load moralis
 Moralis.start({serverUrl: MORALIS_SERVER_URL, appId: MORALIS_APP_ID});
 

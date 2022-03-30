@@ -47,10 +47,6 @@ async function getSaleData(purchaseHex)
     {
         buyerAddress = '(Any)';
     }
-    else
-    {
-        buyerAddress = resp;
-    }
 
     // save the completed bool
     completedBool = completed;

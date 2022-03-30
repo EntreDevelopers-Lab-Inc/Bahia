@@ -76,7 +76,7 @@ contract BahiaNFTPurchase2 is
     */
     modifier onlyBuyer(uint256 transactionId)
     {
-        if ((tx.origin != transactions[transactionId].buyerAddress) && (transactions[transactionId].buyerAddress != address(0))) revert NotBuyer();
+        if ((msg.sender != transactions[transactionId].buyerAddress) && (transactions[transactionId].buyerAddress != address(0))) revert NotBuyer();
         _;
     }
 
@@ -86,7 +86,7 @@ contract BahiaNFTPurchase2 is
     */
     modifier onlySeller(uint256 transactionId)
     {
-        if (tx.origin != transactions[transactionId].sellerAddress) revert NotSeller();
+        if (msg.sender != transactions[transactionId].sellerAddress) revert NotSeller();
         _;
     }
 
@@ -125,6 +125,11 @@ contract BahiaNFTPurchase2 is
             sales[buyerAddress].push(transactions.length);
         }
 
+        // check if the creator is the rightful owner
+        IERC721 nftManager = IERC721(collectionAddress);
+        if (nftManager.ownerOf(nftId) != msg.sender) revert NotOwner();
+
+        // make a new transaction
         Transaction memory newTransaction = Transaction({
             purchaseId: transactions.length,
             expirationTime: expirationTime,
@@ -133,7 +138,7 @@ contract BahiaNFTPurchase2 is
             buyerAddress: buyerAddress,
             sellerAddress: msg.sender,  // use the message sender as the seller
             completed: false,
-            nftManager: IERC721(collectionAddress)
+            nftManager: nftManager
             });
 
         // create a new nft purchase
@@ -203,11 +208,11 @@ contract BahiaNFTPurchase2 is
         // now that the nft is transferrable, transfer it out of this wallet (will check other require statements)
         transactions[transactionId].nftManager.safeTransferFrom(transactions[transactionId].sellerAddress, msg.sender, transactions[transactionId].nftId);
 
+        // pay the seller
+        _paySeller(transactionId);
+
         // make sure that the message value exceeds the cost
         _refundExcess(transactionId);
-
-        // pay the seller the remainder
-        _paySeller(transactionId);
 
         // log the sender as the buyer address
         transactions[transactionId].buyerAddress = msg.sender;
@@ -268,7 +273,7 @@ contract BahiaNFTPurchase2 is
         (bool sent, ) = devAddress.call{value: devPayment}("");
         if (!sent) revert InsufficientFunds();
 
-        (bool sent2, ) = transactions[transactionId].sellerAddress.call{value: msg.value - devPayment}("");
+        (bool sent2, ) = transactions[transactionId].sellerAddress.call{value: transactions[transactionId].cost - devPayment}("");
         if (!sent2) revert InsufficientFunds();
     }
 

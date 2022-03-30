@@ -1,5 +1,5 @@
 import brownie
-from brownie import BahiaNFTPurchase2, Fish, accounts, Wei
+from brownie import BahiaNFTPurchase, Fish, NFTPurchase, accounts, Wei
 from scripts.NFT.Purchase.helpful_scripts import deploy
 from scripts.accounts import get_admin_account
 from scripts.constants import DEV_ROYALTY
@@ -13,7 +13,7 @@ def test_create_transaction():
     deploy()
 
     # get the nft purchase contract
-    bahia_contract = BahiaNFTPurchase2[-1]
+    bahia_contract = BahiaNFTPurchase[-1]
     fish_contract = Fish[-1]
 
     # get the buyer and seller
@@ -45,16 +45,16 @@ def test_create_transaction():
     assert bahia_contract.purchaseCount(seller) == 0
 
     # get an nft purchase
-    purchase = bahia_contract.transactions(0)
+    purchase_contract = NFTPurchase.at(
+        purchase_contract_address)
 
     # check that there actually exists some new nft purchase with the address specified, and it has all of the correct data assigned to it
-    assert purchase[0] == purchase_id
-    assert purchase[1] == exp_time
-    assert purchase[2] == nft_id
-    assert purchase[3] == cost
-    assert purchase[4] == buyer
-    assert purchase[5] == seller
-    assert purchase[6] is False
+    assert purchase_contract.purchaseId() == purchase_id
+    assert purchase_contract.expirationTime() == exp_time
+    assert purchase_contract.nftId() == nft_id
+    assert purchase_contract.cost() == cost
+    assert purchase_contract.buyerAddress() == buyer
+    assert purchase_contract.sellerAddress() == seller
 
 
 # test deploying the contract with no buyer
@@ -63,7 +63,7 @@ def test_create_transaction_with_blank_buyer():
     deploy()
 
     # get the nft purchase contract
-    bahia_contract = BahiaNFTPurchase2[-1]
+    bahia_contract = BahiaNFTPurchase[-1]
     fish_contract = Fish[-1]
 
     # get the buyer and seller
@@ -95,16 +95,16 @@ def test_create_transaction_with_blank_buyer():
     assert bahia_contract.purchaseCount(seller) == 0
 
     # get an nft purchase
-    purchase = bahia_contract.transactions(0)
+    purchase_contract = NFTPurchase.at(
+        purchase_contract_address)
 
     # check that there actually exists some new nft purchase with the address specified, and it has all of the correct data assigned to it
-    assert purchase[0] == purchase_id
-    assert purchase[1] == exp_time
-    assert purchase[2] == nft_id
-    assert purchase[3] == cost
-    assert purchase[4] == blank_buyer_addr
-    assert purchase[5] == seller
-    assert purchase[6] is False
+    assert purchase_contract.purchaseId() == purchase_id
+    assert purchase_contract.expirationTime() == exp_time
+    assert purchase_contract.nftId() == nft_id
+    assert purchase_contract.cost() == cost
+    assert purchase_contract.buyerAddress() == blank_buyer_addr
+    assert purchase_contract.sellerAddress() == seller
 
 
 # test creating a transaction with a non-owner
@@ -113,7 +113,7 @@ def test_create_false_transaction():
     deploy()
 
     # get the nft purchase contract
-    bahia_contract = BahiaNFTPurchase2[-1]
+    bahia_contract = BahiaNFTPurchase[-1]
     fish_contract = Fish[-1]
 
     # get the buyer and seller

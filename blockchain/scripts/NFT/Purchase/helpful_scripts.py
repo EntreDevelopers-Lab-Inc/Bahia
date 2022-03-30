@@ -1,4 +1,4 @@
-from brownie import BahiaNFTPurchase, Fish, NFTPurchase, accounts, Wei, chain
+from brownie import BahiaNFTPurchase2, Fish, NFTPurchase, accounts, Wei, chain
 from brownie import interface
 from scripts.accounts import get_admin_account
 from scripts.constants import DEV_ROYALTY
@@ -9,7 +9,7 @@ def deploy():
 
     # deploy the bahia nft purchase and fish contracts
     Fish.deploy({'from': admin})
-    BahiaNFTPurchase.deploy(DEV_ROYALTY, {'from': admin})
+    BahiaNFTPurchase2.deploy(DEV_ROYALTY, {'from': admin})
 
 
 # a function for creating a purchase
@@ -18,7 +18,7 @@ def deploy_and_create(added_exp_time=100):
     deploy()
 
     # get the nft purchase contract
-    bahia_contract = BahiaNFTPurchase[-1]
+    bahia_contract = BahiaNFTPurchase2[-1]
     fish_contract = Fish[-1]
 
     # get the buyer and seller
@@ -40,30 +40,27 @@ def deploy_and_create(added_exp_time=100):
 
     # get the purchase contract
     purchase_id = 0
-    purchase_contract_address = bahia_contract.transactions(purchase_id)
+    purchase = bahia_contract.transactions(purchase_id)
 
-    # get an nft purchase
-    purchase_contract = NFTPurchase.at(
-        purchase_contract_address)
-
-    return purchase_contract, buyer, seller
+    return purchase, buyer, seller
 
 
 # function for approving an address to move stuff
 def deploy_create_approve(added_exp_time=100):
-    purchase_contract, buyer, seller = deploy_and_create(
+    purchase, buyer, seller = deploy_and_create(
         added_exp_time=added_exp_time)
 
     # approve the contract to deposit nfts
-    nft_contract = interface.IERC721(purchase_contract.nftManager())
+    nft_contract = interface.IERC721(purchase[7])
     nft_contract.approve(
-        purchase_contract.address, purchase_contract.nftId(), {'from': seller})
+        BahiaNFTPurchase2[-1].address, purchase[2], {'from': seller})
 
-    print(nft_contract.getApproved(purchase_contract.nftId()))
+    print(nft_contract.getApproved(purchase[2]))
 
-    return purchase_contract, buyer, seller
+    return purchase, buyer, seller
 
 
+# not used for anything useful
 def deploy_purchase_deposit_assets(added_exp_time=100):
     purchase_contract, buyer, seller = deploy_and_create(
         added_exp_time=added_exp_time)

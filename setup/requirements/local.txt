@@ -1,8 +1,6 @@
 ipfshttpclient
 flask
 flask-cors
-flask-bcrypt
 phonenumbers
 flask-jwt-extended
-web3
 bs4

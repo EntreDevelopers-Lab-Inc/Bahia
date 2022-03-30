@@ -1,5 +1,5 @@
 let CURRENT_ACCOUNT = null;
-let DAPP_LINK_IDS = ['#navSell'];
+let DAPP_LINK_IDS = ['#navSell', '#navBuy'];
 
 // set the chain
 async function setChain() {
@@ -98,25 +98,25 @@ function connect() {
     });
 
     setChain();
-
-    // launch the dapp
-    launchDapp();
 }
 
 
 // For now, 'eth_accounts' will continue to always return an array
 async function handleAccountsChanged(accounts) {
-  if (accounts.length === 0) {
+  if (accounts.length == 0) {
     // MetaMask is locked or the user has not connected any accounts
 
     // show the connect button
     $('#connect-btn').show();
 
-  } else if (accounts[0] !== CURRENT_ACCOUNT) {
+  } else if (accounts[0] != CURRENT_ACCOUNT) {
     CURRENT_ACCOUNT = accounts[0];
 
-    setButtonName()
+    setButtonName();
   }
+
+  // launch the dapp
+  launchDapp();
 }
 
 async function handleChainChanged(_chainId) {

@@ -1182,6 +1182,9 @@ p,
     margin: 15px auto 0;
     display: table;
 }
+.social_icon {
+	margin-left:  40%;
+}
 }
 /* -------------------------------------------------
   max-width: 480px

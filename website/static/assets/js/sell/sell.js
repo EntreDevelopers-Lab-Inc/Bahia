@@ -193,19 +193,19 @@ async function createSale()
     }
 
     // remove the button and add a spinning icon
-    $('#create-sale').attr('hidden', true);
-    $('#sale-loading').attr('hidden', false);
+    $('#create-sale').setAttribute('type', 'hidden');
+    $('#sale-loading').setAttribute('hidden', false);
 
     // create a transaction
     var tradeAddress;
 
-    const newTransaction = await CONTRACT.createTransaction(expTime, collectionAddress, nftId, cost, buyerAddress).then(async function (resp) {
+    await CONTRACT.createTransaction(expTime, collectionAddress, nftId, cost, buyerAddress).then(async function (resp) {
 
         await CONTRACT.saleCount(window.ethereum.selectedAddress).then(async function (length) {
               const addSaleData = await CONTRACT.sales(window.ethereum.selectedAddress, (length - 1)).then(async function (txId) {
                   // call approve with the contract (directly, as the sale won't load for a while)
                   var nftContract = new ethers.Contract(collectionAddress, ERC721_ABI, SIGNER);
-                  const contractApproval = nftContract.approve(CONTRACT, nftId);
+                  const contractApproval = nftContract.approve(CONTRACT_ADDRESS, nftId);
                   contractApproval.catch((error) => {
                     alert(error.message);
                   });
@@ -226,19 +226,14 @@ async function createSale()
                   $('#sale-objects')[0].scrollIntoView();
               });
           });
-    });
-
-    // catch any errors
-    newTransaction.catch((error) => {
+    }).catch((error) => {
       alert(error.message);
 
       // put the button back
       $('#create-sale').attr('hidden', false);
       $('#sale-loading').attr('hidden', true);
-    })
+    });
 
-    // get the number of transactions
-    // add the new sale the transaction log --> use prepend
     return false;
 }
 

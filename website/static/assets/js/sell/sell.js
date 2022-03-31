@@ -193,45 +193,47 @@ async function createSale()
     }
 
     // remove the button and add a spinning icon
-    $('#create-sale').setAttribute('type', 'hidden');
-    $('#sale-loading').setAttribute('hidden', false);
+    $('#create-sale').hide();
+    $('#sale-loading').show();
 
     // create a transaction
     var tradeAddress;
 
     await CONTRACT.createTransaction(expTime, collectionAddress, nftId, cost, buyerAddress).then(async function (resp) {
 
+        // call approve with the contract (directly, as the sale won't load for a while)
+        var nftContract = new ethers.Contract(collectionAddress, ERC721_ABI, SIGNER);
+        await nftContract.approve(CONTRACT_ADDRESS, nftId).then(function () {
+          // get the row with the correct transaction address --> set the activate button to Cancel
+        }).catch((error) => {
+          alert('Contract approval encountered an error. Please reload the page and try again (see sales section at bottom).' + error.message);
+        });
+
+        // add the sale data
         await CONTRACT.saleCount(window.ethereum.selectedAddress).then(async function (length) {
               const addSaleData = await CONTRACT.sales(window.ethereum.selectedAddress, (length - 1)).then(async function (txId) {
-                  // call approve with the contract (directly, as the sale won't load for a while)
-                  var nftContract = new ethers.Contract(collectionAddress, ERC721_ABI, SIGNER);
-                  const contractApproval = nftContract.approve(CONTRACT_ADDRESS, nftId);
-                  contractApproval.catch((error) => {
-                    alert(error.message);
-                  });
-
-                  // close the modal
-                  toggleModal();
-
-                  // clear the form
-                  $('#sell-form')[0].reset();
-
-                  // put the button back
-                  $('#create-sale').attr('hidden', false);
-                  $('#sale-loading').attr('hidden', true);
-
                   // resp is an integer --> go add the sale
                   addSale(txId);
 
                   $('#sale-objects')[0].scrollIntoView();
               });
           });
+
+        // close the modal
+        toggleModal();
+
+        // clear the form
+        $('#sell-form')[0].reset();
+
+        // put the button back
+        $('#create-sale').show();
+        $('#sale-loading').hide();
     }).catch((error) => {
       alert(error.message);
 
       // put the button back
-      $('#create-sale').attr('hidden', false);
-      $('#sale-loading').attr('hidden', true);
+      $('#create-sale').show();
+      $('#sale-loading').hide();
     });
 
     return false;

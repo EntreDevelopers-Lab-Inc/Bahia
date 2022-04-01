@@ -30,6 +30,8 @@ async function getSaleData(purchaseHex)
         sellerAddress = transaction[5];
         completed = transaction[6];
         collectionAddress = transaction[7];
+    }).catch((error) => {
+        throw error;
     });
 
 

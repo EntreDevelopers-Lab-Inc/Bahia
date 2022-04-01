@@ -26,12 +26,19 @@ async function viewTrade()
     var tradeAddress = $('#trade-address').val();
 
     // load up the trade contract data
-    var data = await getSaleData(tradeAddress);
+    var data;
+    await getSaleData(tradeAddress).then(function (resp) {
+        data = resp;
+    }).catch((error) => {
+        // alert that the trade could not be found
+        alert('Could not find trade associated with ' + tradeAddress);
 
+        $('#nft-loading').attr('hidden', true);
+    });
+
+    // return if data is undefined
     if (data == undefined)
     {
-        alert('Could not find trade associated with ' + tradeAddress);
-        $('#nft-loading').attr('hidden', true);
         return;
     }
 

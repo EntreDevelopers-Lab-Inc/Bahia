@@ -20,7 +20,7 @@ function addNFT(data)
     // add the link
     var metadata = JSON.parse(data.metadata);
 
-    data['link'] = metadata.image;
+    data['link'] = getIPFSLink(metadata.image);
 
     // render the template
     var newNft = Mustache.render(NFT_TEMPLATE, data);

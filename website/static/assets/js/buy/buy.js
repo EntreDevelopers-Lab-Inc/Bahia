@@ -52,7 +52,7 @@ async function viewTrade()
         var metadata = JSON.parse(resp.metadata);
 
         // set the image
-        $('#image').attr('src', metadata['image']);
+        $('#image').attr('src', getIPFSLink(metadata.image));
     });
 
     // set the collection address

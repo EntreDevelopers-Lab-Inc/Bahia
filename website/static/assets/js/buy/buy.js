@@ -42,7 +42,7 @@ async function viewTrade()
         return;
     }
 
-    // start by adding th picture (takes the longest)
+    // start by adding the picture (takes the longest)
 
     // need to remove old picture to maintain integrity
     $('#image').attr('src', '');
@@ -104,7 +104,6 @@ async function viewTrade()
     // show the nft-data
     $('#nft-data').attr('hidden', false);
     $('#nft-loading').attr('hidden', true);
-
 }
 
 
@@ -130,20 +129,40 @@ async function copyAddress()
 // create a function that buys the nft
 async function buyNFT()
 {
+    var buyBtn = $('#buy-btn');
+    var waitMessage = $('#wait-message');
+
     // get the trade address
     var purchaseHex = $('#buy-btn').attr('trade-address');
 
     // disable the button to make sure the user does not rebuy
     disableBuyBtn();
 
+    // hide the buy button, show the wait message
+    buyBtn.hide();
+    waitMessage.show();
+
     // run the contract
     const purchase = CONTRACT.buy(purchaseHex, {value: ethers.utils.parseEther($('#cost').attr('cost')), gasLimit: GAS_LIMIT}).then(function () {
+        // show the buy button, hide the wait message
+        buyBtn.show();
+        waitMessage.hide();
+
+        // alert the user that the purchase went through
+        alert('Successfully purchased ' + $('#name').text());
+
+        // mark as completed
         $('#completed').text('[COMPLETED]');
+
     });
 
     purchase.catch((error) => {
         alert(error.message);
         enableBuyBtn();
+
+        // show the buy button, hide the wait message
+        buyBtn.show();
+        waitMessage.hide();
 
     })
 }

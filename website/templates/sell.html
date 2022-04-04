@@ -22,7 +22,15 @@
             <button class="btn btn-default btn-radius btn-block trigger" id="sell-nft-btn" onclick="showSellModal();">Sell NFT</button>
           </div>
         </div>
-        <div class="row small_space" id="nft-objects">
+        <div class="row small_space">
+          <div class="col-2">
+            <a class="pagination-btn btn-default" id="previous-btn" onclick="previousNFTs();" style="display: none;"><i class="pagination-icon ion-ios-arrow-left"></i></a>
+          </div>
+          <div class="col-8"></div>
+          <div class="col-2">
+            <a class="pagination-btn btn-default" style="float: right;" onclick="nextNFTs();"><i class="pagination-icon ion-ios-arrow-right"></i></a>
+          </div>
+        </div>        <div class="row small_space" id="nft-objects">
         </div>
         <div class="row small_space">
           <div class="col-lg-12 col-md-12 col-sm-12">

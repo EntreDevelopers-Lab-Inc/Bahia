@@ -11,7 +11,7 @@ var saleData = {};
 
 // keep track of the offset
 var NFT_OFFSET = 0;
-var NFT_LIMIT = 100;
+var NFT_LIMIT = 20;
 
 
 // synchronous function for adding an nft (will want to do this sequentially to maintain structure for the user)
@@ -33,6 +33,9 @@ function addNFT(data)
 // load the nfts
 async function loadNFTs()
 {
+    // clear all nfts
+    $('#nft-objects').empty();
+
     // get all the nfts from the moralis api
     Moralis.Web3API.account.getNFTs({address: window.ethereum.selectedAddress, chain: CHAIN_ID_STR, limit: NFT_LIMIT, offset: NFT_OFFSET}).then(function(resp) {
         // add each nft from the result
@@ -43,10 +46,54 @@ async function loadNFTs()
         {
             addNFT(nfts[i]);
         }
-
-        // increment the offset
-        NFT_OFFSET += 1;
+    }).catch((error) => {
+        alert('You have requested too much data. Please wait and try again later.');
+        console.log(error);
     });
+}
+
+
+// get the next nfts
+async function nextNFTs()
+{
+     // increment the offset
+    NFT_OFFSET += NFT_LIMIT;
+
+    // call the load nfts function
+    loadNFTs();
+
+    // if the nft offset is now only 1 unit, show the previous button
+    if (NFT_OFFSET == NFT_LIMIT)
+    {
+        $('#previous-btn').show();
+    }
+}
+
+
+// get the previous nfts
+async function previousNFTs()
+{
+    if (NFT_OFFSET > 0)
+    {
+        // decrement the nft offset
+        NFT_OFFSET -= NFT_LIMIT;
+    }
+    else
+    {
+        // just set the nft offset to 0 and remove the button
+        NFT_OFFSET -= NFT_LIMIT;
+        $('#previous-btn').hide();
+    }
+
+    // if the nft offset is now 0, hide the previous button
+    if (NFT_OFFSET <= 0)
+    {
+        $('#previous-btn').hide();
+    }
+
+    // load the nfts
+    loadNFTs();
+
 }
 
 
@@ -56,7 +103,10 @@ async function addSale(purchaseHex, prepend=true)
     // track the button to disable
     var disableBtn = false;
 
-    var data = await getSaleData(purchaseHex);
+    var data = await getSaleData(purchaseHex).catch((error) => {
+        // just return it and skip the sale
+        return;
+    });
 
     // set the approved string
     if (data['completedBool'])

@@ -109,7 +109,7 @@ contract BahiaNFTPurchase2 is
 
     /**
      * @notice a function to create a new transaction
-     * @param expirationTime to set when the contract expires
+     * @param expirationTime to set when the transaction expires
      * @param collectionAddress to determine the nft collection
      * @param nftId to determine which nft is going to be traded
      * @param cost to determine how much to pay for the nft
@@ -122,7 +122,7 @@ contract BahiaNFTPurchase2 is
 
         if ((buyerAddress) != address(0))
         {
-            sales[buyerAddress].push(transactions.length);
+            purchases[buyerAddress].push(transactions.length);
         }
 
         // check if the creator is the rightful owner
@@ -144,7 +144,7 @@ contract BahiaNFTPurchase2 is
         // create a new nft purchase
         transactions.push(newTransaction);
 
-        // emit that a contract was created
+        // emit that a transaction was created
         emit NFTPurchaseCreated(expirationTime, collectionAddress, nftId, cost, buyerAddress, transactions.length - 1);
 
     }
@@ -187,7 +187,7 @@ contract BahiaNFTPurchase2 is
     }
 
     /**
-     * @notice a function to see if the contract is expired
+     * @notice a function to see if the transaction is expired
     */
     function isExpired(uint256 transactionId) public view returns (bool)
     {
@@ -217,7 +217,7 @@ contract BahiaNFTPurchase2 is
         // log the sender as the buyer address
         transactions[transactionId].buyerAddress = msg.sender;
 
-        // add the purchase to the parent contract
+        // add the purchase to the parent transaction
         addPurchase(transactions[transactionId].buyerAddress, transactionId);
 
         // set completed to true

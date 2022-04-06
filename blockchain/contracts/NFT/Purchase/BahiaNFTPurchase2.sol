@@ -122,7 +122,8 @@ contract BahiaNFTPurchase2 is
 
         if ((buyerAddress) != address(0))
         {
-            purchases[buyerAddress].push(transactions.length);
+            // shortcut for dividing sales and confirmed purchases
+            sales[buyerAddress].push(transactions.length);
         }
 
         // check if the creator is the rightful owner

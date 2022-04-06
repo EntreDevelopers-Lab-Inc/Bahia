@@ -38,6 +38,7 @@ async function loadNFTs()
 
     // get all the nfts from the moralis api
     Moralis.Web3API.account.getNFTs({address: window.ethereum.selectedAddress, chain: CHAIN_ID_STR, limit: NFT_LIMIT, offset: NFT_OFFSET}).then(function(resp) {
+
         // add each nft from the result
         var nfts = resp.result;
 
@@ -46,6 +47,18 @@ async function loadNFTs()
         {
             addNFT(nfts[i]);
         }
+
+        // if the number of children less than the limit, there not another page, so hide the next button
+        if ($('#nft-objects').children().length < NFT_LIMIT)
+        {
+            $('#next-btn').hide();
+        }
+        // else, show the button
+        else
+        {
+            $('#next-btn').show();
+        }
+
     }).catch((error) => {
         alert('You have requested too much data. Please wait and try again later.');
         console.log(error);
@@ -103,10 +116,20 @@ async function addSale(purchaseHex, prepend=true)
     // track the button to disable
     var disableBtn = false;
 
-    var data = await getSaleData(purchaseHex).catch((error) => {
-        // just return it and skip the sale
+    var data = await getSaleData(purchaseHex);
+
+    // if there is no data, some issue existed in the getter, so just skip it
+    if (data == undefined)
+    {
         return;
-    });
+    }
+
+    // if the seller address is not the selected address, return
+    if (data['sellerAddress'].toLowerCase() != window.ethereum.selectedAddress.toLowerCase())
+    {
+        // skip the sale
+        return;
+    }
 
     // set the approved string
     if (data['completedBool'])

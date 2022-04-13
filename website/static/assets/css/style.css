@@ -181,12 +181,19 @@ button:focus {
 .overflow_hide {
 	overflow: hidden;
 }
+
+.title_default_light h1, h2, h3, h4, h5, h6 {
+	font-weight: bold;
+}
+
+.title_default_light h1, h4 {
+	text-transform: capitalize;
+	margin-bottom: 30px;
+}
+
 .title_default_light h4, 
 .title_default_dark h4{
 	font-size: 26px;
-	font-weight: bold;
-	margin-bottom: 30px;
-	text-transform: capitalize;
 }
 .title_default_light h4,
 .title_default_light p {

@@ -1,0 +1,138 @@
+{% extends "layout.html" %}
+
+{% block content %}
+    <link href="{{url_for('static', filename='assets/css/whitepaper.css')}}" rel="stylesheet"/>
+    <section>
+    <canvas class="transparent_effect fixed" id="banner_canvas">
+    </canvas>
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <div class="title_default_light">
+                        <h1 class="text-center">Bahia: P2P NFT Trading</h1>
+                    </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-3 col-12">
+                    <!--Table of contents-->
+                    <ol type="I">
+                        <li><a href="#abstract">Abstract</a></li>
+                        <li>
+                            <a href="#why-bahia">Why Bahia</a>
+                            <ol type="a">
+                                <li>
+                                    <a href="#why-bahia-a">
+                                        Peer-to-Exchange Fee Delegation
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#why-bahia-b">
+                                        NFT Owner Lifecycle
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#why-bahia-c">
+                                        Peer-to-Peer Fee Delegation
+                                    </a>
+                                </li>
+                            </ol>
+                        </li>
+                        <li>
+                            <a href="#buy-sell-workflow">
+                                Buy-Sell Workflow
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#sell-protocol">
+                                Sell Protocol
+                            </a>
+                            <ol>
+                                <li>
+                                    <a href="#sell-protocol-a">
+                                        Trade Details
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#sell-protocol-b">
+                                        Selling
+                                    </a>
+                                </li>
+                            </ol>
+                        </li>
+                        <li>
+                            <a href="#buy-protocol">
+                                Buy Protocol
+                            </a>
+                            <ol>
+                                <li>
+                                    <a href="#buy-protocol-a">
+                                        Purchase Requirements
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#buy-protocol-b">
+                                        Buying
+                                    </a>
+                                </li>
+                            </ol>
+                        </li>
+                        <li>
+                            <a href="#security">
+                                Security
+                            </a>
+                            <ol>
+                                <li>
+                                    <a href="#security-a">
+                                        Wallet Connection
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#security-b">
+                                        Trustless Execution
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#security-c">
+                                        ETH vs. ERC20
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#security-d">
+                                        Escrow vs. NFT Direct Transfer
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#security-e">
+                                        Activating the Trade
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#security-f">
+                                        Expiration
+                                    </a>
+                                </li>
+                            </ol>
+                        </li>
+                        <li>
+                            <a href="#conclusion">
+                                Conclusion
+                            </a>
+                        </li>
+                    </ol>
+                </div>
+                <div class="col-lg-9 col-12">
+                    <h2 id="abstract">
+                        Abstract
+                    </h2>
+                    <p>
+                        The NFT marketplace presents two trading options: peer-to-exchange and peer-to-peer. The market for the first trading option has been dominated by large exchanges where individuals can find an extensive assortment of items. Here, users have the freedom to peruse and shop as they have centralized access to information. On the other hand, peer-to-peer platforms give users access to greatly reduced fees, reducing trading friction. However, this option remains a nascent concept riddled with FUD, requiring users to be unnecessarily technically savvy to avoid scams. To address this shortcoming, Bahia was born: a new platform built to ensure the safety of peer-to-peer transactions while maintaining low fees.
+                    </p>
+                    <p>
+                        The team had a single goal: make peer-to-peer trading simple and easy for users to understand. Bahia intentionally does not include specific features that have subjected non-technical users to scams. Meanwhile, the platform implements a strict security protocol to create a transparent environment in which peers can buy and sell NFTs.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+{% endblock%}

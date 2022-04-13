@@ -9,6 +9,11 @@ def home():
     return render_template('home.html')
 
 
+@app.route('/whitepaper')
+def whitepaper():
+    return render_template('whitepaper.html', title='Whitepaper')
+
+
 @app.route('/buy')
 def buy():
     return render_template('buy.html', title='Buy', mustache=True, dapp=True)

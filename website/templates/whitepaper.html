@@ -1,5 +1,9 @@
 {% extends "layout.html" %}
 
+{% block meta %}
+  <meta content="Bahia: a new platform built to ensure the safety of peer-to-peer transactions while maintaining low fees." name="description"/>
+{% endblock %}
+
 {% block content %}
     <link href="{{url_for('static', filename='assets/css/whitepaper.css')}}" rel="stylesheet"/>
     <section>

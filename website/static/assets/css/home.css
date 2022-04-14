@@ -1,0 +1,13 @@
+.whitepaper-btn
+{
+    float: right;
+    margin-bottom: 2rem;
+    margin-right: 2rem;
+}
+
+@media only screen and (max-width: 991px) {
+    .whitepaper-btn
+    {
+        margin-right: 0rem;
+    }
+}

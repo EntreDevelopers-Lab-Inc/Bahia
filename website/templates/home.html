@@ -1,5 +1,6 @@
 {% extends "layout.html" %}
 {% block content %}
+  <link href="{{url_for('static', filename='assets/css/home.css')}}" rel="stylesheet"/>
   <!-- START SECTION BANNER -->
   <section class="section_banner pb-0" data-image-src="assets/images/banner_bg3.png" data-parallax="scroll" data-z-index="1" id="home_section">
    <canvas class="transparent_effect fixed" id="banner_canvas">
@@ -8,23 +9,28 @@
     <div class="row align-items-center">
      <div class="col-lg-6 col-md-12 col-sm-12 order-lg-first">
       <div class="banner_text text_md_center">
-       <h1 class="animation" data-animation="fadeInUp">
+       <h1 class="animation" data-animation="fadeInUp" data-animation-delay="0.2s">
         Bahia - The Safest, Simplest P2P NFT Trading Platform Ever.
        </h1>
        </div>
       </div>
       <div class="col-lg-6 col-md-12 col-sm-12 order-lg-first">
-      <div class="row banner_text" data-animation="fadeInUp">
-       <h5>For Traders, By Traders</h5>
-       <p class="animation" data-animation="fadeInUp" data-animation-delay="0.4s">
+      <div class="row banner_text" data-animation="fadeInUp" data-animation-delay="0.4s">
+       <h5 class="animation" data-animation="fadeInUp" data-animation-delay="0.6s">For Traders, By Traders</h5>
+       <p class="animation" data-animation="fadeInUp" data-animation-delay="0.6s">
         We set out to create the most straight-forward method of buying and selling NFTs between peers. Our goal was and continues to be making the NFT trade as simple, secure, and efficient as possible.
        </p>
-       <h5>Don't Pay for Market Makers</h5>
+       <h5 class="animation" data-animation="fadeInUp" data-animation-delay="0.6s">Don't Pay for Market Makers</h5>
        <p class="animation" data-animation="fadeInUp" data-animation-delay="0.6s">
         Exchanges charge 2.5% for creating a market for you, and collections charge an additional 5+% on platforms like OpenSea and LooksRare. Bahia is for sellers that can find their own buyers, charging only 1% to keep improving our platform for you.
        </p>
-
      </div>
+    </div>
+    </div>
+    <div class="row">
+      <div class="col-lg-9 col-md-6 col-sm-0"></div>
+      <div class="col-lg-3 col-md-6 col-sm-12">
+        <a href="{{ url_for('whitepaper') }}" class="btn btn-border-white btn-radius whitepaper-btn" style="">Whitepaper <i class="ion-ios-arrow-thin-right"></i></a>
     </div>
     <div class="row">
      <div class="col-12">

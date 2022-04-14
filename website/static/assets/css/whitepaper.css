@@ -1,3 +1,8 @@
+html
+{
+    scroll-behavior: smooth;
+}
+
 ol, ul
 {
     color: #fff;
@@ -24,6 +29,7 @@ h4
     font-size: 20px;
     font-weight: normal;
     margin-bottom: 0.25rem;
+    text-transform: none;
 }
 
 .table-of-contents

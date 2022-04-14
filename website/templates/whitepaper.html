@@ -13,11 +13,11 @@
                     </div>
             </div>
             <div class="row">
-                <div class="col-lg-3 col-12">
+                <div class="col-lg-3 col-12 table-of-contents">
                     <!--Table of contents-->
-                    <ol type="I">
+                    <ol class="two-columns" type="I">
                         <li><a href="#abstract">Abstract</a></li>
-                        <li>
+                        <li class="toc-header">
                             <a href="#why-bahia">Why Bahia</a>
                             <ol type="a">
                                 <li>
@@ -37,16 +37,16 @@
                                 </li>
                             </ol>
                         </li>
-                        <li>
+                        <li class="toc-header">
                             <a href="#buy-sell-workflow">
                                 Buy-Sell Workflow
                             </a>
                         </li>
-                        <li>
+                        <li class="toc-header">
                             <a href="#sell-protocol">
                                 Sell Protocol
                             </a>
-                            <ol>
+                            <ol type="a">
                                 <li>
                                     <a href="#sell-protocol-a">
                                         Trade Details
@@ -59,11 +59,11 @@
                                 </li>
                             </ol>
                         </li>
-                        <li>
+                        <li class="toc-header">
                             <a href="#buy-protocol">
                                 Buy Protocol
                             </a>
-                            <ol>
+                            <ol type="a">
                                 <li>
                                     <a href="#buy-protocol-a">
                                         Purchase Requirements
@@ -76,11 +76,11 @@
                                 </li>
                             </ol>
                         </li>
-                        <li>
+                        <li class="toc-header">
                             <a href="#security">
                                 Security
                             </a>
-                            <ol>
+                            <ol type="a">
                                 <li>
                                     <a href="#security-a">
                                         Wallet Connection
@@ -113,7 +113,7 @@
                                 </li>
                             </ol>
                         </li>
-                        <li>
+                        <li class="toc-header">
                             <a href="#conclusion">
                                 Conclusion
                             </a>
@@ -129,6 +129,214 @@
                     </p>
                     <p>
                         The team had a single goal: make peer-to-peer trading simple and easy for users to understand. Bahia intentionally does not include specific features that have subjected non-technical users to scams. Meanwhile, the platform implements a strict security protocol to create a transparent environment in which peers can buy and sell NFTs.
+                    </p>
+                    <h2 id="why-bahia">
+                        Why Bahia: Peer-to-Exchange vs. Peer-to-Peer
+                    </h2>
+                    <h4>
+                        Peer-to-Exchange Fee Delegation
+                    </h4>
+                    <p>
+                        Fees should be broken down into two parts: market-making and security. On exchanges like OpenSea, these fees get split between the collection creator (who can set any royalty on the transactions associated with their NFTs) and the exchange. These fees can reach up to 7.5+% – a considerable amount.  However, these exchanges do provide a service: they centralize data about numerous NFT collections as well as direct users to their desired purchases.
+                    </p>
+                    <h4>
+                        NFT Owner Lifecycle
+                    </h4>
+                    <p>
+                        For a novice buyer unsure of which NFT to purchase, the centralization of NFT collections is imperative, justifying the aforementioned high fees . After all, how else will Web 2.0 natives safely enter the NFT space? At an early point, users have limited social circles within NFT communities and need these exchanges to gain a perspective on the overall market.
+                    </p>
+                    <p>
+                        Once individuals have purchased and sold a few NFTs, they often become members of multiple communities. Moreover, nearly each of these communities has a Discord marketplace, in which transactions are done peer to peer. Similarly, these individuals have social media followings, which contain hundreds of potential buyers. At this point, the buyers/sellers have been active within the NFT space for long enough to create their own markets rather than needing to use an exchange to execute a transaction. Often within minutes, sellers receive offers from buyers following up on a Twitter or Discord post. Evidently, the seller does not need an exchange to make a market. By transacting via an exchange anyway, these sellers still pay the redundant market making fees charged by collections (e.g. BAYC) and exchanges (e.g. OpenSea). Simply put, sellers frequently pay unnecessary fees by selling on an exchange AFTER soliciting buyers.
+                    </p>
+                    <h4>
+                        Peer-to-Peer Fee Delegation
+                    </h4>
+                    <p>
+                        If the seller uses a peer-to-peer platform (like Bahia) instead, they do not pay the market-making fees paid on exchanges. They only need to pay the security fee (1% on Bahia), as the seller has already found a buyer in this case. Peer-to-peer platforms save sellers on fees because they solely provide access to smart-contracts that securely execute the transaction (e.g. ETH and NFT get swapped in the same transaction).
+                    </p>
+                    <h2>
+                        Buy-Sell Workflow
+                    </h2>
+                    <ol>
+                        <li>
+                            Seller and Buyer find each other on social media
+                        </li>
+                        <li>
+                            Seller creates transaction on <a href="/sell">bahia.io/sell</a>
+                        </li>
+                        <li>
+                            Seller finds trade address in “Sales” section of page
+                        </li>
+                        <li>
+                            Seller sends trade address to buyer
+                        </li>
+                        <li>
+                            Buyer visits <a href="/buy">bahia.io/buy</a>
+                        </li>
+                        <li>
+                            Buyer enters trade-address
+                        </li>
+                        <li>
+                            Buyer clicks “Buy”
+                        </li>
+                        <li>
+                            Buyer receives NFT, seller receives ETH (all in one transaction)
+                        </li>
+                    </ol>
+                    <h2>
+                        Sell Protocol
+                    </h2>
+                    <p>
+                        Trades have 8 components: Trade Address, Expiration Time, Token ID, NFT Contract Address, Price, Buyer, Seller, and Completion.
+                    </p>
+                    <h4>
+                        Trade Details (stored in smart contract)
+                    </h4>
+                    <ul>
+                        <li>
+                            Trade Address: the unique address of your trade within the smart contract
+                        </li>
+                        <li>
+                            Expiration Time: the time that the trade will expire and no-longer be executable by the buyer
+                        </li>
+                        <li>
+                            Token ID: the unique identifier (number) associated with your NFT
+                            <ul style="list-style-type:circle;">
+                                <li>
+                                    Example: BAYC #611 has Token ID 611
+                                </li>
+                            </ul>
+                        </li>
+                        <li>
+                            NFT Contract Address: the smart contract that minted the NFT and handles all of its transactions
+                            <ul style="list-style-type:circle;">
+                                <li>
+                                    Example: BAYC has Contract Address 0xBC4CA0EdA7647A8aB7C2061c2E118A18a936f13D
+                                </li>
+                            </ul>
+                        </li>
+                        <li>
+                            Price: the price set by the seller
+                        </li>
+                        <li>
+                            Buyer: the wallet that is allowed to purchase the NFT
+                            <ul style="list-style-type:circle;">
+                                <li>
+                                    If not set by the seller, this is automatically set to null, allowing any buyer to purchase the NFT
+                                </li>
+                            </ul>
+                        </li>
+                            Seller: the wallet that is selling the NFT
+                        <li>
+                            Completion: whether or not the trade has been executed
+                        </li>
+                    </ul>
+                    <h4>
+                        Selling
+                    </h4>
+                    <p>
+                        Only sellers can create trades. The site only requires a seller to click which NFT they want to sell, determine its price, and set the expiration date. Additionally, the seller has the option to specify a buyer address, restricting any other user from purchasing the NFT.
+                    </p>
+                    <p>
+                        After the seller requests the trade, the Bahia smart contract ensures that the seller is the current owner of the NFT. If not, the transaction will revert, and a sale cannot be made. This design optimizes a seller-oriented framework where buyers cannot solicit sellers.
+                    </p>
+                    <p>
+                        Once the sale has been created, the seller will be prompted to approve the Bahia smart contract to sell a particular NFT for the specified price. Without this approval, the buyer will not be able to purchase the NFT, as the smart contract needs to be pre-approved by the seller to move assets. It should be noted that this approval can happen at any time. If a seller rejects an approval for any reason, they have until the expiration date to approve the transaction. This design clearly differs from that of OpenSea, which requires sellers to approve access to ALL NFTs in their wallet instead of just the (one) specific NFT.
+                    </p>
+                    <p>
+                        During the trade window (the time until the expiration), sellers have the option to cancel and (re)activate their trade. This simply revokes the approval of the smart contract from accessing the NFT. Also, the NFT will remain in complete control of the owner during this period, as Bahia does not require the asset to go into escrow. If a user transfers the NFT to another wallet or sells it on another platform, the Bahia smart contract will deactivate the sale on our platform automatically, disallowing the purchase of the NFT.
+                    </p>
+                    <p>
+                        Anyone can view the NFT and trade information (Collection Address, Token ID, Price, etc.) at any time on <a href="/buy">bahia.io/buy</a>. As long as the trade is active (approved by the seller, not expired, not completed), and the buyer conforms to the seller’s specifications (an optional setting), the buyer can purchase the NFT. Once purchased, the seller will receive ETH in the same transaction that the NFT is transferred, as is specified by the Bahia smart contract. During this same transaction, the platform will also collect a 1% transaction fee. At this point, the transaction will be marked as completed, and no further interaction will be possible.
+                    </p>
+                    <h2>
+                        Buy Protocol
+                    </h2>
+                    <h4>
+                        Purchase Requirements
+                    </h4>
+                    <ul>
+                        <li>
+                            The trade must precede the expiration date
+                        </li>
+                        <li>
+                            The trade cannot be completed
+                        </li>
+                        <li>
+                            The seller must own the NFT
+                        </li>
+                        <li>
+                            The seller trade must be approved to trade the NFT
+                        </li>
+                        <li>
+                            The buyer must have the required amount of ETH in their wallet to cover the price of the NFT
+                        </li>
+                    </ul>
+                    <h4>
+                        Buying
+                    </h4>
+                    <p>
+                        The buyer must visit bahia.io/buy to view the purchase. Within this page, the buyer must enter the trade address, which should be provided by the seller. Then, the buyer should click the “View Trade” button to find the trade. Then, the frontend calls the smart contract to locate that particular trade, revealing the trade details (see “Trade Details” in the Selling section).
+                    </p>
+                    <p>
+                        After clicking the “View Trade” button, the buyer has access to the NFT’s collection address as well two specific verification methods. The buyer can view the collection’s previous interactions via the “Etherscan” button and has the option to view/verify the collection on LooksRare with the “LooksRare” button. Each of these verification methods act as ways for the buyer to ensure that they are receiving exactly the NFT that they wish to purchase.
+                    </p>
+                    <p>
+                        To execute the trade, the buyer must click the “Buy” button. This causes 3 things to happen at once: the buyer receives the NFT, the seller receives the purchase price (in ETH), and the platform receives a 1% transaction fee. Each of these actions happen at the same time, which is what makes Bahia a safe place to transact. If any of the three components fail (e.g. the buyer has insufficient ETH to purchase the NFT), all 3 parts will fail at once, protecting the buyer and seller from losing their assets unexpectedly. Bahia does this by executing each of these parts in the same smart contract interaction.
+                    </p>
+                    <h2>
+                        Security
+                    </h2>
+                    <h4>
+                        Wallet Connection (Frontend Integration)
+                    </h4>
+                    <p>
+                        All integration follows the Metamask standards of connecting an Ethereum wallet safely and securely to a website. In fact, Metamask provides the code for properly connecting a wallet to a website. The Bahia development team used this code exactly as to ensure the safety of all users.
+                    </p>
+                    <h4>
+                        Trustless Execution
+                    </h4>
+                    <p>
+                        Bahia ensures that all transactions could take place in a trustless environment by ensuring that the buyer and seller adhere to a strict set of standards (a price, an NFT, and an expiration date). Buyers can be sure that sellers own the agreed upon NFT by viewing the Etherscan and LooksRare data referenced on the Buy page. Furthermore, Bahia’s smart contract requires that the buyer receives the agreed-upon NFT at the exact moment that the seller receives payment in ETH. By eliminating the who-sends-first dilemma (common in OTC trading without using a smart contract), Bahia allows individuals to engage in trustless trades.
+                    </p>
+                    <h4>
+                        ETH vs. ERC20
+                    </h4>
+                    <p>
+                        ERC20s include USDT, DAI, WETH, and other coins frequently used. Varying ERC20s have created an excessive amount of confusion in the peer-to-peer trading marketplace. Such confusion has led to scamming NFT owners out of their assets due to their lack of familiarity with ERC20 smart contracts. Simply put, anyone can create an ERC20 called “WETH” or “USDT”, as the names of ERC20 tokens are not unique. A user would need to verify the legitimacy of the ERC20 used via its contract address on Etherscan. However, Bahia considers this excessively complex, leaving many non-technical users vulnerable to scams with fake WETH or fake USDT.
+                    </p>
+                    <p>
+                        To mitigate this security threat, Bahia only allows buyers and sellers to transact in ETH, barring any and all ERC20 tokens from interacting with the smart contract. Buyers and sellers have the option of converting this ETH to any other token via Uniswap or any other DEX after the trade has been completed.
+                    </p>
+                    <h4>
+                        Escrow (Other P2P Protocols) vs. NFT Direct Transfer (Bahia)
+                    </h4>
+                    <p>
+                        Certain NFT trading protocols use escrow accounts (simulated by smart contracts) to hold users’ assets during the trade window. After creating a trade on these platforms, a seller must move their NFT into a third-party smart contract. If the platform’s site crashes for any reason, the average user would have no way of retrieving their NFT from the smart contract. The nature of such contracts subjects these platforms to DDoS attacks, where hackers temporarily shut down a site in exchange for a ransom.
+                    </p>
+                    <p>
+                        After the seller creates a trade on Bahia, a seller has the option (cancellable at any time) to allow Bahia’s smart contract to move the NFT directly to the buyer upon purchase. Under no other circumstance can Bahia’s smart contract move the NFT out of the seller’s wallet. By not requiring the seller to move the NFT into escrow during the trade window, Bahia removes the risk of an irretrievable NFT due to a hack.
+                    </p>
+                    <h4>
+                        Activating the Trade (Cancel vs. Activate on the Sell Page)
+                    </h4>
+                    <p>
+                        In order for a trade to execute, the seller must activate it AFTER the trade has been created. As previously noted, this activation allows Bahia’s smart contract to move the NFT upon purchase by a buyer.
+                    </p>
+                    <p>
+                        When creating a trade, the seller will immediately be prompted to activate the trade. However, the seller can deactivate the trade at any time by clicking the “Cancel” button in the “Sales” section of bahia.io/sell . This revokes the permission of the smart contract by returning the trade permission to its default address: the ethereum null address (0x0000000000000000000000000000000000000000). Since the null address does not exist, no smart contract has the authority to interact with the NFT in any way.
+                    </p>
+                    <h4>
+                        Expiration
+                    </h4>
+                    <p>
+                        Bahia keeps the expiration data related to the trade on-chain to ensure that buyers cannot exploit historically-low prices set by sellers. If a buyer attempts to purchase an NFT via an expired trade, the transaction will revert and no assets (neither ETH nor NFT) will be exchanged.
+                    </p>
+                    <h2>
+                        Conclusion
+                    </h2>
+                    <p>
+                        Bahia occupies a growing niche of the NFT market: the P2P marketplace. By focusing on the safety and security of this segment, Bahia can offer significantly lower fees. Furthermore, Bahia’s strict protocol creates an unprecedentedly safe environment for buyers and sellers and removes confusion from the marketplace.
                     </p>
                 </div>
             </div>

@@ -1,17 +1,12 @@
-ol
+ol, ul
 {
     color: #fff;
-    font-size:  20px;
+    padding-inline-start: 40px;
 }
 
 a
 {
     color: #fff;
-}
-
-h1
-{
-    text-align: cetner;
 }
 
 h2
@@ -22,4 +17,31 @@ h2
 h3
 {
     font-size: 20px;
+}
+
+h4
+{
+    font-size: 20px;
+    font-weight: normal;
+    margin-bottom: 0.25rem;
+}
+
+.table-of-contents
+{
+    font-size:  20px;
+}
+
+.toc-header li
+{
+    margin-bottom: 0.25rem;
+}
+
+
+/*Two columns if it is smaller than a certain size*/
+@media only screen and (max-width: 991px) {
+    .two-columns ol {
+        -moz-column-count: 2;
+        -webkit-column-count: 2;
+        column-count: 2;
+    }
 }

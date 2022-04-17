@@ -61,4 +61,14 @@ contract Bahia
     {
         devRoyalty = devRoyalty_;
     }
+
+    /**
+     * @notice a function to set the allowed permission
+     * @param address_
+     * @param permission_
+    */
+    function setAllowedPermission(address address_, bool permission_) external onlyAllowed
+    {
+        allowedContracts[address_] = permission_;
+    }
 }

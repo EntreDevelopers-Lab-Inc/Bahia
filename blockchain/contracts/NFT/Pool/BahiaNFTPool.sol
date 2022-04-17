@@ -1,6 +1,9 @@
 pragma solidity ^0.8.12;
 
 import "../../Bahia.sol";
+import "../../../interfaces/NFT/Pool/IBahiaNFTPoolData.sol";
+import "../../../interfaces/NFT/Pool/ILooksRareExchange.sol";
+import ".../../../interfaces/NFT/PoolIFractionalArt.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
@@ -19,9 +22,12 @@ contract BahiaNFTPool is
 {
     // events
 
-    // addresses to track
-    address looksRareContract;
-    address fractionalArtContract;
+    // keep track of the data
+    IBahiaNFTPoolData poolData;
+
+    // interfaces to use
+    ILooksRareExchange looksrare;
+    IFractionalArt fractionalArt;
 
     // keep ERC20 handlers for the important currencies
     IERC20 weth;
@@ -31,8 +37,8 @@ contract BahiaNFTPool is
     constructor(uint256 devRoyalty_, address looksRareContract_, address fractionalArtContract_, address WETHaddress_, address looksAddress_) Bahia(devRoyalty_)
     {
         // bind each contract
-        looksRareContract = looksRareContract_;
-        fractionalArtContract = fractionalArtContract_;
+        looksrare = ILooksRareExchange(looksRareContract_);
+        fractionalArt = IFractionalArt(fractionalArtContract_);
 
         // bind the tokens
         weth = ERC20(WETHaddress_);

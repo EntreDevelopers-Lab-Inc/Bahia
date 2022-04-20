@@ -36,7 +36,7 @@ contract Bahia
     }
 
     /**
-     * @notice a modified that only allowed contracts can access
+     * @notice a modifier that only allowed contracts can access
     */
     modifier onlyAllowed()
     {
@@ -64,8 +64,8 @@ contract Bahia
 
     /**
      * @notice a function to set the allowed permission
-     * @param address_
-     * @param permission_
+     * @param address_ for the address to set the permission of
+     * @param permission_ for the permission setting
     */
     function setAllowedPermission(address address_, bool permission_) external onlyAllowed
     {

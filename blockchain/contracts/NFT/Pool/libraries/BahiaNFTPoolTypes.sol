@@ -14,11 +14,14 @@ library BahiaNFTPoolTypes {
         uint256 startListPrice;  // fractional art
 
         address creator; // make sure that the creator is recognized
+        bool completed;
+        uint256 endPurchasePrice;  // logs what the contract was executed at
     }
 
     // participant data
     struct Participant {
         address participantAddress;
-        uint256 totalContribution;  // this will be set to allow the user to manage their contribution to the pool
+        uint256 contribution;  // this will be set to allow the user to manage their contribution to the pool
+        uint256 paid;  // logs how much of the contribution purchase price has been paid
     }
 }

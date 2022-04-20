@@ -1,9 +1,11 @@
+// SPDX-License-Identifier: MIT
+
 pragma solidity ^0.8.12;
 
 import "../../Bahia.sol";
 import "../../../interfaces/NFT/Pool/IBahiaNFTPoolData.sol";
 import "../../../interfaces/NFT/Pool/ILooksRareExchange.sol";
-import ".../../../interfaces/NFT/PoolIFractionalArt.sol";
+import "../../../interfaces/NFT/Pool/IFractionalArt.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
@@ -41,8 +43,8 @@ contract BahiaNFTPool is
         fractionalArt = IFractionalArt(fractionalArtContract_);
 
         // bind the tokens
-        weth = ERC20(WETHaddress_);
-        looksAddress = ERC20(looksAddress_);
+        weth = IERC20(WETHaddress_);
+        looks = IERC20(looksAddress_);
 
     }
 

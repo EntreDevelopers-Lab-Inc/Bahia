@@ -139,7 +139,7 @@ contract BahiaNFTPoolData is
     // empty participant
     function _blankParticipant() internal pure returns (BahiaNFTPoolTypes.Participant memory)
     {
-        BahiaNFTPoolTypes.Participant memory blankParticipant = BahiaNFTPoolTypes.Participant(address(0), 0, 0);
+        BahiaNFTPoolTypes.Participant memory blankParticipant = BahiaNFTPoolTypes.Participant(0, address(0), 0, 0);
         return blankParticipant;
     }
 }

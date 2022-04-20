@@ -20,6 +20,7 @@ library BahiaNFTPoolTypes {
 
     // participant data
     struct Participant {
+        uint256 participantId;  // self-aware
         address participantAddress;
         uint256 contribution;  // this will be set to allow the user to manage their contribution to the pool
         uint256 paid;  // logs how much of the contribution purchase price has been paid

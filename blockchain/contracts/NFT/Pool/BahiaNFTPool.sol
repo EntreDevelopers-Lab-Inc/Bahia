@@ -18,8 +18,10 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 
 error FailedLooksTransfer();
 error NoPoolFound();
+error NoParticipantFound();
 error ContributionNotAllowed();
 error PoolCompleted();
+error NotParticipant();
 
 contract BahiaNFTPool is
     Bahia,
@@ -92,7 +94,7 @@ contract BahiaNFTPool is
         if (pool.completed) revert PoolCompleted();
 
         // make sure that the contract is allowed to spend the contribution (stops people from joining without the intention of paying --> creates excess gas for the user if they want to execute a trade)
-        if (weth.allowance(msg.sender, address(this)) <= contribution) revert ContributionNotAllowed();
+        _checkAllowance(contribution);
 
         // create a participant
         BahiaNFTPoolTypes.Participant memory newParticipant = BahiaNFTPoolTypes.Participant({
@@ -103,11 +105,48 @@ contract BahiaNFTPool is
             });
 
         // add the participant to the pool if this all passes
-        poolData.addParticipant(poolId, newParticipant);
+        bool participantAdded = poolData.addParticipant(poolId, newParticipant);
+
+        if (!participantAdded) revert NoPoolFound();
+    }
+
+    // function to set the contribution
+    function setContribution(uint256 poolId, uint256 participantId, uint256 newContribution) external whenNotPaused
+    {
+        // get the participant
+        BahiaNFTPoolTypes.Participant memory participant = poolData.getParticipant(poolId, participantId);
+
+        // make sure there is a real participant
+        if (participant.participantAddress == address(0)) revert NoParticipantFound();
+
+        // revert if the participant's address does not match
+        if (participant.participantAddress != msg.sender) revert NotParticipant();
+
+        // ensure that the balance is at least the contribution
+        _checkAllowance(newContribution);
+
+        // set the contribution if it passes the above constraints
+        bool contributionSet = poolData.setContribution(poolId, participant.participantId, newContribution);
+
+        // revert if the contribution could not be found
+        if (!contributionSet) revert NoPoolFound();
+    }
+
+    // execute the transaction (no need to check, the pool has been pre-approved)
+    // going to need more inputs (see order types in purchase contract)
+    function buyNow(uint256 poolId, uint256 minPercentageToAsk) external whenNotPaused nonReentrant
+    {
+        //
+    }
+
+    // function to check the allowance
+    function _checkAllowance(uint256 contribution) internal
+    {
+        if (weth.allowance(msg.sender, address(this)) <= contribution) revert ContributionNotAllowed();
     }
 
     // some function for withdrawing all looks from contract to owner
-    function withdrawLooks() external onlyOwner
+    function withdrawLooks() external onlyOwner nonReentrant
     {
         // get the balance
         uint256 balance = looks.balanceOf(address(this));

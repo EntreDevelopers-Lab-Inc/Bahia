@@ -8,6 +8,7 @@ pragma solidity ^0.8.4;
 
 error NotDev();
 error NotAllowed();
+error NotUser();
 
 contract Bahia
 {
@@ -41,6 +42,16 @@ contract Bahia
     modifier onlyAllowed()
     {
         if (!allowedContracts[msg.sender]) revert NotAllowed();
+        _;
+    }
+
+    /**
+     * @notice a modifier that requires that the user isn't a smart contract
+    */
+    modifier callerIsUser()
+    {
+        if (msg.sender != tx.origin) revert NotUser();
+
         _;
     }
 

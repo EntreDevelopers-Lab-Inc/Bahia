@@ -12,6 +12,9 @@ import "@chiru-labs/contracts/ERC721A.sol";
 // errors
 error NotOwner();
 error TimeError();
+error FalseRaffle();
+error RaffleExpired();
+error InsufficientFunds();
 
 
 contract BahiaNFTRaffle is
@@ -45,8 +48,22 @@ contract BahiaNFTRaffle is
     // constructor
     constructor(string memory name_, string memory symbol_, uint256 devRoyalty_) Bahia(devRoyalty_) ERC721A(name_, symbol_) {}
 
+    // check if a raffle exists
+    modifier raffleExists(uint256 raffleId)
+    {
+        if (raffleId >= raffles.length) revert FalseRaffle();
+
+        _;
+    }
+
+    // check if raffle is expired
+    modifier raffleLive(uint256 raffleId)
+    {
+        if (raffles[raffleId].expiration < block.timestamp) revert RaffleExpired();
+    }
+
     // create a raffle
-    function createRaffle(address collectionAddress, uint256 nftId, uint256 ticketPrice, uint256 expiration, string calldata tokenURI) external
+    function createRaffle(address collectionAddress, uint256 nftId, uint256 ticketPrice, uint256 expiration, string calldata tokenURI) external callerIsUser
     {
         // check if the creator is the rightful owner
         IERC721 nftManager = IERC721(collectionAddress);
@@ -73,6 +90,34 @@ contract BahiaNFTRaffle is
     }
 
     // buy tickets
+    function buyTickets(uint256 raffleId, uint256 quantity) external payable callerIsUser raffleExists(raffleId) raffleLive(raffleId) nonReentrant
+    {
+        // calculate the total cost
+        uint256 totalCost = quantity * raffles[raffleId].price;
+
+        // ensure the correct amount has been sent
+        if (msg.value < totalCost) revert InsufficientFunds();
+
+        // get the start and end token ids
+        uint256 startId = _currentIndex + 1;
+        uint256 endId = startId + quantity;
+
+        // mint the tickets to the user
+        _safeMint(msg.sender, quantity);
+
+        // iterate over the ticket range
+        for (uint256 i = startId; i <= endId; i += 1)
+        {
+            // add the tickets to the raffle
+            raffleToTickets[raffleId].push(i);
+
+            // add the raffle id to the ticket mapping
+            ticketToRaffle[i] = raffleId;
+        }
+
+        // refund the excess
+        if (msg.value)
+    }
 
     // draw the winning ticket
 
@@ -83,4 +128,6 @@ contract BahiaNFTRaffle is
     // overload token uri to return raffle's token uri
 
     // set the token URI
+
+    // get a user's balance depending on the raffle id
 }

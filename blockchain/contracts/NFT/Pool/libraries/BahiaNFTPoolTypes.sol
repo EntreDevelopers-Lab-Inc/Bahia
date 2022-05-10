@@ -16,6 +16,8 @@ library BahiaNFTPoolTypes {
         address creator; // make sure that the creator is recognized
         bool completed;
         uint256 endPurchasePrice;  // logs what the contract was executed at
+
+        uint256 vaultId;  // the id of the fractional art vault (necessary to claim shares)
     }
 
     // participant data

@@ -70,7 +70,7 @@ contract BahiaNFTPoolData is
     }
 
     // getter function to get a pool's participant (based on an index)
-    function getParticipant(uint256 poolId, uint256 participantId) public view returns (BahiaNFTPoolTypes.Participant memory)
+    function getParticipant(uint256 poolId, uint256 participantId) public returns (BahiaNFTPoolTypes.Participant memory)
     {
         // if there is no matching participant, return a blank one
         if (participantId <= poolIdToParticipants[poolId].length)
@@ -100,6 +100,28 @@ contract BahiaNFTPoolData is
         // return that the participant has been added
         return true;
     }
+
+    // setter function to update participant information
+    function setParticipant(uint256 poolId, BahiaNFTPoolTypes.Participant memory participant) external onlyAllowed returns (bool)
+    {
+        // if there is no matching pool, return false
+        if (poolId >= getPoolCount())
+        {
+            return false;
+        }
+        // if there is no matching participant, return false
+        else if (participant.participantId <= poolIdToParticipants[poolId].length)
+        {
+            return false;
+        }
+
+        // otherwise, set the participant
+        poolIdToParticipants[poolId][participant.participantId] = participant;
+
+        // return true for success
+        return true;
+    }
+
 
     // option to change contribution
     function setContribution(uint256 poolId, uint256 participantId, uint256 newContribution) external onlyAllowed returns (bool)
@@ -132,7 +154,7 @@ contract BahiaNFTPoolData is
     // empty pool
     function _blankPool() internal pure returns (BahiaNFTPoolTypes.Pool memory)
     {
-        BahiaNFTPoolTypes.Pool memory blankPool = BahiaNFTPoolTypes.Pool(0, address(0), 0, 0, 0, "", "", 0, address(0), false, 0);
+        BahiaNFTPoolTypes.Pool memory blankPool = BahiaNFTPoolTypes.Pool(0, address(0), 0, 0, 0, "", "", 0, address(0), false, 0, 0);
         return blankPool;
     }
 

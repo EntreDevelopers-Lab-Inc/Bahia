@@ -23,6 +23,7 @@ error NoParticipantFound();
 error ContributionNotAllowed();
 error PoolCompleted();
 error NotParticipant();
+error InsufficientFunds();
 
 contract BahiaNFTPool is
     Bahia,
@@ -135,17 +136,61 @@ contract BahiaNFTPool is
 
     // execute the transaction (no need to check, the pool has been pre-approved)
     // going to need more inputs (see order types in purchase contract)
-    function buyNow(uint256 poolId, uint256 minPercentageToAsk, OrderTypes.TakerOrder calldata takerBid, OrderTypes.MakerOrder calldata makerAsk) external whenNotPaused nonReentrant
+    function buyNow(uint256 poolId, uint256 minPercentageToAsk, OrderTypes.TakerOrder calldata takerAsk, OrderTypes.MakerOrder calldata makerBid) external whenNotPaused nonReentrant
     {
+        // get the participant count
+        uint256 participantCount = poolData.getParticipantCount(poolId);
+
+        // have a participant data member to which to store data
+        BahiaNFTPoolTypes.Participant memory participant;
+
+        // internally count the amount of WETH that the contract has access to
+        uint256 accessibleWETH;
+
+        // boolean to track success of transfer
+        bool success;
+
         // iterate over all the addresses in the pool
-            // collect all the weth from the addresses up to the taker order
-            // set the contribution (the amount collected)
+        for (uint256 i = 0; i < participantCount; i += 1)
+        {
+            // get the participant (got participant count from contract, no need to check it)
+            participant = poolData.getParticipant(poolId, i);
+
+            // check if the participant is contributing at all (cheaper if you check iteratively)
+            if (participant.contribution > 0)
+            {
+                // check if the amount allowed matches the contribution
+                if (weth.allowance(participant.participantAddress) >= participant.contribution)
+                {
+                    // set the paid amount to the minimum
+                    participant.paid = _min(contribution, (takerAsk.price - accessibleWETH));
+
+                    // push payment update to data contract (no neeed to check success, as we got the participant from the contract)
+                    poolData.setParticipant(poolId, participant);
+
+                    // collect weth from the participant up to their contribution OR taker order (this is optimal if we guarantee that the contract has enough WETH to buy it --> check off-chain)
+                    success = weth.transferFrom(participant.participantAddress, address(this), participant.paid);
+
+                    // add the paid amount to the accessible weth
+                    accessibleWETH += participant.paid;
+                }
+            }
+        }
+
+        // if the accessible weth is less than the bid, revert
+        if (accessibleWETH < takerAsk.price) revert InsufficientFunds();
 
         // allow looksrare to take the amount from this contract
+        weth.approve(address(looksrare), accessibleWETH);
 
         // call matchBidWithTakerAsk
+        looksrare.matchBidWithTakerAsk(takerAsk, makerBid);
 
-        // now that the contract has the NFT, fractionalize it (call mint from contract --> )
+        // now that the contract has the NFT, allow the fractional art vault factory to interact with it
+
+        // create a vault & fractionalize
+
+        // initialize the vault with the pool data --> will mint all fractions to this contract (and will then be available for claim)
 
     }
 
@@ -160,6 +205,8 @@ contract BahiaNFTPool is
 
         // revert if paid is 0 (for BOTH participants that were not needed to fund AND participants that have already collected their share)
 
+        // mark that the shared have been distributed by setting paid to 0
+
         // distribute these fractionalized shares
     }
 
@@ -167,6 +214,12 @@ contract BahiaNFTPool is
     function _checkAllowance(uint256 contribution) internal
     {
         if (weth.allowance(msg.sender, address(this)) <= contribution) revert ContributionNotAllowed();
+    }
+
+    // function to calculate minimums
+    function _min(uint256 a, uint256 b) internal returns (uint256)
+    {
+        return a <= b ? a : b;
     }
 
     // some function for withdrawing all looks from contract to owner

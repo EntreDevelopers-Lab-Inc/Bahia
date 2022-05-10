@@ -6,6 +6,7 @@ import {BahiaNFTPoolTypes} from "../../../contracts/NFT/Pool/libraries/BahiaNFTP
 import "../../Bahia.sol";
 import "../../../interfaces/NFT/Pool/IBahiaNFTPoolData.sol";
 import "../../../interfaces/NFT/Pool/ILooksRareExchange.sol";
+import {OrderTypes} from "../../../contracts/NFT/Pool/libraries/OrderTypes.sol";
 import "../../../interfaces/NFT/Pool/IFractionalArt.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
@@ -134,9 +135,32 @@ contract BahiaNFTPool is
 
     // execute the transaction (no need to check, the pool has been pre-approved)
     // going to need more inputs (see order types in purchase contract)
-    function buyNow(uint256 poolId, uint256 minPercentageToAsk) external whenNotPaused nonReentrant
+    function buyNow(uint256 poolId, uint256 minPercentageToAsk, OrderTypes.TakerOrder calldata takerBid, OrderTypes.MakerOrder calldata makerAsk) external whenNotPaused nonReentrant
     {
-        //
+        // iterate over all the addresses in the pool
+            // collect all the weth from the addresses up to the taker order
+            // set the contribution (the amount collected)
+
+        // allow looksrare to take the amount from this contract
+
+        // call matchBidWithTakerAsk
+
+        // now that the contract has the NFT, fractionalize it (call mint from contract --> )
+
+    }
+
+    // function to claim the fractionalized shares
+    function claimShares(uint256 poolId, uint256 participantId) external whenNotPaused nonReentrant
+    {
+        // get the pool (used to get the end purchase price and completion information)
+
+        // revert if not completed
+
+        // get the participant
+
+        // revert if paid is 0 (for BOTH participants that were not needed to fund AND participants that have already collected their share)
+
+        // distribute these fractionalized shares
     }
 
     // function to check the allowance

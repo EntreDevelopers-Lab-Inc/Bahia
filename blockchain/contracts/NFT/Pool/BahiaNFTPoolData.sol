@@ -43,7 +43,7 @@ contract BahiaNFTPoolData is
     }
 
     // getter function for the pool
-    function getPool(uint256 poolId) public view returns (BahiaNFTPoolTypes.Pool memory)
+    function getPool(uint256 poolId) public returns (BahiaNFTPoolTypes.Pool memory)
     {
         // if the pool id is greater than the total length, return an empty pool
         if (poolId >= getPoolCount())
@@ -154,7 +154,7 @@ contract BahiaNFTPoolData is
     // empty pool
     function _blankPool() internal pure returns (BahiaNFTPoolTypes.Pool memory)
     {
-        BahiaNFTPoolTypes.Pool memory blankPool = BahiaNFTPoolTypes.Pool(0, address(0), 0, 0, 0, "", "", 0, address(0), false, 0, 0);
+        BahiaNFTPoolTypes.Pool memory blankPool = BahiaNFTPoolTypes.Pool(0, address(0), 0, 0, 0, "", "", 0, 0, address(0), false, 0, 0);
         return blankPool;
     }
 

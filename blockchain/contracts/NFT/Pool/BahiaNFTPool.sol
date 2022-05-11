@@ -8,6 +8,7 @@ import "../../../interfaces/NFT/Pool/IBahiaNFTPoolData.sol";
 import "../../../interfaces/NFT/Pool/ILooksRareExchange.sol";
 import {OrderTypes} from "../../../contracts/NFT/Pool/libraries/OrderTypes.sol";
 import "../../../interfaces/NFT/Pool/IFractionalArt.sol";
+import "../../../interfaces/NFT/Pool/IFractionalVault.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
@@ -18,6 +19,7 @@ import "@openzeppelin/contracts/security/Pausable.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 error FailedLooksTransfer();
+error FailedWETHTransfer();
 error NoPoolFound();
 error NoParticipantFound();
 error ContributionNotAllowed();
@@ -138,6 +140,12 @@ contract BahiaNFTPool is
     // going to need more inputs (see order types in purchase contract)
     function buyNow(uint256 poolId, uint256 minPercentageToAsk, OrderTypes.TakerOrder calldata takerAsk, OrderTypes.MakerOrder calldata makerBid) external whenNotPaused nonReentrant
     {
+        // pool storage variable
+        BahiaNFTPoolTypes.Pool memory pool = poolData.getPool(poolId);
+
+        // if there is no pool, revert
+        if (pool.maxContributions == 0) revert NoPoolFound();
+
         // get the participant count
         uint256 participantCount = poolData.getParticipantCount(poolId);
 
@@ -151,7 +159,7 @@ contract BahiaNFTPool is
         bool success;
 
         // iterate over all the addresses in the pool
-        for (uint256 i = 0; i < participantCount; i += 1)
+        for (uint256 i = 0; i < participantCount; (i += 1) || (accessibleWETH >= takerAsk.price))
         {
             // get the participant (got participant count from contract, no need to check it)
             participant = poolData.getParticipant(poolId, i);
@@ -180,6 +188,9 @@ contract BahiaNFTPool is
         // if the accessible weth is less than the bid, revert
         if (accessibleWETH < takerAsk.price) revert InsufficientFunds();
 
+        // set the end purchase price
+        pool.endPurchasePrice = accessibleWETH;
+
         // allow looksrare to take the amount from this contract
         weth.approve(address(looksrare), accessibleWETH);
 
@@ -187,10 +198,13 @@ contract BahiaNFTPool is
         looksrare.matchBidWithTakerAsk(takerAsk, makerBid);
 
         // now that the contract has the NFT, allow the fractional art vault factory to interact with it
+        IERC721(pool.collection).approve(address(fractionalArt), pool.nftId);
 
         // create a vault & fractionalize
+        pool.vaultId = fractionalArt.mint(pool.shareName, pool.shareSymbol, pool.collection, pool.nftId, pool.shareSupply, pool.startListPrice, 0);  // no curator fee
 
         // initialize the vault with the pool data --> will mint all fractions to this contract (and will then be available for claim)
+        IFractionalVault().initialize(address(this), pool.collection);
 
     }
 
@@ -233,6 +247,19 @@ contract BahiaNFTPool is
 
         // revert if the transfer was unsuccessful
         if (!sent) revert FailedLooksTransfer();
+    }
+
+    // some function for withdrawing all weth from contract to owner
+    function withdrawLooks() external onlyOwner nonReentrant
+    {
+        // get the balance
+        uint256 balance = weth.balanceOf(address(this));
+
+        // transfer the entire balance
+        bool sent = weth.transfer(address(this), balance);
+
+        // revert if the transfer was unsuccessful
+        if (!sent) revert FailedWETHTransfer();
     }
 
     // function to pause the contract

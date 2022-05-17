@@ -10,7 +10,7 @@ interface IBahiaNFTPoolData {
     function getPoolCount() external view returns (uint256);
 
     // getter function for the pool
-    function getPool(uint256 poolId) external view returns (BahiaNFTPoolTypes.Pool memory);
+    function getPool(uint256 poolId) external returns (BahiaNFTPoolTypes.Pool memory);
 
     // function to add a pool
     function addPool(BahiaNFTPoolTypes.Pool memory newPool) external;
@@ -22,10 +22,13 @@ interface IBahiaNFTPoolData {
     function getParticipantCount(uint256 poolId) external view returns (uint256);
 
     // getter function to get a pool's participant (based on an index)
-    function getParticipant(uint256 poolId, uint256 participantId) external view returns (BahiaNFTPoolTypes.Participant memory);
+    function getParticipant(uint256 poolId, uint256 participantId) external returns (BahiaNFTPoolTypes.Participant memory);
 
     // ability to add a participant to a pool
     function addParticipant(uint256 poolId, BahiaNFTPoolTypes.Participant memory newParticipant) external returns (bool);
+
+    // set a participant
+    function setParticipant(uint256 poolId, BahiaNFTPoolTypes.Participant memory participant) external returns (bool);
 
     // set the contribution
     function setContribution(uint256 poolId, uint256 participantId, uint256 newContribution) external returns (bool);

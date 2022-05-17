@@ -8,7 +8,6 @@ import "../../../interfaces/NFT/Pool/IBahiaNFTPoolData.sol";
 import "../../../interfaces/NFT/Pool/ILooksRareExchange.sol";
 import {OrderTypes} from "../../../contracts/NFT/Pool/libraries/OrderTypes.sol";
 import "../../../interfaces/NFT/Pool/IFractionalArt.sol";
-import "../../../interfaces/NFT/Pool/IFractionalVault.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
@@ -66,7 +65,7 @@ contract BahiaNFTPool is
     }
 
     // function to create a pool with limited inputs (don't want user to have full control and create false creators, completion, etc.)
-    function createPool(address collection_, uint256 nftId_, uint256 approvalPercent_, uint256 maxContributions_, string memory shareName_, string memory shareSymbol_, uint256 startListPrice_) external whenNotPaused
+    function createPool(address collection_, uint256 nftId_, uint256 approvalPercent_, uint256 maxContributions_, string memory shareName_, string memory shareSymbol_, uint256 shareSupply_, uint256 startListPrice_) external whenNotPaused
     {
         // create a new pool
         BahiaNFTPoolTypes.Pool memory newPool = BahiaNFTPoolTypes.Pool({
@@ -77,10 +76,12 @@ contract BahiaNFTPool is
                 maxContributions: maxContributions_,
                 shareName: shareName_,
                 shareSymbol: shareSymbol_,
+                shareSupply: shareSupply_,
                 startListPrice: startListPrice_,
                 creator: msg.sender,
                 completed: false,
-                endPurchasePrice: 0
+                endPurchasePrice: 0,
+                vaultId: 0
             });
 
         // add the pool to the data contract
@@ -158,7 +159,7 @@ contract BahiaNFTPool is
         bool success;
 
         // iterate over all the addresses in the pool
-        for (uint256 i = 0; i < participantCount; (i += 1) || (accessibleWETH >= takerAsk.price))
+        for (uint256 i = 0; (i < participantCount)  || (accessibleWETH >= totalPrice); i += 1)
         {
             // get the participant (got participant count from contract, no need to check it)
             participant = poolData.getParticipant(poolId, i);
@@ -167,19 +168,20 @@ contract BahiaNFTPool is
             if (participant.contribution > 0)
             {
                 // check if the amount allowed matches the contribution
-                if (weth.allowance(participant.participantAddress) >= participant.contribution)
+                if (weth.allowance(participant.participantAddress, address(this)) >= participant.contribution)
                 {
                     // set the paid amount to the minimum
-                    participant.paid = _min(contribution, (totalPrice - accessibleWETH));
+                    participant.paid = _min(participant.contribution, (totalPrice - accessibleWETH));
 
                     // push payment update to data contract (no neeed to check success, as we got the participant from the contract)
                     poolData.setParticipant(poolId, participant);
 
+                    // add the paid amount to the accessible weth
+                    accessibleWETH += participant.paid;
+
                     // collect weth from the participant up to their contribution OR taker order (this is optimal if we guarantee that the contract has enough WETH to buy it --> check off-chain)
                     success = weth.transferFrom(participant.participantAddress, address(this), participant.paid);
 
-                    // add the paid amount to the accessible weth
-                    accessibleWETH += participant.paid;
                 }
             }
         }
@@ -219,7 +221,7 @@ contract BahiaNFTPool is
         if (!pool.completed) revert PoolIncomplete();
 
         // get the participant
-        participant = _safeParticipant(poolId, participantId);
+        BahiaNFTPoolTypes.Participant memory participant = _safeParticipant(poolId, participantId);
 
         // revert if paid is 0 (for BOTH participants that were not needed to fund AND participants that have already collected their share)
         if (participant.paid == 0) revert NoShares();
@@ -228,17 +230,17 @@ contract BahiaNFTPool is
         participant.paid = 0;
 
         // upload the participant to the data contract
-        poolData.setParticipant(participant);
+        poolData.setParticipant(poolId, participant);
 
         // distribute these fractionalized shares
-        IERC20 sharesContract = IERC20(IFractionalArt.vaults(pool.vaultId));
-        sharesContract.transfer(participant.participantAddress, (pool.shareSupply * participant.paid / pool.endPurchasePrice)));
+        IERC20 sharesContract = IERC20(fractionalArt.vaults(pool.vaultId));
+        sharesContract.transfer(participant.participantAddress, (pool.shareSupply * participant.paid / pool.endPurchasePrice));
     }
 
     // get a pool safely
     function _safePool(uint256 poolId) internal returns (BahiaNFTPoolTypes.Pool memory)
     {
-        pool = poolData.getPool(poolId);
+        BahiaNFTPoolTypes.Pool memory pool = poolData.getPool(poolId);
 
         // if there is no pool, revert
         if (pool.maxContributions == 0) revert NoPoolFound();
@@ -250,7 +252,7 @@ contract BahiaNFTPool is
     // get a participant safely
     function _safeParticipant(uint256 poolId, uint256 participantId) internal returns (BahiaNFTPoolTypes.Participant memory)
     {
-        BahiaNFTPoolTypes.Participant participant = poolData.getParticipant(poolId, participantId);
+        BahiaNFTPoolTypes.Participant memory participant = poolData.getParticipant(poolId, participantId);
 
         // make sure there is a real participant
         if (participant.participantAddress == address(0)) revert NoParticipantFound();
@@ -284,8 +286,8 @@ contract BahiaNFTPool is
         if (!sent) revert FailedLooksTransfer();
     }
 
-    // some function for withdrawing all weth from contract to owner
-    function withdrawLooks() external onlyOwner nonReentrant
+    // some function for withdrawing all weth from contract to owner (unlikely to use, as contract does not store weth)
+    function withdrawWETH() external onlyOwner nonReentrant
     {
         // get the balance
         uint256 balance = weth.balanceOf(address(this));

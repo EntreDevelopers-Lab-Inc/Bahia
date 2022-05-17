@@ -24,8 +24,10 @@ error NoPoolFound();
 error NoParticipantFound();
 error ContributionNotAllowed();
 error PoolCompleted();
+error PoolIncomplete();
 error NotParticipant();
 error InsufficientFunds();
+error NoShares();
 
 contract BahiaNFTPool is
     Bahia,
@@ -118,10 +120,7 @@ contract BahiaNFTPool is
     function setContribution(uint256 poolId, uint256 participantId, uint256 newContribution) external whenNotPaused
     {
         // get the participant
-        BahiaNFTPoolTypes.Participant memory participant = poolData.getParticipant(poolId, participantId);
-
-        // make sure there is a real participant
-        if (participant.participantAddress == address(0)) revert NoParticipantFound();
+        BahiaNFTPoolTypes.Participant memory participant = _safeParticipant(poolId, participantId);
 
         // revert if the participant's address does not match
         if (participant.participantAddress != msg.sender) revert NotParticipant();
@@ -141,10 +140,7 @@ contract BahiaNFTPool is
     function buyNow(uint256 poolId, uint256 minPercentageToAsk, OrderTypes.TakerOrder calldata takerAsk, OrderTypes.MakerOrder calldata makerBid) external whenNotPaused nonReentrant
     {
         // pool storage variable
-        BahiaNFTPoolTypes.Pool memory pool = poolData.getPool(poolId);
-
-        // if there is no pool, revert
-        if (pool.maxContributions == 0) revert NoPoolFound();
+        BahiaNFTPoolTypes.Pool memory pool = _safePool(poolId);
 
         // get the participant count
         uint256 participantCount = poolData.getParticipantCount(poolId);
@@ -154,6 +150,9 @@ contract BahiaNFTPool is
 
         // internally count the amount of WETH that the contract has access to
         uint256 accessibleWETH;
+
+        // calculate total price including fees
+        uint256 totalPrice = takerAsk.price + (takerAsk.price * devRoyalty / 100000);
 
         // boolean to track success of transfer
         bool success;
@@ -171,7 +170,7 @@ contract BahiaNFTPool is
                 if (weth.allowance(participant.participantAddress) >= participant.contribution)
                 {
                     // set the paid amount to the minimum
-                    participant.paid = _min(contribution, (takerAsk.price - accessibleWETH));
+                    participant.paid = _min(contribution, (totalPrice - accessibleWETH));
 
                     // push payment update to data contract (no neeed to check success, as we got the participant from the contract)
                     poolData.setParticipant(poolId, participant);
@@ -197,27 +196,67 @@ contract BahiaNFTPool is
         // call matchBidWithTakerAsk
         looksrare.matchBidWithTakerAsk(takerAsk, makerBid);
 
+        // pay the devs
+        weth.transfer(devAddress, accessibleWETH * (devRoyalty / 100000));
+
         // now that the contract has the NFT, allow the fractional art vault factory to interact with it
         IERC721(pool.collection).approve(address(fractionalArt), pool.nftId);
 
-        // create a vault & fractionalize (assuming all tokens mint to this contract)
+        // create a vault & fractionalize (assuming all ERC20 tokens mint to this contract)
         pool.vaultId = fractionalArt.mint(pool.shareName, pool.shareSymbol, pool.collection, pool.nftId, pool.shareSupply, pool.startListPrice, 0);  // no curator fee
+
+        // push the pool to the data contract
+        poolData.updatePool(pool);
     }
 
-    // function to claim the fractionalized shares
+    // function to claim the fractionalized shares (anyone can call, allowing people to lead pooling and airdrop shares)
     function claimShares(uint256 poolId, uint256 participantId) external whenNotPaused nonReentrant
     {
         // get the pool (used to get the end purchase price and completion information)
+        BahiaNFTPoolTypes.Pool memory pool = _safePool(poolId);
 
         // revert if not completed
+        if (!pool.completed) revert PoolIncomplete();
 
         // get the participant
+        participant = _safeParticipant(poolId, participantId);
 
         // revert if paid is 0 (for BOTH participants that were not needed to fund AND participants that have already collected their share)
+        if (participant.paid == 0) revert NoShares();
 
-        // mark that the shared have been distributed by setting paid to 0
+        // mark that the shares have been distributed by setting paid to 0
+        participant.paid = 0;
+
+        // upload the participant to the data contract
+        poolData.setParticipant(participant);
 
         // distribute these fractionalized shares
+        IERC20 sharesContract = IERC20(IFractionalArt.vaults(pool.vaultId));
+        sharesContract.transfer(participant.participantAddress, (pool.shareSupply * participant.paid / pool.endPurchasePrice)));
+    }
+
+    // get a pool safely
+    function _safePool(uint256 poolId) internal returns (BahiaNFTPoolTypes.Pool memory)
+    {
+        pool = poolData.getPool(poolId);
+
+        // if there is no pool, revert
+        if (pool.maxContributions == 0) revert NoPoolFound();
+
+        // else, just return the pool
+        return pool;
+    }
+
+    // get a participant safely
+    function _safeParticipant(uint256 poolId, uint256 participantId) internal returns (BahiaNFTPoolTypes.Participant memory)
+    {
+        BahiaNFTPoolTypes.Participant participant = poolData.getParticipant(poolId, participantId);
+
+        // make sure there is a real participant
+        if (participant.participantAddress == address(0)) revert NoParticipantFound();
+
+        // if it passes checks, return the participant
+        return participant;
     }
 
     // function to check the allowance

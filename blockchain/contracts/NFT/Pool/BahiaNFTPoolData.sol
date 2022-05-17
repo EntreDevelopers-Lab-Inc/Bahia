@@ -5,6 +5,7 @@ pragma solidity ^0.8.12;
 import "../../../interfaces/NFT/Pool/IBahiaNFTPoolData.sol";
 import "../../Bahia.sol";
 
+error NoPoolFound();
 
 contract BahiaNFTPoolData is
     IBahiaNFTPoolData
@@ -61,6 +62,16 @@ contract BahiaNFTPoolData is
         pools.push(newPool);
 
         emit PoolCreated(newPool);
+    }
+
+    // function to update a pool
+    function updatePool(BahiaNFTPoolTypes.Pool memory pool) external onlyAllowed
+    {
+        // ensure that the pool exists
+        if (pool.poolId < pools.length) revert NoPoolFound();
+
+        // set the pool
+        pools[pool.poolId] = pool;
     }
 
     // getter funtion to get the count of a pool's participants

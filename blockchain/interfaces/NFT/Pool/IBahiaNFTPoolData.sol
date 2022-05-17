@@ -15,6 +15,9 @@ interface IBahiaNFTPoolData {
     // function to add a pool
     function addPool(BahiaNFTPoolTypes.Pool memory newPool) external;
 
+    // update a pool
+    function updatePool(BahiaNFTPoolTypes.Pool memory pool) external;
+
     // getter funtion to get the count of a pool's participants
     function getParticipantCount(uint256 poolId) external view returns (uint256);
 

@@ -200,12 +200,8 @@ contract BahiaNFTPool is
         // now that the contract has the NFT, allow the fractional art vault factory to interact with it
         IERC721(pool.collection).approve(address(fractionalArt), pool.nftId);
 
-        // create a vault & fractionalize
+        // create a vault & fractionalize (assuming all tokens mint to this contract)
         pool.vaultId = fractionalArt.mint(pool.shareName, pool.shareSymbol, pool.collection, pool.nftId, pool.shareSupply, pool.startListPrice, 0);  // no curator fee
-
-        // initialize the vault with the pool data --> will mint all fractions to this contract (and will then be available for claim)
-        IFractionalVault().initialize(address(this), pool.collection);
-
     }
 
     // function to claim the fractionalized shares

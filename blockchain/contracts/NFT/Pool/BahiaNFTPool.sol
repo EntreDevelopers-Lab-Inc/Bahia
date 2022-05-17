@@ -5,7 +5,6 @@ pragma solidity ^0.8.12;
 import {BahiaNFTPoolTypes} from "../../../contracts/NFT/Pool/libraries/BahiaNFTPoolTypes.sol";
 import "../../Bahia.sol";
 import "../../../interfaces/NFT/Pool/IBahiaNFTPoolData.sol";
-import "../../../interfaces/NFT/Pool/ILooksRareExchange.sol";
 import {OrderTypes} from "../../../contracts/NFT/Pool/libraries/OrderTypes.sol";
 import "../../../interfaces/NFT/Pool/IFractionalArt.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
@@ -17,7 +16,6 @@ import "@openzeppelin/contracts/token/ERC721/utils/ERC721Holder.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
-error FailedLooksTransfer();
 error FailedWETHTransfer();
 error NoPoolFound();
 error NoParticipantFound();
@@ -41,27 +39,22 @@ contract BahiaNFTPool is
     IBahiaNFTPoolData poolData;
 
     // interfaces to use
-    ILooksRareExchange looksrare;
     IFractionalArt fractionalArt;
 
     // keep ERC20 handlers for the important currencies
     IERC20 weth;
-    IERC20 looks;
 
     // constructor
-    constructor(uint256 devRoyalty_, address dataAddress_, address looksRareContract_, address fractionalArtContract_, address WETHaddress_, address looksAddress_) Bahia(devRoyalty_)
+    constructor(uint256 devRoyalty_, address dataAddress_, address fractionalArtContract_, address WETHaddress_) Bahia(devRoyalty_)
     {
         // connect to the data contract
         poolData = IBahiaNFTPoolData(dataAddress_);
 
         // bind each contract
-        looksrare = ILooksRareExchange(looksRareContract_);
         fractionalArt = IFractionalArt(fractionalArtContract_);
 
         // bind the tokens
         weth = IERC20(WETHaddress_);
-        looks = IERC20(looksAddress_);
-
     }
 
     // function to create a pool with limited inputs (don't want user to have full control and create false creators, completion, etc.)
@@ -136,80 +129,7 @@ contract BahiaNFTPool is
         if (!contributionSet) revert NoPoolFound();
     }
 
-    // execute the transaction (no need to check, the pool has been pre-approved)
-    // going to need more inputs (see order types in purchase contract)
-    function buyNow(uint256 poolId, uint256 minPercentageToAsk, OrderTypes.TakerOrder calldata takerAsk, OrderTypes.MakerOrder calldata makerBid) external whenNotPaused nonReentrant
-    {
-        // pool storage variable
-        BahiaNFTPoolTypes.Pool memory pool = _safePool(poolId);
 
-        // get the participant count
-        uint256 participantCount = poolData.getParticipantCount(poolId);
-
-        // have a participant data member to which to store data
-        BahiaNFTPoolTypes.Participant memory participant;
-
-        // internally count the amount of WETH that the contract has access to
-        uint256 accessibleWETH;
-
-        // calculate total price including fees
-        uint256 totalPrice = takerAsk.price + (takerAsk.price * devRoyalty / 100000);
-
-        // boolean to track success of transfer
-        bool success;
-
-        // iterate over all the addresses in the pool
-        for (uint256 i = 0; (i < participantCount)  || (accessibleWETH >= totalPrice); i += 1)
-        {
-            // get the participant (got participant count from contract, no need to check it)
-            participant = poolData.getParticipant(poolId, i);
-
-            // check if the participant is contributing at all (cheaper if you check iteratively)
-            if (participant.contribution > 0)
-            {
-                // check if the amount allowed matches the contribution
-                if (weth.allowance(participant.participantAddress, address(this)) >= participant.contribution)
-                {
-                    // set the paid amount to the minimum
-                    participant.paid = _min(participant.contribution, (totalPrice - accessibleWETH));
-
-                    // push payment update to data contract (no neeed to check success, as we got the participant from the contract)
-                    poolData.setParticipant(poolId, participant);
-
-                    // add the paid amount to the accessible weth
-                    accessibleWETH += participant.paid;
-
-                    // collect weth from the participant up to their contribution OR taker order (this is optimal if we guarantee that the contract has enough WETH to buy it --> check off-chain)
-                    success = weth.transferFrom(participant.participantAddress, address(this), participant.paid);
-
-                }
-            }
-        }
-
-        // if the accessible weth is less than the bid, revert
-        if (accessibleWETH < takerAsk.price) revert InsufficientFunds();
-
-        // set the end purchase price
-        pool.endPurchasePrice = accessibleWETH;
-
-        // allow looksrare to take the amount from this contract
-        weth.approve(address(looksrare), accessibleWETH);
-
-        // call matchBidWithTakerAsk
-        looksrare.matchBidWithTakerAsk(takerAsk, makerBid);
-
-        // pay the devs
-        weth.transfer(devAddress, accessibleWETH * (devRoyalty / 100000));
-
-        // now that the contract has the NFT, allow the fractional art vault factory to interact with it
-        IERC721(pool.collection).approve(address(fractionalArt), pool.nftId);
-
-        // create a vault & fractionalize (assuming all ERC20 tokens mint to this contract)
-        pool.vaultId = fractionalArt.mint(pool.shareName, pool.shareSymbol, pool.collection, pool.nftId, pool.shareSupply, pool.startListPrice, 0);  // no curator fee
-
-        // push the pool to the data contract
-        poolData.updatePool(pool);
-    }
 
     // function to claim the fractionalized shares (anyone can call, allowing people to lead pooling and airdrop shares)
     function claimShares(uint256 poolId, uint256 participantId) external whenNotPaused nonReentrant
@@ -235,6 +155,12 @@ contract BahiaNFTPool is
         // distribute these fractionalized shares
         IERC20 sharesContract = IERC20(fractionalArt.vaults(pool.vaultId));
         sharesContract.transfer(participant.participantAddress, (pool.shareSupply * participant.paid / pool.endPurchasePrice));
+    }
+
+    // function to calculate minimums
+    function _min(uint256 a, uint256 b) internal returns (uint256)
+    {
+        return a <= b ? a : b;
     }
 
     // get a pool safely
@@ -267,23 +193,56 @@ contract BahiaNFTPool is
         if (weth.allowance(msg.sender, address(this)) <= contribution) revert ContributionNotAllowed();
     }
 
-    // function to calculate minimums
-    function _min(uint256 a, uint256 b) internal returns (uint256)
+
+    // function to collect weth
+    function _collectWETH(uint256 poolId, uint256 totalPrice) internal returns (uint256)
     {
-        return a <= b ? a : b;
-    }
+        // get the participant count
+        uint256 participantCount = poolData.getParticipantCount(poolId);
 
-    // some function for withdrawing all looks from contract to owner
-    function withdrawLooks() external onlyOwner nonReentrant
-    {
-        // get the balance
-        uint256 balance = looks.balanceOf(address(this));
+        // have a participant data member to which to store data
+        BahiaNFTPoolTypes.Participant memory participant;
 
-        // transfer the entire balance
-        bool sent = looks.transfer(address(this), balance);
+        // internally count the amount of WETH that the contract has access to
+        uint256 accessibleWETH;
 
-        // revert if the transfer was unsuccessful
-        if (!sent) revert FailedLooksTransfer();
+        // boolean to track success of transfer
+        bool success;
+
+        // iterate over all the addresses in the pool
+        for (uint256 i = 0; (i < participantCount)  || (accessibleWETH >= totalPrice); i += 1)
+        {
+            // get the participant (got participant count from contract, no need to check it)
+            participant = poolData.getParticipant(poolId, i);
+
+            // check if the participant is contributing at all (cheaper if you check iteratively)
+            if (participant.contribution > 0)
+            {
+                // check if the amount allowed matches the contribution, and that the participant can spend that much
+                if ((weth.allowance(participant.participantAddress, address(this)) >= participant.contribution) && (weth.balanceOf(participant.participantAddress) >= participant.contribution))
+                {
+                    // set the paid amount to the minimum
+                    participant.paid = _min(participant.contribution, (totalPrice - accessibleWETH));
+
+                    // push payment update to data contract (no neeed to check success, as we got the participant from the contract)
+                    poolData.setParticipant(poolId, participant);
+
+                    // add the paid amount to the accessible weth
+                    accessibleWETH += participant.paid;
+
+                    // collect weth from the participant up to their contribution OR taker order (this is optimal if we guarantee that the contract has enough WETH to buy it --> check off-chain)
+                    success = weth.transferFrom(participant.participantAddress, address(this), participant.paid);
+
+                    if (!success) revert FailedWETHTransfer();
+                }
+            }
+        }
+
+        // if the accessible weth is less than the bid, revert
+        if (accessibleWETH < totalPrice) revert InsufficientFunds();
+
+        // return the weth that was transferred
+        return accessibleWETH;
     }
 
     // some function for withdrawing all weth from contract to owner (unlikely to use, as contract does not store weth)

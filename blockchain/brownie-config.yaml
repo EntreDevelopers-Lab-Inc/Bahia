@@ -1,6 +1,6 @@
 dependencies:
   - chiru-labs/ERC721A@3.0.0
-  - OpenZeppelin/openzeppelin-contracts@4.5.0
+  - OpenZeppelin/openzeppelin-contracts@4.6.0
 
 # remap using the compiler
 compiler:

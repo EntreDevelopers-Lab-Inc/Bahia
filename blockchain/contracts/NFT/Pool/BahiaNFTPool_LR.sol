@@ -40,29 +40,17 @@ contract BahiaNFTPool_LR is
         // calculate total price including fees
         uint256 totalPrice = takerAsk.price + (takerAsk.price * devRoyalty / 100000);
 
-        // get the accessible weth
-        uint256 accessibleWETH = _collectWETH(poolId, totalPrice);
-
-        // set the end purchase price
-        pool.endPurchasePrice = accessibleWETH;
+        // set the end purchase price (this is the accessible weth)
+        pool.endPurchasePrice = _collectWETH(poolId, totalPrice);
 
         // allow looksrare to take the amount from this contract
-        weth.approve(address(looksrare), accessibleWETH);
+        weth.approve(address(looksrare), takerAsk.price);
 
         // call matchBidWithTakerAsk
         looksrare.matchBidWithTakerAsk(takerAsk, makerBid);
 
         // pay the devs
-        weth.transfer(devAddress, accessibleWETH * (devRoyalty / 100000));
-
-        // now that the contract has the NFT, allow the fractional art vault factory to interact with it
-        IERC721(pool.collection).approve(address(fractionalArt), pool.nftId);
-
-        // create a vault & fractionalize (assuming all ERC20 tokens mint to this contract)
-        pool.vaultId = fractionalArt.mint(pool.shareName, pool.shareSymbol, pool.collection, pool.nftId, pool.shareSupply, pool.startListPrice, 0);  // no curator fee
-
-        // push the pool to the data contract
-        poolData.updatePool(pool);
+        _createVault(pool);
     }
 
     // some function for withdrawing all looks from contract to owner

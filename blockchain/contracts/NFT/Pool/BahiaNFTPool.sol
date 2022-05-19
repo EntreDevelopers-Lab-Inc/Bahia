@@ -58,14 +58,13 @@ contract BahiaNFTPool is
     }
 
     // function to create a pool with limited inputs (don't want user to have full control and create false creators, completion, etc.)
-    function createPool(address collection_, uint256 nftId_, uint256 approvalPercent_, uint256 maxContributions_, string memory shareName_, string memory shareSymbol_, uint256 shareSupply_, uint256 startListPrice_) external whenNotPaused
+    function createPool(address collection_, uint256 nftId_, uint256 maxContributions_, string memory shareName_, string memory shareSymbol_, uint256 shareSupply_, uint256 startListPrice_) external whenNotPaused
     {
         // create a new pool
         BahiaNFTPoolTypes.Pool memory newPool = BahiaNFTPoolTypes.Pool({
                 poolId: poolData.getPoolCount(),
                 collection: collection_,
                 nftId: nftId_,
-                approvalPercent: approvalPercent_,
                 maxContributions: maxContributions_,
                 shareName: shareName_,
                 shareSymbol: shareSymbol_,
@@ -243,6 +242,22 @@ contract BahiaNFTPool is
 
         // return the weth that was transferred
         return accessibleWETH;
+    }
+
+    // create the vault
+    function _createVault(BahiaNFTPoolTypes.Pool memory pool) internal
+    {
+        // pay the devs
+        weth.transfer(devAddress, pool.endPurchasePrice * (devRoyalty / 100000));
+
+        // now that the contract has the NFT, allow the fractional art vault factory to interact with it
+        IERC721(pool.collection).approve(address(fractionalArt), pool.nftId);
+
+        // create a vault & fractionalize (assuming all ERC20 tokens mint to this contract)
+        pool.vaultId = fractionalArt.mint(pool.shareName, pool.shareSymbol, pool.collection, pool.nftId, pool.shareSupply, pool.startListPrice, 0);  // no curator fee
+
+        // push the pool to the data contract
+        poolData.updatePool(pool);
     }
 
     // some function for withdrawing all weth from contract to owner (unlikely to use, as contract does not store weth)

@@ -3,9 +3,9 @@
 pragma solidity ^0.8.12;
 
 import "../../../interfaces/NFT/Pool/IBahiaNFTPoolData.sol";
-import "../../Bahia.sol";
 
 error NoPoolFound();
+error NotAllowed();
 
 contract BahiaNFTPoolData is
     IBahiaNFTPoolData
@@ -19,10 +19,10 @@ contract BahiaNFTPoolData is
     BahiaNFTPoolTypes.Pool[] public pools;
 
     // mapping to track pool Id to participants
-    mapping(uint256 => BahiaNFTPoolTypes.Participant[]) poolIdToParticipants;
+    mapping(uint256 => BahiaNFTPoolTypes.Participant[]) public poolIdToParticipants;
 
     // allow certain contracts
-    mapping(address => bool) internal allowedContracts;
+    mapping(address => bool) private allowedContracts;
 
     constructor()
     {
@@ -165,7 +165,7 @@ contract BahiaNFTPoolData is
     // empty pool
     function _blankPool() internal pure returns (BahiaNFTPoolTypes.Pool memory)
     {
-        BahiaNFTPoolTypes.Pool memory blankPool = BahiaNFTPoolTypes.Pool(0, address(0), 0, 0, 0, "", "", 0, 0, address(0), false, 0, 0);
+        BahiaNFTPoolTypes.Pool memory blankPool = BahiaNFTPoolTypes.Pool(0, address(0), 0, 0, "", "", 0, 0, address(0), false, 0, 0);
         return blankPool;
     }
 
@@ -174,5 +174,11 @@ contract BahiaNFTPoolData is
     {
         BahiaNFTPoolTypes.Participant memory blankParticipant = BahiaNFTPoolTypes.Participant(0, address(0), 0, 0);
         return blankParticipant;
+    }
+
+    // set the allowed permission
+    function setAllowedPermission(address address_, bool permission_) external onlyAllowed
+    {
+        allowedContracts[address_] = permission_;
     }
 }

@@ -1,4 +1,4 @@
-from brownie import BahiaNFTPoolData, BahiaNFTPool, accounts
+from brownie import Settings, ERC721VaultFactory, BahiaNFTPoolData, BahiaNFTPool, accounts
 from scripts.accounts import get_admin_account
 from scripts.constants import DEV_ROYALTY
 
@@ -6,7 +6,11 @@ from scripts.constants import DEV_ROYALTY
 def deploy():
     admin = get_admin_account()
 
+    # deploy settings for vault factory
+    Settings.deploy({'from': admin})
+
     # deploy fractional art and weth
+    ERC721VaultFactory.deploy(Settings[-1], {'from': admin})
 
     # deploy the data contract
     BahiaNFTPoolData.deploy({'from': admin})

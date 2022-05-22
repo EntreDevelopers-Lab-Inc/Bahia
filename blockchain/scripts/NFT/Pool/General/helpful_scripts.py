@@ -24,3 +24,7 @@ def deploy():
     # make the pool an allowed contract
     BahiaNFTPoolData[-1].setAllowedPermission(
         BahiaNFTPool[-1], True, {'from': admin})
+
+    # give each account 10 weth
+    for account in accounts:
+        WETH10[-1].deposit({'value': 10, 'from': account})

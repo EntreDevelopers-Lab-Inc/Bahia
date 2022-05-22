@@ -83,11 +83,10 @@ contract BahiaNFTPool is
     // a function to add a participant to a particular pool
     function joinPool(uint256 poolId, uint256 contribution) external whenNotPaused
     {
-        // get the actual pool
-        BahiaNFTPoolTypes.Pool memory pool = poolData.getPool(poolId);
+        // NOTE: no reason to check for a non-zero contribution, as this wastes gas, and a malicious attempt could just set their contribution to 0 later (which cannot be changed, as people need to maintain the ability to leave the pool)
 
-        // if there is no creator, the pool doesn't exists
-        if (pool.creator == address(0)) revert NoPoolFound();
+        // get the actual pool
+        BahiaNFTPoolTypes.Pool memory pool = _safePool(poolId);
 
         // if the pool has been completed, it cannot be joined
         if (pool.completed) revert PoolCompleted();
@@ -103,10 +102,8 @@ contract BahiaNFTPool is
                 paid: 0  // hasn't paid anything yet
             });
 
-        // add the participant to the pool if this all passes
+        // add the participant to the pool if this all passes (can assume this will work, as it is a valid pool id)
         bool participantAdded = poolData.addParticipant(poolId, newParticipant);
-
-        if (!participantAdded) revert NoPoolFound();
     }
 
     // function to set the contribution
@@ -168,7 +165,7 @@ contract BahiaNFTPool is
         BahiaNFTPoolTypes.Pool memory pool = poolData.getPool(poolId);
 
         // if there is no pool, revert
-        if (pool.maxContributions == 0) revert NoPoolFound();
+        if (pool.creator == address(0)) revert NoPoolFound();
 
         // else, just return the pool
         return pool;
@@ -189,7 +186,7 @@ contract BahiaNFTPool is
     // function to check the allowance
     function _checkAllowance(uint256 contribution) internal
     {
-        if (weth.allowance(msg.sender, address(this)) <= contribution) revert ContributionNotAllowed();
+        if (weth.allowance(msg.sender, address(this)) < contribution) revert ContributionNotAllowed();
     }
 
 

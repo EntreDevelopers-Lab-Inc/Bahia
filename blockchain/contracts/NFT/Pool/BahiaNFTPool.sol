@@ -112,13 +112,11 @@ contract BahiaNFTPool is
         // get the participant
         BahiaNFTPoolTypes.Participant memory participant = _safeParticipant(poolId, participantId);
 
-        // revert if the participant's address does not match
-        if (participant.participantAddress != msg.sender) revert NotParticipant();
-
         // ensure that the balance is at least the contribution
         _checkAllowance(newContribution);
 
         // set the contribution if it passes the above constraints
+        // this setter checks that the participant is the origin of this transaction
         bool contributionSet = poolData.setContribution(poolId, participant.participantId, newContribution);
 
         // revert if the contribution could not be found

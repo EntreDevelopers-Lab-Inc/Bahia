@@ -7,14 +7,14 @@ import {ReentrancyGuard} from "@openzeppelin/contracts/security/ReentrancyGuard.
 import {IERC20, SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
 // LooksRare interfaces
-import {ICurrencyManager} from "./interfaces/ICurrencyManager.sol";
-import {IExecutionManager} from "./interfaces/IExecutionManager.sol";
-import {IExecutionStrategy} from "./interfaces/IExecutionStrategy.sol";
-import {IRoyaltyFeeManager} from "./interfaces/IRoyaltyFeeManager.sol";
-import {ILooksRareExchange} from "./interfaces/ILooksRareExchange.sol";
-import {ITransferManagerNFT} from "./interfaces/ITransferManagerNFT.sol";
-import {ITransferSelectorNFT} from "./interfaces/ITransferSelectorNFT.sol";
-import {IWETH} from "./interfaces/IWETH.sol";
+import {ICurrencyManager} from "./Interfaces/ICurrencyManager.sol";
+import {IExecutionManager} from "./Interfaces/IExecutionManager.sol";
+import {IExecutionStrategy} from "./Interfaces/IExecutionStrategy.sol";
+import {IRoyaltyFeeManager} from "./Interfaces/IRoyaltyFeeManager.sol";
+import {ILooksRareExchange} from "./Interfaces/ILooksRareExchange.sol";
+import {ITransferManagerNFT} from "./Interfaces/ITransferManagerNFT.sol";
+import {ITransferSelectorNFT} from "./Interfaces/ITransferSelectorNFT.sol";
+import {IWETH} from "./Interfaces/IWETH.sol";
 
 // LooksRare libraries
 import {OrderTypes} from "./libraries/OrderTypes.sol";

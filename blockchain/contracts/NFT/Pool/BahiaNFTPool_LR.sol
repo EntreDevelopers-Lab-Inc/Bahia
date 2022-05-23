@@ -3,8 +3,8 @@
 pragma solidity ^0.8.12;
 
 import "./BahiaNFTPool.sol";
-import "../../../interfaces/NFT/Pool/ILooksRareExchange.sol";
-import {OrderTypes} from "../../../contracts/NFT/Pool/libraries/OrderTypes.sol";
+import "./reference/Interfaces/ILooksRareExchange.sol";
+import {OrderTypes} from "./reference/libraries/OrderTypes.sol";
 
 error FailedLooksTransfer();
 

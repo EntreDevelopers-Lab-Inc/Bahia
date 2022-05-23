@@ -5,7 +5,6 @@ pragma solidity ^0.8.12;
 import {BahiaNFTPoolTypes} from "../../../contracts/NFT/Pool/libraries/BahiaNFTPoolTypes.sol";
 import "../../Bahia.sol";
 import "../../../interfaces/NFT/Pool/IBahiaNFTPoolData.sol";
-import {OrderTypes} from "../../../contracts/NFT/Pool/libraries/OrderTypes.sol";
 import "../../../interfaces/NFT/Pool/IFractionalArt.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";

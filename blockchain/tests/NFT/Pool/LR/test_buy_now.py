@@ -40,7 +40,6 @@ def test_buy():
     pool_contract.joinPool(0, 1, {'from': accounts[2]})
     pool_contract.joinPool(0, 2, {'from': accounts[3]})
     pool_contract.joinPool(0, 3, {'from': accounts[4]})
-    chain.mine(10)
 
     # get the maker ask
     maker_ask = create_maker_ask(signer=accounts[1],

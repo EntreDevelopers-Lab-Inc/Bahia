@@ -122,7 +122,7 @@ contract BahiaNFTPool is
 
 
     // function to claim the fractionalized shares (anyone can call, allowing people to lead pooling and airdrop shares)
-    function claimShares(uint256 poolId, uint256 participantId) external whenNotPaused nonReentrant
+    function claimShares(uint256 poolId, uint256 participantId) external whenNotPaused callerIsUser
     {
         // get the pool (used to get the end purchase price and completion information)
         BahiaNFTPoolTypes.Pool memory pool = _safePool(poolId);

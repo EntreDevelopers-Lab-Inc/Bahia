@@ -45,16 +45,11 @@ contract BahiaNFTPoolData is
     }
 
     // getter function for the pool
-    function getPool(uint256 poolId) public returns (BahiaNFTPoolTypes.Pool memory)
+    function getPool(uint256 poolId) public view returns (BahiaNFTPoolTypes.Pool memory)
     {
-        // if the pool id is greater than the total length, return an empty pool
-        if (poolId >= getPoolCount())
-        {
-            return _blankPool();
-        }
+        // if (poolId > getPoolCount()) revert NoPoolFound();
         // else return a real pool
         return pools[poolId];
-
     }
 
     // function to add a pool
@@ -79,7 +74,7 @@ contract BahiaNFTPoolData is
     }
 
     // getter function to get a pool's participant (based on an index)
-    function getParticipant(uint256 poolId, uint256 participantId) public returns (BahiaNFTPoolTypes.Participant memory)
+    function getParticipant(uint256 poolId, uint256 participantId) public view returns (BahiaNFTPoolTypes.Participant memory)
     {
         // otherwise, return the participant
         return poolIdToParticipants[poolId][participantId];
@@ -88,11 +83,7 @@ contract BahiaNFTPoolData is
     // ability to add a participant to a pool (allows another sequential bid)
     function addParticipant(uint256 poolId, BahiaNFTPoolTypes.Participant memory newParticipant) external onlyAllowed
     {
-        // check if the pool exists
-        if (poolId >= getPoolCount())
-        {
-            revert NoPoolFound();
-        }
+        // if (poolId > getPoolCount()) revert NoPoolFound();
 
         // add the participant to the pool
         poolIdToParticipants[poolId].push(newParticipant);

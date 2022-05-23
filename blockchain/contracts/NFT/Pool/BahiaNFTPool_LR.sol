@@ -32,7 +32,7 @@ contract BahiaNFTPool_LR is
     // execute the transaction (no need to check, the pool has been pre-approved)
     // going to need more inputs (see order types in purchase contract)
     // execute the transaction (no need to check, the pool has been pre-approved)
-    function buyNow(uint256 poolId, uint256 minPercentageToAsk, OrderTypes.TakerOrder calldata takerAsk, OrderTypes.MakerOrder calldata makerBid) external whenNotPaused callerIsUser
+    function buyNow(uint256 poolId, OrderTypes.TakerOrder calldata takerAsk, OrderTypes.MakerOrder calldata makerBid) external whenNotPaused callerIsUser
     {
         // pool storage variable
         BahiaNFTPoolTypes.Pool memory pool = _safePool(poolId);

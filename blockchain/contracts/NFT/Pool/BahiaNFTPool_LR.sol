@@ -32,24 +32,34 @@ contract BahiaNFTPool_LR is
     // execute the transaction (no need to check, the pool has been pre-approved)
     // going to need more inputs (see order types in purchase contract)
     // execute the transaction (no need to check, the pool has been pre-approved)
-    function buyNow(uint256 poolId, OrderTypes.TakerOrder calldata takerAsk, OrderTypes.MakerOrder calldata makerBid) external whenNotPaused callerIsUser
+    function buyNow(uint256 poolId, OrderTypes.MakerOrder calldata makerAsk, uint256 minPercentageToAsk, bytes calldata params) external whenNotPaused callerIsUser
     {
         // pool storage variable
         BahiaNFTPoolTypes.Pool memory pool = _safePool(poolId);
 
         // calculate total price including fees
-        uint256 totalPrice = takerAsk.price + (takerAsk.price * devRoyalty / 100000);
+        uint256 totalPrice = makerAsk.price + (makerAsk.price * devRoyalty / 100000);
 
         // set the end purchase price (this is the accessible weth)
         pool.endPurchasePrice = _collectWETH(poolId, totalPrice);
 
         // allow looksrare to take the amount from this contract
-        weth.approve(address(looksrare), takerAsk.price);
+        weth.approve(address(looksrare), makerAsk.price);
 
-        // call matchBidWithTakerAsk
-        looksrare.matchBidWithTakerAsk(takerAsk, makerBid);
+        // make the order (everything else has succeeded)
+        OrderTypes.TakerOrder memory takerBid = OrderTypes.TakerOrder({
+            isOrderAsk: false,
+            taker: address(this),
+            price: makerAsk.price,
+            tokenId: pool.nftId,
+            minPercentageToAsk: minPercentageToAsk,
+            params: params
+            });
 
-        // pay the devs
+        // call matchBidWithMakerAsk
+        looksrare.matchAskWithTakerBid(takerBid, makerAsk);
+
+        // pay the devs, create a vault
         _createVault(pool);
     }
 

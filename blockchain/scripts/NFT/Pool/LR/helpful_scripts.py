@@ -16,19 +16,19 @@ def deploy_support():
 
     # deploy a looksrare token (same supply cap as the actual token)
     LooksRareToken.deploy(
-        NULL_ADDRESS, 0, 1000000000000000000000000000, {'from': admin})
+        admin, 0, 1000000000000000000000000000, {'from': admin})
 
     # deploy looksrare exchange support
     CurrencyManager.deploy({'from': admin})
     ExecutionManager.deploy({'from': admin})
 
     # add the fixed price strategy
-    StrategyStandardSaleForFixedPrice.deploy({'from': admin})
+    StrategyStandardSaleForFixedPrice.deploy(0, {'from': admin})
     ExecutionManager[-1].addStrategy(
         StrategyStandardSaleForFixedPrice[-1], {'from': admin})
 
-    # set royalty fee limit to 95% (max limit)
-    RoyaltyFeeRegistry.deploy(95000, {'from': admin})
+    # set royalty fee limit to 90%
+    RoyaltyFeeRegistry.deploy(9000, {'from': admin})
     RoyaltyFeeManager.deploy(RoyaltyFeeRegistry[-1], {'from': admin})
 
     # deploy looksrare exchange (null address receives protocol fees, as not testing this exchange)
@@ -48,7 +48,7 @@ def deploy():
     # deploy the bahia nft pool and fish contracts
     Fish.deploy({'from': admin})
     BahiaNFTPool_LR.deploy(
-        DEV_ROYALTY, BahiaNFTPoolData[-1], ERC721VaultFactory[-1], WETH10[-1], LooksRareExchange[-1], {'from': admin})
+        DEV_ROYALTY, BahiaNFTPoolData[-1], ERC721VaultFactory[-1], WETH10[-1], LooksRareExchange[-1], LooksRareToken[-1], {'from': admin})
 
     # make the pool an allowed contract
     BahiaNFTPoolData[-1].setAllowedPermission(

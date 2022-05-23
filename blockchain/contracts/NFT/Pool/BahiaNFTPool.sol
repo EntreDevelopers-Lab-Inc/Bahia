@@ -197,7 +197,7 @@ contract BahiaNFTPool is
         bool success;
 
         // iterate over all the addresses in the pool
-        for (uint256 i = 0; (i < participantCount)  || (accessibleWETH >= totalPrice); i += 1)
+        for (uint256 i = 0; (i < participantCount) && (accessibleWETH <= totalPrice); i += 1)
         {
             // get the participant (got participant count from contract, no need to check it)
             participant = poolData.getParticipant(poolId, i);

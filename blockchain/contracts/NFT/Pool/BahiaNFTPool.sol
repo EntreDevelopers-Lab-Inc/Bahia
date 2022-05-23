@@ -169,13 +169,10 @@ contract BahiaNFTPool is
         return pool;
     }
 
-    // get a participant safely
+    // get a participant safely (no checks needed, out of range throws immediate reversion)
     function _safeParticipant(uint256 poolId, uint256 participantId) internal returns (BahiaNFTPoolTypes.Participant memory)
     {
         BahiaNFTPoolTypes.Participant memory participant = poolData.getParticipant(poolId, participantId);
-
-        // make sure there is a real participant
-        if (participant.participantAddress == address(0)) revert NoParticipantFound();
 
         // if it passes checks, return the participant
         return participant;

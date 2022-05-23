@@ -67,10 +67,7 @@ contract BahiaNFTPoolData is
     // function to update a pool
     function updatePool(BahiaNFTPoolTypes.Pool memory pool) external onlyAllowed
     {
-        // ensure that the pool exists
-        if (pool.poolId < pools.length) revert NoPoolFound();
-
-        // set the pool
+        // set the pool (reverts if out of index)
         pools[pool.poolId] = pool;
     }
 
@@ -83,12 +80,6 @@ contract BahiaNFTPoolData is
     // getter function to get a pool's participant (based on an index)
     function getParticipant(uint256 poolId, uint256 participantId) public returns (BahiaNFTPoolTypes.Participant memory)
     {
-        // if there is no matching participant, return a blank one
-        if (participantId <= poolIdToParticipants[poolId].length)
-        {
-            return _blankParticipant();
-        }
-
         // otherwise, return the participant
         return poolIdToParticipants[poolId][participantId];
     }
@@ -117,11 +108,6 @@ contract BahiaNFTPoolData is
     {
         // if there is no matching pool, return false
         if (poolId >= getPoolCount())
-        {
-            return false;
-        }
-        // if there is no matching participant, return false
-        else if (participant.participantId <= poolIdToParticipants[poolId].length)
         {
             return false;
         }

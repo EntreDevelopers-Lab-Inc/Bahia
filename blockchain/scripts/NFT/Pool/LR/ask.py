@@ -30,8 +30,8 @@ def create_maker_ask(signer, collection_address, price, token_id, amount, strate
     v = 27
 
     # r and s are parts of the hash
-    r = long_bytes[2:35]
-    s = long_bytes[35:]
+    r = str(long_bytes)[2:34]
+    s = str(long_bytes)[34:]
 
     # apped v,r,s to the ask
     maker_ask += [v, r, s]

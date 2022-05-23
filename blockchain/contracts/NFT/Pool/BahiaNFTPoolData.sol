@@ -79,7 +79,7 @@ contract BahiaNFTPoolData is
     }
 
     // getter function to get a pool's participant (based on an index)
-    function getParticipant(uint256 poolId, uint256 participantId) public returns (BahiaNFTPoolTypes.Participant memory)
+    function getParticipant(uint256 poolId, uint256 participantId) external returns (BahiaNFTPoolTypes.Participant memory)
     {
         // otherwise, return the participant
         return poolIdToParticipants[poolId][participantId];

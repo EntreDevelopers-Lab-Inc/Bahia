@@ -12,8 +12,13 @@ compiler:
 # set the wallet
 wallets:
   from_key: ${PRIVATE_KEY}  # can get the key from the environment variables
+  dev_test_wallet: ${DEVELOPMENT_KEY}
   DEVELOPMENT_KEY: testAccount
   password: 'password'
+wallets:
+  from_key: ${PRIVATE_KEY}
+
+
 
 networks:
   default: development

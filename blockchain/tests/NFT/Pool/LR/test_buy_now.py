@@ -2,7 +2,7 @@ import pytest
 import brownie
 from brownie import BahiaNFTPool_LR, BahiaNFTPoolData, LooksRareExchange, Fish, WETH10, StrategyStandardSaleForFixedPrice, accounts, chain
 from scripts.NFT.Pool.LR.helpful_scripts import deploy
-from scripts.NFT.pool.LR.ask import list_nft
+from scripts.NFT.Pool.LR.ask import list_nft
 
 
 # deploy and create a pool every time
@@ -14,7 +14,7 @@ def setup_pool():
     # get the contracts
     fish_contract = Fish[-1]
     pool_contract = BahiaNFTPool_LR[-1]
-    looksrare_contract = LookRareExchange[-1]
+    looksrare_contract = LooksRareExchange[-1]
     weth_contract = WETH10[-1]
 
     # mint an NFT to the user

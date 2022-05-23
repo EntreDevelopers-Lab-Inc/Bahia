@@ -63,6 +63,22 @@ contract LooksRareExchange is ILooksRareExchange, ReentrancyGuard, Ownable {
     using OrderTypes for OrderTypes.MakerOrder;
     using OrderTypes for OrderTypes.TakerOrder;
 
+    struct ShortAsk {
+        bool isOrderAsk;
+        address signer;
+        address collection;
+        uint256 price;
+        uint256 tokenId;
+        uint256 amount;
+        address strategy;
+        address currency;
+        uint256 nonce;
+        uint256 startTime;
+        uint256 endTime;
+        uint256 minPercentageToAsk;
+        bytes params;
+    }
+
     address public immutable WETH;
     bytes32 public immutable DOMAIN_SEPARATOR;
 
@@ -149,6 +165,12 @@ contract LooksRareExchange is ILooksRareExchange, ReentrancyGuard, Ownable {
         royaltyFeeManager = IRoyaltyFeeManager(_royaltyFeeManager);
         WETH = _WETH;
         protocolFeeRecipient = _protocolFeeRecipient;
+    }
+
+    // shortcut for getting a hash
+    function getHash(ShortAsk calldata shortAsk) external view returns (bytes32)
+    {
+        return keccak256(abi.encode(shortAsk));
     }
 
     /**

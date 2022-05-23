@@ -1,6 +1,6 @@
 import pytest
 import brownie
-from brownie import BahiaNFTPool_LR, BahiaNFTPoolData, LooksRareExchange, Fish, WETH10, StrategyStandardSaleForFixedPrice, accounts, chain
+from brownie import BahiaNFTPool_LR, BahiaNFTPoolData, LooksRareExchange, Fish, WETH10, StrategyStandardSaleForFixedPrice, TransferManagerERC721, accounts, chain
 from scripts.NFT.Pool.LR.helpful_scripts import deploy
 from scripts.NFT.Pool.LR.ask import create_maker_ask
 
@@ -14,11 +14,14 @@ def setup_pool():
     # get the contracts
     fish_contract = Fish[-1]
     pool_contract = BahiaNFTPool_LR[-1]
-    looksrare_contract = LooksRareExchange[-1]
     weth_contract = WETH10[-1]
+    lr_transfer_contract = TransferManagerERC721[-1]
 
     # mint an NFT to the user
     fish_contract.safeMint(1, {'from': accounts[1]})
+
+    # allow the transfer manager to interact with the nft
+    fish_contract.approve(lr_transfer_contract, 0)
 
     # create a pool from an account
     pool_contract.createPool(fish_contract, 0, 6, 'Scales', 'SCLS', 30, 150, {
@@ -34,7 +37,6 @@ def test_buy():
     # get the contracts
     fish_contract = Fish[-1]
     pool_contract = BahiaNFTPool_LR[-1]
-    looksrare_contract = LooksRareExchange[-1]
 
     # have the accounts join the pool
     pool_contract.joinPool(0, 1, {'from': accounts[2]})
@@ -54,8 +56,6 @@ def test_buy():
                                  end_time=chain.time() + 600,  # 10 minutes later
                                  min_percentage_to_ask=8500  # collect 85% of the order
                                  )
-
-    print(BahiaNFTPoolData[-1].getParticipantCount(0))
 
     # call buy now
     pool_contract.buyNow(0, maker_ask, 8500, '', {'from': accounts[2]})

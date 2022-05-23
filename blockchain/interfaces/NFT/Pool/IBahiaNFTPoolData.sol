@@ -25,11 +25,11 @@ interface IBahiaNFTPoolData {
     function getParticipant(uint256 poolId, uint256 participantId) external returns (BahiaNFTPoolTypes.Participant memory);
 
     // ability to add a participant to a pool
-    function addParticipant(uint256 poolId, BahiaNFTPoolTypes.Participant memory newParticipant) external returns (bool);
+    function addParticipant(uint256 poolId, BahiaNFTPoolTypes.Participant memory newParticipant) external;
 
     // set a participant
-    function setParticipant(uint256 poolId, BahiaNFTPoolTypes.Participant memory participant) external returns (bool);
+    function setParticipant(uint256 poolId, BahiaNFTPoolTypes.Participant memory participant) external;
 
     // set the contribution
-    function setContribution(uint256 poolId, uint256 participantId, uint256 newContribution) external returns (bool);
+    function setContribution(uint256 poolId, uint256 participantId, uint256 newContribution) external;
 }

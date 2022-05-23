@@ -6,6 +6,7 @@ import "../../../interfaces/NFT/Pool/IBahiaNFTPoolData.sol";
 
 error NoPoolFound();
 error NotAllowed();
+error NotParticipant();
 
 contract BahiaNFTPoolData is
     IBahiaNFTPoolData
@@ -85,12 +86,12 @@ contract BahiaNFTPoolData is
     }
 
     // ability to add a participant to a pool (allows another sequential bid)
-    function addParticipant(uint256 poolId, BahiaNFTPoolTypes.Participant memory newParticipant) external onlyAllowed returns (bool)
+    function addParticipant(uint256 poolId, BahiaNFTPoolTypes.Participant memory newParticipant) external onlyAllowed
     {
         // check if the pool exists
         if (poolId >= getPoolCount())
         {
-            return false;
+            revert NoPoolFound();
         }
 
         // add the participant to the pool
@@ -98,35 +99,29 @@ contract BahiaNFTPoolData is
 
         // emit that a new participant has been added
         emit ParticipantAdded(poolId, newParticipant);
-
-        // return that the participant has been added
-        return true;
     }
 
     // setter function to update participant information
-    function setParticipant(uint256 poolId, BahiaNFTPoolTypes.Participant memory participant) external onlyAllowed returns (bool)
+    function setParticipant(uint256 poolId, BahiaNFTPoolTypes.Participant memory participant) external onlyAllowed
     {
         // if there is no matching pool, return false
         if (poolId >= getPoolCount())
         {
-            return false;
+            revert NoPoolFound();
         }
 
         // otherwise, set the participant
         poolIdToParticipants[poolId][participant.participantId] = participant;
-
-        // return true for success
-        return true;
     }
 
 
     // option to change contribution
-    function setContribution(uint256 poolId, uint256 participantId, uint256 newContribution) external onlyAllowed returns (bool)
+    function setContribution(uint256 poolId, uint256 participantId, uint256 newContribution) external onlyAllowed
     {
         // check if the pool exists
         if (poolId >= getPoolCount())
         {
-            return false;
+            revert NoPoolFound();
         }
 
         // get the participant
@@ -135,7 +130,7 @@ contract BahiaNFTPoolData is
         // check that the participant is the transaction sender
         if (participant.participantAddress != tx.origin)
         {
-            return false;
+            revert NotParticipant();
         }
 
         // set the contribution
@@ -143,9 +138,6 @@ contract BahiaNFTPoolData is
 
         // emit that the contribution has been set
         emit ContributionSet(poolId, participant);
-
-        // return that the contribution has been set
-        return true;
     }
 
     // empty pool

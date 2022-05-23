@@ -103,7 +103,7 @@ contract BahiaNFTPool is
             });
 
         // add the participant to the pool if this all passes (can assume this will work, as it is a valid pool id)
-        bool participantAdded = poolData.addParticipant(poolId, newParticipant);
+        poolData.addParticipant(poolId, newParticipant);
     }
 
     // function to set the contribution
@@ -117,10 +117,7 @@ contract BahiaNFTPool is
 
         // set the contribution if it passes the above constraints
         // this setter checks that the participant is the origin of this transaction
-        bool contributionSet = poolData.setContribution(poolId, participant.participantId, newContribution);
-
-        // revert if the contribution could not be found
-        if (!contributionSet) revert NoPoolFound();
+        poolData.setContribution(poolId, participant.participantId, newContribution);
     }
 
 

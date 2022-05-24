@@ -133,33 +133,6 @@ contract BahiaNFTPoolData is
         emit ContributionSet(poolId, participant);
     }
 
-    // empty pool
-    // function _blankPool() internal pure returns (BahiaNFTPoolTypes.Pool memory)
-    // {
-    //     BahiaNFTPoolTypes.Pool memory blankPool = BahiaNFTPoolTypes.Pool(
-    //         0, // poolId
-    //         address(0), // collection address
-    //         0, // nftId
-    //         0, // maxContributions
-    //         "", //shareName
-    //         "", //shareSymbol
-    //         0, //shareSupply
-    //         0, //startListPrice
-    //         address(0), //creator adddress
-    //         false, // completed bool
-    //         0, // endPurchasePrice 
-    //         0 //vaultId
-    //         );
-    //     return blankPool;
-    // }
-
-    // empty participant
-    // function _blankParticipant() internal pure returns (BahiaNFTPoolTypes.Participant memory)
-    // {
-    //     BahiaNFTPoolTypes.Participant memory blankParticipant = BahiaNFTPoolTypes.Participant(0, address(0), 0, 0);
-    //     return blankParticipant;
-    // }
-
     // set the allowed permission
     function setAllowedPermission(address address_, bool permission_) external onlyAllowed
     {

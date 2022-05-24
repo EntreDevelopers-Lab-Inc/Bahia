@@ -2,6 +2,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.0 <0.9.0 >=0.8.1 <0.9.0;
 
+import "./Interfaces/IVault.sol";
+
 ////// lib/openzeppelin-contracts/contracts/utils/Context.sol
 // OpenZeppelin Contracts v4.4.1 (utils/Context.sol)
 
@@ -1829,14 +1831,6 @@ library EnumerableSet {
 /* import "openzeppelin-contracts/contracts/token/ERC1155/ERC1155.sol"; */
 /* import "openzeppelin-contracts/contracts/utils/Strings.sol"; */
 /* import "openzeppelin-contracts/contracts/access/Ownable.sol"; */
-
-interface IVault {
-  function onTransfer(
-    address,
-    address,
-    uint256
-  ) external;
-}
 
 contract FERC1155 is ERC1155, Ownable {
   using Strings for uint256;

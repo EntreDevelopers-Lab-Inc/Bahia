@@ -8,10 +8,8 @@ library BahiaNFTPoolTypes {
         address collection;
         uint256 nftId;
         uint256 maxContributions;  // limits NFT owner from manipulating markets
-        string shareName;  // fractional art
-        string shareSymbol;  // fractional art
-        uint256 shareSupply;
-        uint256 startListPrice;  // fractional art
+
+        uint256 shareSupply;  // fractional art
 
         address creator; // make sure that the creator is recognized
         bool completed;

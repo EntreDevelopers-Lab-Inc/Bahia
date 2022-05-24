@@ -121,13 +121,13 @@ contract BahiaNFTPoolData is
         if (poolId >= _currentIndex) revert NoPoolFound();
 
         // get the participant
-        BahiaNFTPoolTypes.Participant memory participant = poolIdToParticipants[poolId][participantId];
+        BahiaNFTPoolTypes.Participant storage participant = poolIdToParticipants[poolId][participantId];
 
         // check that the participant is the transaction sender
         if (participant.participantAddress != tx.origin) revert NotParticipant();
 
         // set the contribution
-        poolIdToParticipants[poolId][participantId].contribution = newContribution;
+        participant.contribution = newContribution;
 
         // emit that the contribution has been set
         emit ContributionSet(poolId, participant);

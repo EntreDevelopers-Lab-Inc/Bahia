@@ -64,7 +64,7 @@ def test_update_pool():
     other_account = get_dev_account() 
 
     #Create new pool with the same ID...
-    new_pool = (
+    new_pool = [
         0, # poolId
         "0x0000000000000000000000000000000000000000", # collection address
         1, # nftId
@@ -77,13 +77,24 @@ def test_update_pool():
         False, # completed bool
         1, # endPurchasePrice
         1, #vaultId
-    ) 
+    ]
 
     data_contract.updatePool(new_pool, {"from": admin_account})
+
+    # Cannot update_pool from other_account
     with brownie.reverts():
         data_contract.updatePool(new_pool, {"from": other_account})
     
     assert data_contract.getPool(0) == new_pool
+
+    # Reset the pool_id to 5
+    # ***
+    new_pool[0] = 5
+    # ***
+
+    # Cannot update a pool that doesn't exist...
+    with brownie.reverts():
+        data_contract.updatePool(new_pool, {"from": admin_account})
 
 def test_get_pool():
     data_contract = BahiaNFTPoolData[-1]
@@ -177,10 +188,18 @@ def test_set_contribution():
     with brownie.reverts():
         data_contract.setContribution(pool_id, 1, contribution, {"from": admin_account})
     
-    # Pool doesn't exist
+    # Pool doesn't exist...
     with brownie.reverts():
-        data_contract.setContribution(5, participant_id, contribution, {"from": other_account})
+        data_contract.setContribution(5, participant_id, contribution, {"from": admin_account})
     
+    # Other_account cannot setContribution...
+    with brownie.reverts():
+        data_contract.setContribution(pool_id, participant_id, contribution, {"from": other_account})
+
+    # Cannot set contribution for participant that doesn't exist...
+    with brownie.reverts():
+        data_contract.setContribution(pool_id, 10, contribution, {"from": admin_account})
+
     data_contract.setContribution(pool_id, participant_id, contribution, {"from": admin_account})
 
     assert data_contract.getParticipant(pool_id, participant_id)[2] == contribution

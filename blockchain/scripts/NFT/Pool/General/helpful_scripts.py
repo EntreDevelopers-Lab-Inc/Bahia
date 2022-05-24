@@ -1,4 +1,5 @@
-from brownie import Settings, ERC721VaultFactory, WETH10, BahiaNFTPoolData, BahiaNFTPool, Fish, accounts
+from brownie import WETH10, VaultFactory, BahiaNFTPoolData, BahiaNFTPool, Fish, accounts
+from scripts.NFT.Pool.fractional_art import deploy_fractional_art
 from scripts.accounts import get_admin_account
 from scripts.constants import DEV_ROYALTY
 
@@ -6,11 +7,10 @@ from scripts.constants import DEV_ROYALTY
 def deploy():
     admin = get_admin_account()
 
-    # deploy settings for vault factory
-    Settings.deploy({'from': admin})
+    # deploy fractional art
+    deploy_fractional_art()
 
-    # deploy fractional art and weth
-    ERC721VaultFactory.deploy(Settings[-1], {'from': admin})
+    # deploy weth
     WETH10.deploy({'from': admin})
 
     # deploy the data contract
@@ -19,7 +19,7 @@ def deploy():
     # deploy the bahia nft pool and fish contracts
     Fish.deploy({'from': admin})
     BahiaNFTPool.deploy(
-        DEV_ROYALTY, BahiaNFTPoolData[-1], ERC721VaultFactory[-1], WETH10[-1], {'from': admin})
+        DEV_ROYALTY, BahiaNFTPoolData[-1], VaultFactory[-1], WETH10[-1], {'from': admin})
 
     # make the pool an allowed contract
     BahiaNFTPoolData[-1].setAllowedPermission(

@@ -1,6 +1,6 @@
 import pytest
 import brownie
-from brownie import BahiaNFTPool_LR, BahiaNFTPoolData, LooksRareExchange, Fish, WETH10, StrategyStandardSaleForFixedPrice, TransferManagerERC721, ERC721VaultFactory, IERC20, IERC1155, accounts, chain
+from brownie import BahiaNFTPool_LR, BahiaNFTPoolData, LooksRareExchange, Fish, WETH10, StrategyStandardSaleForFixedPrice, TransferManagerERC721, VaultFactory, accounts, chain
 from scripts.NFT.Pool.LR.helpful_scripts import deploy
 from scripts.NFT.Pool.LR.ask import create_maker_ask
 from scripts.accounts import get_admin_account
@@ -27,7 +27,7 @@ def setup_pool():
         lr_transfer_contract, True, {'from': accounts[1]})
 
     # create a pool from an account
-    pool_contract.createPool(fish_contract, 0, 606, 'Scales', 'SCLS', 3000, 15000, {
+    pool_contract.createPool(fish_contract, 0, 606, 3000, {
                              'from': accounts[2]})
 
     # allow the pool to take money from the accounts
@@ -40,7 +40,7 @@ def test_buy():
     # get the contracts
     fish_contract = Fish[-1]
     pool_contract = BahiaNFTPool_LR[-1]
-    vault_contract = ERC721VaultFactory[-1]
+    vault_contract = VaultFactory[-1]
     weth_contract = WETH10[-1]
 
     # have the accounts join the pool

@@ -1,4 +1,5 @@
-from brownie import FERC1155, VaultFactory, WETH10, LooksRareToken, LooksRareExchange, CurrencyManager, ExecutionManager, TransferSelectorNFT, TransferManagerERC721, TransferManagerERC1155, StrategyStandardSaleForFixedPrice, RoyaltyFeeManager, RoyaltyFeeRegistry, BahiaNFTPoolData, BahiaNFTPool_LR, Fish, accounts
+from brownie import WETH10, VaultFactory, LooksRareToken, LooksRareExchange, CurrencyManager, ExecutionManager, TransferSelectorNFT, TransferManagerERC721, TransferManagerERC1155, StrategyStandardSaleForFixedPrice, RoyaltyFeeManager, RoyaltyFeeRegistry, BahiaNFTPoolData, BahiaNFTPool_LR, Fish, accounts
+from scripts.NFT.Pool.fractional_art import deploy_fractional_art
 from scripts.accounts import get_admin_account
 from scripts.constants import DEV_ROYALTY, NULL_ADDRESS
 
@@ -7,15 +8,7 @@ from scripts.constants import DEV_ROYALTY, NULL_ADDRESS
 def deploy_support():
     admin = get_admin_account()
 
-    # deploy settings for vault factory
-    Settings.deploy({'from': admin})
-
-    # deploy fractional art
-    FERC1155.deploy({"from": admin})
-    VaultFactory.deploy(Settings[-1], {'from': admin})
-
-    # add the vault factory as a minter for the ERC1155s
-    FERC1155[-1].addMinter(VaultFactory[-1])
+    deploy_fractional_art()
 
     # add weth
     WETH10.deploy({'from': admin})

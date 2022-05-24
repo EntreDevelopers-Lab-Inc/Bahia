@@ -60,7 +60,7 @@ contract BahiaNFTPool is
     }
 
     // function to create a pool with limited inputs (don't want user to have full control and create false creators, completion, etc.)
-    function createPool(address collection_, uint256 nftId_, uint256 maxContributions_, uint256 shareSupply_, uint256 startListPrice_) external whenNotPaused
+    function createPool(address collection_, uint256 nftId_, uint256 maxContributions_, uint256 shareSupply_) external whenNotPaused
     {
         // create a new pool
         BahiaNFTPoolTypes.Pool memory newPool = BahiaNFTPoolTypes.Pool({
@@ -242,7 +242,7 @@ contract BahiaNFTPool is
         IERC721(pool.collection).approve(address(fractionalArt), pool.nftId);
 
         // create a vault & fractionalize (assuming all ERC20 tokens mint to this contract)
-        pool.vaultId = fractionalArt.mint(pool.collection, pool.nftId, pool.shareSupply);  // no curator fee
+        pool.vaultId = fractionalArt.mint(pool.collection, pool.nftId, pool.shareSupply);
 
         // push the pool to the data contract
         poolData.updatePool(pool);

@@ -1,4 +1,4 @@
-from brownie import Settings, ERC721VaultFactory, WETH10, LooksRareToken, LooksRareExchange, CurrencyManager, ExecutionManager, TransferSelectorNFT, TransferManagerERC721, TransferManagerERC1155, StrategyStandardSaleForFixedPrice, RoyaltyFeeManager, RoyaltyFeeRegistry, BahiaNFTPoolData, BahiaNFTPool_LR, Fish, accounts, chain
+from brownie import FERC1155, VaultFactory, WETH10, LooksRareToken, LooksRareExchange, CurrencyManager, ExecutionManager, TransferSelectorNFT, TransferManagerERC721, TransferManagerERC1155, StrategyStandardSaleForFixedPrice, RoyaltyFeeManager, RoyaltyFeeRegistry, BahiaNFTPoolData, BahiaNFTPool_LR, Fish, accounts
 from scripts.accounts import get_admin_account
 from scripts.constants import DEV_ROYALTY, NULL_ADDRESS
 
@@ -10,8 +10,14 @@ def deploy_support():
     # deploy settings for vault factory
     Settings.deploy({'from': admin})
 
-    # deploy fractional art and weth
-    ERC721VaultFactory.deploy(Settings[-1], {'from': admin})
+    # deploy fractional art
+    FERC1155.deploy({"from": admin})
+    VaultFactory.deploy(Settings[-1], {'from': admin})
+
+    # add the vault factory as a minter for the ERC1155s
+    FERC1155[-1].addMinter(VaultFactory[-1])
+
+    # add weth
     WETH10.deploy({'from': admin})
 
     # deploy a looksrare token (same supply cap as the actual token)
@@ -61,7 +67,7 @@ def deploy():
     # deploy the bahia nft pool and fish contracts
     Fish.deploy({'from': admin})
     BahiaNFTPool_LR.deploy(
-        DEV_ROYALTY, BahiaNFTPoolData[-1], ERC721VaultFactory[-1], WETH10[-1], LooksRareExchange[-1], LooksRareToken[-1], {'from': admin})
+        DEV_ROYALTY, BahiaNFTPoolData[-1], VaultFactory[-1], WETH10[-1], LooksRareExchange[-1], LooksRareToken[-1], {'from': admin})
 
     # make the pool an allowed contract
     BahiaNFTPoolData[-1].setAllowedPermission(

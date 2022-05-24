@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import {OrderTypes} from "../../../contracts/NFT/Pool/libraries/OrderTypes.sol";
+import {OrderTypes} from "../../../contracts/NFT/Pool/reference/libraries/OrderTypes.sol";
 
 interface ILooksRareExchange {
     function matchAskWithTakerBidUsingETHAndWETH(

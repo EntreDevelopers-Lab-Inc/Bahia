@@ -21,7 +21,8 @@ def setup_pool():
     fish_contract.safeMint(1, {'from': accounts[1]})
 
     # allow the transfer manager to interact with the nft
-    fish_contract.approve(lr_transfer_contract, 0)
+    fish_contract.setApprovalForAll(
+        lr_transfer_contract, True, {'from': accounts[1]})
 
     # create a pool from an account
     pool_contract.createPool(fish_contract, 0, 6, 'Scales', 'SCLS', 30, 150, {

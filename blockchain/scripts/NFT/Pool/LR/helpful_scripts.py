@@ -1,4 +1,4 @@
-from brownie import Settings, ERC721VaultFactory, WETH10, LooksRareToken, LooksRareExchange, CurrencyManager, ExecutionManager, TransferSelectorNFT, TransferManagerERC721, TransferManagerERC1155, StrategyStandardSaleForFixedPrice, RoyaltyFeeManager, RoyaltyFeeRegistry, BahiaNFTPoolData, BahiaNFTPool_LR, Fish, accounts
+from brownie import Settings, ERC721VaultFactory, WETH10, LooksRareToken, LooksRareExchange, CurrencyManager, ExecutionManager, TransferSelectorNFT, TransferManagerERC721, TransferManagerERC1155, StrategyStandardSaleForFixedPrice, RoyaltyFeeManager, RoyaltyFeeRegistry, BahiaNFTPoolData, BahiaNFTPool_LR, Fish, accounts, chain
 from scripts.accounts import get_admin_account
 from scripts.constants import DEV_ROYALTY, NULL_ADDRESS
 
@@ -43,6 +43,10 @@ def deploy_support():
     TransferManagerERC1155.deploy(LooksRareExchange[-1], {'from': admin})
     TransferSelectorNFT.deploy(
         TransferManagerERC721[-1], TransferManagerERC1155[-1], {'from': admin})
+
+    # update the LR transfer selector
+    LooksRareExchange[-1].updateTransferSelectorNFT(
+        TransferSelectorNFT[-1], {'from': admin})
 
 
 # function to deploy everything

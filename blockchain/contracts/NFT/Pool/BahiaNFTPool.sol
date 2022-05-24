@@ -235,9 +235,6 @@ contract BahiaNFTPool is
     // create the vault
     function _createVault(BahiaNFTPoolTypes.Pool memory pool) internal
     {
-        // pay the devs
-        weth.transfer(devAddress, pool.endPurchasePrice * (devRoyalty / 100000));
-
         // now that the contract has the NFT, allow the fractional art vault factory to interact with it
         IERC721(pool.collection).approve(address(fractionalArt), pool.nftId);
 

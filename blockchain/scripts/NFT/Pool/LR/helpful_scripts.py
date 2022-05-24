@@ -69,4 +69,4 @@ def deploy():
 
     # give each account 10 weth
     for account in accounts:
-        WETH10[-1].deposit({'value': 10, 'from': account})
+        WETH10[-1].deposit({'value': 1000, 'from': account})

@@ -244,6 +244,9 @@ contract BahiaNFTPool is
         // create a vault & fractionalize (assuming all ERC20 tokens mint to this contract)
         pool.vaultId = fractionalArt.mint(pool.collection, pool.nftId, pool.shareSupply);
 
+        // mark that the pool has been completed
+        pool.completed = true;
+
         // push the pool to the data contract
         poolData.updatePool(pool);
     }

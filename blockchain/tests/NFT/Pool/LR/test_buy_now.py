@@ -97,3 +97,30 @@ def test_buy():
 
 
 # test executing a purchase with a price that's too high
+def test_buy_too_high():
+    # get the contracts
+    fish_contract = Fish[-1]
+    pool_contract = BahiaNFTPool_LR[-1]
+
+    # have the accounts join the pool
+    pool_contract.joinPool(0, 101, {'from': accounts[2]})
+    pool_contract.joinPool(0, 202, {'from': accounts[3]})
+    pool_contract.joinPool(0, 303, {'from': accounts[4]})
+
+    # get the maker ask
+    maker_ask = create_maker_ask(signer=accounts[1],
+                                 collection_address=fish_contract,
+                                 price=700,
+                                 token_id=0,
+                                 amount=1,
+                                 strategy=StrategyStandardSaleForFixedPrice[-1],
+                                 currency=WETH10[-1],
+                                 nonce=0,  # first nft listed by this account
+                                 start_time=chain.time(),
+                                 end_time=chain.time() + 600,  # 10 minutes later
+                                 min_percentage_to_ask=8500  # collect 85% of the order
+                                 )
+
+    # try to buy the item (should fail)
+    with brownie.reverts():
+        pool_contract.buyNow(0, maker_ask, 8500, '', {'from': accounts[2]})

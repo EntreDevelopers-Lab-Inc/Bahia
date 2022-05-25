@@ -2374,7 +2374,6 @@ contract VaultFactory is Ownable, ERC1155Holder {
     uint256 _id,
     uint256 _amount
   ) external returns (uint256) {
-    require(msg.sender == FERC1155(fnft).owner(), "not owner");
     uint256 count = FERC1155(fnft).count() + 1;
     address vault = address(new Vault(fnft, count, _token, _id, msg.sender));
     uint256 fractionId = FERC1155(fnft).mint(vault, _amount);

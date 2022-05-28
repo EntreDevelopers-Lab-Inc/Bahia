@@ -1,5 +1,5 @@
 from brownie import WETH10, VaultFactory, LooksRareToken, LooksRareExchange, CurrencyManager, ExecutionManager, TransferSelectorNFT, TransferManagerERC721, TransferManagerERC1155, StrategyStandardSaleForFixedPrice, RoyaltyFeeManager, RoyaltyFeeRegistry, BahiaNFTPoolData, BahiaNFTPool_LR, Fish, accounts
-from scripts.NFT.Pool.fractional_art + import deploy_fractional_art
+from scripts.NFT.Pool.fractional_art import deploy_fractional_art
 from scripts.accounts import get_admin_account
 from scripts.constants import DEV_ROYALTY, NULL_ADDRESS
 

@@ -1,6 +1,6 @@
 import pytest
 import brownie
-from brownie import BahiaNFTPool_LR, BahiaNFTPoolData, LooksRareExchange, Fish, WETH10, StrategyStandardSaleForFixedPrice, TransferManagerERC721, VaultFactory, accounts, chain
+from brownie import BahiaNFTPool_LR, LooksRareExchange, Fish, WETH10, StrategyStandardSaleForFixedPrice, TransferManagerERC721, VaultFactory, accounts, chain
 from scripts.NFT.Pool.LR.helpful_scripts import deploy
 from scripts.NFT.Pool.LR.ask import create_maker_ask
 from scripts.accounts import get_admin_account

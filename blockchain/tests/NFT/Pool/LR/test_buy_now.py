@@ -1,6 +1,6 @@
 import pytest
 import brownie
-from brownie import BahiaNFTPool_LR, LooksRareExchange, Fish, WETH10, StrategyStandardSaleForFixedPrice, TransferManagerERC721, VaultFactory, accounts, chain
+from brownie import BahiaNFTPool_LR, Fish, WETH10, StrategyStandardSaleForFixedPrice, TransferManagerERC721, VaultFactory, accounts, chain
 from scripts.NFT.Pool.LR.helpful_scripts import deploy
 from scripts.NFT.Pool.LR.ask import create_maker_ask
 from scripts.accounts import get_admin_account
@@ -62,8 +62,7 @@ def test_buy():
                                  min_percentage_to_ask=8500  # collect 85% of the order
                                  )
 
-    # get admin start balance
-    admin = get_admin_account()
+    # get start balances
     balance_accounts = [pool_contract] + accounts[1:5]
     start_balances = dict()
     end_balances = dict()

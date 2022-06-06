@@ -18,7 +18,7 @@ def setup_pool():
     fish_contract.safeMint(1, {'from': accounts[1]})
 
     # create a pool from an account
-    pool_contract.createPool(fish_contract, 0, 3, 'Scales', 'SCLS', 9, 27, {
+    pool_contract.createPool(fish_contract, 0, 3, 9, {
                              'from': accounts[1]})
 
 

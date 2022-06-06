@@ -6,11 +6,13 @@ import {BahiaNFTPoolTypes} from "../../../contracts/NFT/Pool/libraries/BahiaNFTP
 import "../../Bahia.sol";
 import "../../../interfaces/NFT/Pool/IBahiaNFTPoolData.sol";
 import "../../../interfaces/NFT/Pool/IFractionalArt.sol";
+import "./reference/Interfaces/IVault.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "@openzeppelin/contracts/token/ERC721/utils/ERC721Holder.sol";
+import "@openzeppelin/contracts/token/ERC1155/IERC1155.sol";
+import "@openzeppelin/contracts/token/ERC1155/IERC1155Receiver.sol";
 import "@openzeppelin/contracts/token/ERC721/utils/ERC721Holder.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
@@ -28,6 +30,7 @@ error NoShares();
 contract BahiaNFTPool is
     Bahia,
     ERC721Holder,
+    IERC1155Receiver,
     ReentrancyGuard,
     Ownable,
     Pausable
@@ -57,7 +60,7 @@ contract BahiaNFTPool is
     }
 
     // function to create a pool with limited inputs (don't want user to have full control and create false creators, completion, etc.)
-    function createPool(address collection_, uint256 nftId_, uint256 maxContributions_, string memory shareName_, string memory shareSymbol_, uint256 shareSupply_, uint256 startListPrice_) external whenNotPaused
+    function createPool(address collection_, uint256 nftId_, uint256 maxContributions_, uint256 shareSupply_) external whenNotPaused
     {
         // create a new pool
         BahiaNFTPoolTypes.Pool memory newPool = BahiaNFTPoolTypes.Pool({
@@ -65,10 +68,7 @@ contract BahiaNFTPool is
                 collection: collection_,
                 nftId: nftId_,
                 maxContributions: maxContributions_,
-                shareName: shareName_,
-                shareSymbol: shareSymbol_,
                 shareSupply: shareSupply_,
-                startListPrice: startListPrice_,
                 creator: msg.sender,
                 completed: false,
                 endPurchasePrice: 0,
@@ -142,9 +142,12 @@ contract BahiaNFTPool is
         // upload the participant to the data contract
         poolData.setParticipant(poolId, participant);
 
+        // get the vault
+        IVault vault = IVault(fractionalArt.vaults(pool.vaultId));
+
         // distribute these fractionalized shares
-        IERC20 sharesContract = IERC20(fractionalArt.vaults(pool.vaultId));
-        sharesContract.transfer(participant.participantAddress, (pool.shareSupply * participant.paid / pool.endPurchasePrice));
+        IERC1155 sharesContract = IERC1155(fractionalArt.fnft());
+        sharesContract.safeTransferFrom(address(this), participant.participantAddress, vault.id(), (pool.shareSupply * participant.paid / pool.endPurchasePrice), bytes("0"));
     }
 
     // function to calculate minimums
@@ -235,14 +238,14 @@ contract BahiaNFTPool is
     // create the vault
     function _createVault(BahiaNFTPoolTypes.Pool memory pool) internal
     {
-        // pay the devs
-        weth.transfer(devAddress, pool.endPurchasePrice * (devRoyalty / 100000));
-
         // now that the contract has the NFT, allow the fractional art vault factory to interact with it
         IERC721(pool.collection).approve(address(fractionalArt), pool.nftId);
 
         // create a vault & fractionalize (assuming all ERC20 tokens mint to this contract)
-        pool.vaultId = fractionalArt.mint(pool.shareName, pool.shareSymbol, pool.collection, pool.nftId, pool.shareSupply, pool.startListPrice, 0);  // no curator fee
+        pool.vaultId = fractionalArt.mint(pool.collection, pool.nftId, pool.shareSupply);
+
+        // mark that the pool has been completed
+        pool.completed = true;
 
         // push the pool to the data contract
         poolData.updatePool(pool);
@@ -272,5 +275,25 @@ contract BahiaNFTPool is
         {
             _unpause();
         }
+    }
+
+    // must have this function for receiving ERC1155s
+    function onERC1155Received(address operator, address from,uint256 id, uint256 value, bytes calldata data) external returns (bytes4)
+    {
+        // return the magic key for fractional art
+        return this.onERC1155Received.selector;
+    }
+
+    // must have this function for receiving ERC1155s
+    function onERC1155BatchReceived(address operator, address from, uint256[] calldata ids, uint256[] calldata values, bytes calldata data) external returns (bytes4)
+    {
+        // return the magic key for fractional art
+        return this.onERC1155BatchReceived.selector;
+    }
+
+    // note that the 1155 interface is supported
+    function supportsInterface(bytes4 interfaceId) external view returns (bool)
+    {
+        return interfaceId == type(IERC1155Receiver).interfaceId;
     }
 }

@@ -1,4 +1,5 @@
-from brownie import Settings, ERC721VaultFactory, WETH10, LooksRareToken, LooksRareExchange, CurrencyManager, ExecutionManager, StrategyStandardSaleForFixedPrice, RoyaltyFeeManager, RoyaltyFeeRegistry, BahiaNFTPoolData, BahiaNFTPool_LR, Fish, accounts
+from brownie import WETH10, VaultFactory, LooksRareToken, LooksRareExchange, CurrencyManager, ExecutionManager, TransferSelectorNFT, TransferManagerERC721, TransferManagerERC1155, StrategyStandardSaleForFixedPrice, RoyaltyFeeManager, RoyaltyFeeRegistry, BahiaNFTPoolData, BahiaNFTPool_LR, Fish, accounts
+from scripts.NFT.Pool.fractional_art import deploy_fractional_art
 from scripts.accounts import get_admin_account
 from scripts.constants import DEV_ROYALTY, NULL_ADDRESS
 
@@ -7,11 +8,9 @@ from scripts.constants import DEV_ROYALTY, NULL_ADDRESS
 def deploy_support():
     admin = get_admin_account()
 
-    # deploy settings for vault factory
-    Settings.deploy({'from': admin})
+    deploy_fractional_art()
 
-    # deploy fractional art and weth
-    ERC721VaultFactory.deploy(Settings[-1], {'from': admin})
+    # add weth
     WETH10.deploy({'from': admin})
 
     # deploy a looksrare token (same supply cap as the actual token)
@@ -21,6 +20,9 @@ def deploy_support():
     # deploy looksrare exchange support
     CurrencyManager.deploy({'from': admin})
     ExecutionManager.deploy({'from': admin})
+
+    # add WETH as an accepted currency
+    CurrencyManager[-1].addCurrency(WETH10[-1], {'from': admin})
 
     # add the fixed price strategy
     StrategyStandardSaleForFixedPrice.deploy(0, {'from': admin})
@@ -35,6 +37,16 @@ def deploy_support():
     LooksRareExchange.deploy(
         CurrencyManager[-1], ExecutionManager[-1], RoyaltyFeeManager[-1], WETH10[-1], NULL_ADDRESS, {'from': admin})
 
+    # set up transfer managers
+    TransferManagerERC721.deploy(LooksRareExchange[-1], {'from': admin})
+    TransferManagerERC1155.deploy(LooksRareExchange[-1], {'from': admin})
+    TransferSelectorNFT.deploy(
+        TransferManagerERC721[-1], TransferManagerERC1155[-1], {'from': admin})
+
+    # update the LR transfer selector
+    LooksRareExchange[-1].updateTransferSelectorNFT(
+        TransferSelectorNFT[-1], {'from': admin})
+
 
 # function to deploy everything
 def deploy():
@@ -48,7 +60,7 @@ def deploy():
     # deploy the bahia nft pool and fish contracts
     Fish.deploy({'from': admin})
     BahiaNFTPool_LR.deploy(
-        DEV_ROYALTY, BahiaNFTPoolData[-1], ERC721VaultFactory[-1], WETH10[-1], LooksRareExchange[-1], LooksRareToken[-1], {'from': admin})
+        DEV_ROYALTY, BahiaNFTPoolData[-1], VaultFactory[-1], WETH10[-1], LooksRareExchange[-1], LooksRareToken[-1], {'from': admin})
 
     # make the pool an allowed contract
     BahiaNFTPoolData[-1].setAllowedPermission(
@@ -56,4 +68,4 @@ def deploy():
 
     # give each account 10 weth
     for account in accounts:
-        WETH10[-1].deposit({'value': 10, 'from': account})
+        WETH10[-1].deposit({'value': 1000, 'from': account})

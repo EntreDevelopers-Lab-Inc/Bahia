@@ -1,13 +1,13 @@
 import pytest
 import brownie
-from brownie import BahiaNFTPool_LR, BahiaNFTPoolData, LooksRareExchange, Fish, WETH10, StrategyStandardSaleForFixedPrice, TransferManagerERC721, VaultFactory, accounts, chain
+from brownie import BahiaNFTPool_LR, LooksRareExchange, Fish, WETH10, StrategyStandardSaleForFixedPrice, TransferManagerERC721, VaultFactory, accounts, chain
 from scripts.NFT.Pool.LR.helpful_scripts import deploy
 from scripts.NFT.Pool.LR.ask import create_maker_ask
 from scripts.accounts import get_admin_account
 from scripts.constants import DEV_ROYALTY, NULL_ADDRESS
 
 
-# deploy and create a pool every time
+# deploy and join a pool
 @pytest.fixture(autouse=True)
 def setup_pool():
     # deploy the contracts
@@ -31,36 +31,25 @@ def setup_pool():
                              'from': accounts[2]})
 
     # allow the pool to take money from the accounts
-    for i in range(2, 5):
-        weth_contract.approve(pool_contract, 303, {'from': accounts[i]})
+    for i in range(2, 6):
+        weth_contract.approve(pool_contract, 500, {'from': accounts[i]})
+
+
+# test joining a COMPLETED pool (rest tested in general contract)
+def test_completed_pool():
+    # get the contracts
+    fish_contract = Fish[-1]
+    pool_contract = BahiaNFTPool_LR[-1]
 
     # have the accounts join the pool
     pool_contract.joinPool(0, 101, {'from': accounts[2]})
     pool_contract.joinPool(0, 202, {'from': accounts[3]})
     pool_contract.joinPool(0, 303, {'from': accounts[4]})
 
-
-# test claiming incomplete pool
-def test_incomplete_pool():
-    # get the contract
-    pool_contract = BahiaNFTPool_LR[-1]
-
-    # have account try and withdraw shares
-    with brownie.reverts():
-        pool_contract.claimShares(0, 0, {'from': accounts[2]})
-
-
-# test claiming for a participant that never paid
-def test_unpaid():
-    # get the contract
-    pool_contract = BahiaNFTPool_LR[-1]
-    data_contract = BahiaNFTPoolData[-1]
-
-    # ask for only accounts 2 & 3
     # get the maker ask
     maker_ask = create_maker_ask(signer=accounts[1],
-                                 collection_address=Fish[-1],
-                                 price=300,
+                                 collection_address=fish_contract,
+                                 price=600,
                                  token_id=0,
                                  amount=1,
                                  strategy=StrategyStandardSaleForFixedPrice[-1],
@@ -74,17 +63,6 @@ def test_unpaid():
     # call buy now
     pool_contract.buyNow(0, maker_ask, 8500, '', {'from': accounts[2]})
 
-    # print each account balance
-    for i in range(2, 5):
-        print(
-            f"{accounts[i]}: {data_contract.poolIdToParticipants(0, (i - 2))}")
-
-    # try and claim shares from account 4
+    # check that joining the pool will revert
     with brownie.reverts():
-        pool_contract.claimShares(0, 2, {'from': accounts[4]})
-
-# test partially paid
-
-# test proper claiming
-
-# test claiming from other address (like allowing people to airdrop shares)
+        pool_contract.joinPool(0, 404, {'from': accounts[5]})

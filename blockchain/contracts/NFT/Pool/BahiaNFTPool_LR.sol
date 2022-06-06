@@ -7,6 +7,7 @@ import "./reference/Interfaces/ILooksRareExchange.sol";
 import {OrderTypes} from "./reference/libraries/OrderTypes.sol";
 
 error FailedLooksTransfer();
+error PriceTooHigh();
 
 contract BahiaNFTPool_LR is
     BahiaNFTPool
@@ -37,8 +38,12 @@ contract BahiaNFTPool_LR is
         // pool storage variable
         BahiaNFTPoolTypes.Pool memory pool = _safePool(poolId);
 
+
         // calculate total price including fees
         uint256 totalPrice = makerAsk.price + (makerAsk.price * devRoyalty / 100000);
+
+        // make sure the price is less than the max set by the pool creator (want to do this in buy now, as the pool has already been saved to memory)
+        if (totalPrice > pool.maxContributions) revert PriceTooHigh();
 
         // set the end purchase price (this is the accessible weth)
         pool.endPurchasePrice = _collectWETH(poolId, totalPrice);

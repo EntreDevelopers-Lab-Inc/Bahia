@@ -50,9 +50,7 @@ contract BahiaNFTPoolData is
     // getter function for the pool
     function getPool(uint256 poolId) public view returns (BahiaNFTPoolTypes.Pool memory)
     {
-        BahiaNFTPoolTypes.Pool memory _pool = pools[poolId];
-
-        if (poolId >= _currentIndex || _pool.creator == address(0)) revert NoPoolFound();
+        if (poolId >= _currentIndex) revert NoPoolFound();
         // else return a real pool
         return pools[poolId];
     }

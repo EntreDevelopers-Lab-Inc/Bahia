@@ -65,7 +65,7 @@ contract BahiaNFTPool is
         // create a new pool
         BahiaNFTPoolTypes.Pool memory newPool = BahiaNFTPoolTypes.Pool({
                 poolId: poolData.getPoolCount(),
-                collection: collection_, // address of collection
+                collection: collection_,
                 nftId: nftId_,
                 maxContributions: maxContributions_,
                 shareSupply: shareSupply_,
@@ -85,7 +85,7 @@ contract BahiaNFTPool is
         // NOTE: no reason to check for a non-zero contribution, as this wastes gas, and a malicious attempt could just set their contribution to 0 later (which cannot be changed, as people need to maintain the ability to leave the pool)
 
         // get the actual pool
-        BahiaNFTPoolTypes.Pool memory pool = poolData.getPool(poolId);
+        BahiaNFTPoolTypes.Pool memory pool = _safePool(poolId);
 
         // if the pool has been completed, it cannot be joined
         if (pool.completed) revert PoolCompleted();
@@ -125,7 +125,7 @@ contract BahiaNFTPool is
     function claimShares(uint256 poolId, uint256 participantId) external whenNotPaused callerIsUser
     {
         // get the pool (used to get the end purchase price and completion information)
-        BahiaNFTPoolTypes.Pool memory pool = poolData.getPool(poolId);
+        BahiaNFTPoolTypes.Pool memory pool = _safePool(poolId);
 
         // revert if not completed
         if (!pool.completed) revert PoolIncomplete();
@@ -296,5 +296,4 @@ contract BahiaNFTPool is
     {
         return interfaceId == type(IERC1155Receiver).interfaceId;
     }
-
 }

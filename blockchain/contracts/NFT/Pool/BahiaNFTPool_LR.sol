@@ -36,7 +36,7 @@ contract BahiaNFTPool_LR is
     function buyNow(uint256 poolId, OrderTypes.MakerOrder calldata makerAsk, uint256 minPercentageToAsk, bytes calldata params) external whenNotPaused callerIsUser
     {
         // pool storage variable
-        BahiaNFTPoolTypes.Pool memory pool = poolData.getPool(poolId);
+        BahiaNFTPoolTypes.Pool memory pool = _safePool(poolId);
 
 
         // calculate total price including fees

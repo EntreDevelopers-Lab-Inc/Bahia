@@ -147,7 +147,7 @@ contract BahiaNFTPool is
 
         // distribute these fractionalized shares
         IERC1155 sharesContract = IERC1155(fractionalArt.fnft());
-        sharesContract.safeTransferFrom(address(this), participant.participantAddress, vault.id(), (pool.shareSupply * participant.paid / pool.endPurchasePrice), bytes("0"));
+        sharesContract.safeTransferFrom(address(this), participant.participantAddress, vault.id(), (pool.shareSupply * participant.paid / pool.endPurchasePrice), bytes(""));
     }
 
     // function to calculate minimums
@@ -241,7 +241,7 @@ contract BahiaNFTPool is
         // now that the contract has the NFT, allow the fractional art vault factory to interact with it
         IERC721(pool.collection).approve(address(fractionalArt), pool.nftId);
 
-        // create a vault & fractionalize (assuming all ERC20 tokens mint to this contract)
+        // create a vault & fractionalize (assuming all ERC1155 tokens mint to this contract)
         pool.vaultId = fractionalArt.mint(pool.collection, pool.nftId, pool.shareSupply);
 
         // mark that the pool has been completed

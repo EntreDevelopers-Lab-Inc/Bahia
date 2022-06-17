@@ -83,8 +83,44 @@ def test_unpaid():
     with brownie.reverts():
         pool_contract.claimShares(0, 2, {'from': accounts[4]})
 
+
 # test partially paid
 
-# test proper claiming
+
+# test complete pool
+def test_paid():
+    # get the contract
+    pool_contract = BahiaNFTPool_LR[-1]
+    data_contract = BahiaNFTPoolData[-1]
+
+    # ask for only accounts 2 & 3
+    # get the maker ask
+    maker_ask = create_maker_ask(signer=accounts[1],
+                                 collection_address=Fish[-1],
+                                 price=600,
+                                 token_id=0,
+                                 amount=1,
+                                 strategy=StrategyStandardSaleForFixedPrice[-1],
+                                 currency=WETH10[-1],
+                                 nonce=0,  # first nft listed by this account
+                                 start_time=chain.time(),
+                                 end_time=chain.time() + 600,  # 10 minutes later
+                                 min_percentage_to_ask=8500  # collect 85% of the order
+                                 )
+
+    # call buy now
+    pool_contract.buyNow(0, maker_ask, 8500, '', {'from': accounts[2]})
+
+    # print each account balance
+    for i in range(2, 5):
+        print(
+            f"{accounts[i]}: {data_contract.poolIdToParticipants(0, (i - 2))}")
+
+    # try and claim shares from each account
+    for i in range(2, 5):
+        pool_contract.claimShares(0, (i - 2), {'from': accounts[i]})
+
+        # assert that the balance of the account is correct
+
 
 # test claiming from other address (like allowing people to airdrop shares)

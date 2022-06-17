@@ -2094,7 +2094,7 @@ contract Vault is ERC721Holder, ERC1155Holder {
     address _to,
     uint256 _amount
   ) external {
-    require(msg.sender == fractions, "");
+    require(msg.sender == fractions, "");  // this line is causing problems when trying to transfer the shares to the user
 
     // we are burning
     if (_to == address(0)) {

@@ -111,6 +111,9 @@ contract BahiaNFTPool is
     {
         // get the participant
         BahiaNFTPoolTypes.Participant memory participant = _safeParticipant(poolId, participantId);
+        
+        // ensure that the participant is the only one who can setContribution
+        if(msg.sender != participant.participantAddress) revert NotParticipant();
 
         // ensure that the balance is at least the contribution
         _checkAllowance(newContribution);
@@ -174,6 +177,8 @@ contract BahiaNFTPool is
     function _safeParticipant(uint256 poolId, uint256 participantId) internal returns (BahiaNFTPoolTypes.Participant memory)
     {
         BahiaNFTPoolTypes.Participant memory participant = poolData.getParticipant(poolId, participantId);
+
+        if (participant.participantAddress == address(0)) revert NoParticipantFound();
 
         // if it passes checks, return the participant
         return participant;

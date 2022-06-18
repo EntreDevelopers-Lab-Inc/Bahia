@@ -1,6 +1,6 @@
 import pytest
 import brownie
-from brownie import BahiaNFTPool_LR, BahiaNFTPoolData, LooksRareExchange, Fish, WETH10, StrategyStandardSaleForFixedPrice, TransferManagerERC721, VaultFactory, accounts, chain
+from brownie import FERC1155, BahiaNFTPool_LR, BahiaNFTPoolData, LooksRareExchange, Fish, WETH10, StrategyStandardSaleForFixedPrice, TransferManagerERC721, VaultFactory, accounts, chain
 from scripts.NFT.Pool.LR.helpful_scripts import deploy
 from scripts.NFT.Pool.LR.ask import create_maker_ask
 from scripts.accounts import get_admin_account
@@ -115,6 +115,12 @@ def test_paid():
     for i in range(2, 5):
         print(
             f"{accounts[i]}: {data_contract.poolIdToParticipants(0, (i - 2))}")
+
+    fractional_contract = FERC1155[-1]
+    print(f"pool_contract balance of FERC1155: {fractional_contract.balanceOf(pool_contract, 1)}")
+    print(f"pool_contract: {data_contract.getPool(0)}")
+    vault_id = data_contract.getPool(0)[8]
+    print(f"vault_id: {vault_id}")
 
     # try and claim shares from each account
     for i in range(2, 5):

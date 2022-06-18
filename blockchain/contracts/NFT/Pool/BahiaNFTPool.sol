@@ -7,6 +7,7 @@ import "../../Bahia.sol";
 import "../../../interfaces/NFT/Pool/IBahiaNFTPoolData.sol";
 import "../../../interfaces/NFT/Pool/IFractionalArt.sol";
 import "./reference/Interfaces/IVault.sol";
+import "./reference/Interfaces/IFERC1155.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
@@ -146,8 +147,9 @@ contract BahiaNFTPool is
         IVault vault = IVault(fractionalArt.vaults(pool.vaultId));
 
         // distribute these fractionalized shares
-        IERC1155 sharesContract = IERC1155(fractionalArt.fnft());
-        sharesContract.safeTransferFrom(address(this), participant.participantAddress, vault.id(), (pool.shareSupply * participant.paid / pool.endPurchasePrice), bytes(""));
+        IFERC1155 sharesContract = IFERC1155(fractionalArt.fnft());
+        
+        sharesContract.safeTransferFrom(address(this), participant.participantAddress, vault.fractionsID(), (pool.shareSupply * participant.paid / pool.endPurchasePrice), bytes(""));
     }
 
     // function to calculate minimums

@@ -9,4 +9,6 @@ interface IVault {
     address,
     uint256
   ) external;
+
+  function fractionsID() external view returns (uint256);
 }

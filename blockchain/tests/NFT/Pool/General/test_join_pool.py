@@ -1,5 +1,6 @@
 import pytest
 import brownie
+from web3 import Web3
 from brownie import BahiaNFTPool, BahiaNFTPoolData, Fish, WETH10, accounts
 from scripts.NFT.Pool.General.helpful_scripts import deploy
 
@@ -35,16 +36,17 @@ def test_join_fake_pool():
 def test_join_pool():
     pool_contract = BahiaNFTPool[-1]
     data_contract = BahiaNFTPoolData[-1]
+    contribution = Web3.toWei(0.5, "ether")
 
     # allow the contract to manage WETH balance
-    WETH10[-1].approve(pool_contract, 1, {'from': accounts[1]})
+    WETH10[-1].approve(pool_contract, contribution, {'from': accounts[1]})
 
     # join the pool
-    pool_contract.joinPool(0, 1, {'from': accounts[1]})
+    pool_contract.joinPool(0, contribution, {'from': accounts[1]})
 
     # make sure the participant has been added to the data contract
     assert data_contract.getParticipantCount(0) == 1
-    assert data_contract.poolIdToParticipants(0, 0) == (0, accounts[1], 1, 0)
+    assert data_contract.poolIdToParticipants(0, 0) == (0, accounts[1], contribution, 0)
 
 
 # check allowance and data contract will be checked in other tests

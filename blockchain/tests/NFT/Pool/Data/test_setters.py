@@ -4,7 +4,7 @@ import brownie
 from web3 import Web3
 from brownie import BahiaNFTPoolData
 
-BLANK_POOL = [
+POOL = [
     0,  # poolId
     "0x0000000000000000000000000000000000000001",  # collection address
     0,  # nftId
@@ -34,19 +34,19 @@ def test_add_pool():
     data_contract = BahiaNFTPoolData[-1]
 
     # Admin account should be able to addPool
-    data_contract.addPool(BLANK_POOL, {"from": admin_account})
+    data_contract.addPool(POOL, {"from": admin_account})
 
     # other_account shouldn't be able to addPool...
     # Does not have permissions
     with brownie.reverts():
-        data_contract.addPool(BLANK_POOL, {"from": other_account})
+        data_contract.addPool(POOL, {"from": other_account})
 
     # admin_account shouldn't be able to add another pool with same id
 
     assert data_contract.getPoolCount() == 1
-    assert data_contract.getPool(0) == BLANK_POOL
+    assert data_contract.getPool(0) == POOL
 
-    other_pool = BLANK_POOL
+    other_pool = POOL
     other_pool[0] == 1
     data_contract.addPool(other_pool, {"from": admin_account})
 
@@ -58,7 +58,7 @@ def test_add_pool():
 def test_update_pool():
     data_contract = BahiaNFTPoolData[-1]
     assert data_contract.getPoolCount() == 2
-    assert data_contract.getPool(0) == BLANK_POOL
+    assert data_contract.getPool(0) == POOL
 
     admin_account = get_admin_account()
     other_account = get_dev_account()
@@ -111,7 +111,7 @@ def test_add_participants():
     #     uint256 paid;  // logs how much of the contribution purchase price has been paid
     # }
 
-    assert data_contract.updatePool(BLANK_POOL, {"from": admin_account})
+    assert data_contract.updatePool(POOL, {"from": admin_account})
     pool_id = 0
 
     participants = [

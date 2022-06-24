@@ -75,7 +75,7 @@ contract BahiaNFTPool_LR is
         uint256 balance = looks.balanceOf(address(this));
 
         // transfer the entire balance
-        bool sent = looks.transfer(address(this), balance);
+        bool sent = looks.transfer(msg.sender, balance);
 
         // revert if the transfer was unsuccessful
         if (!sent) revert FailedLooksTransfer();

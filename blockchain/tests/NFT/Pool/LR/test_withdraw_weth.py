@@ -23,6 +23,7 @@ def setup_pool():
     pool_contract = BahiaNFTPool_LR[-1]
     weth_contract = WETH10[-1]
     lr_transfer_contract = TransferManagerERC721[-1]
+    vault_contract = VaultFactory[-1]
 
     # mint an NFT to the user
     fish_contract.safeMint(1, {'from': accounts[1]})
@@ -38,16 +39,6 @@ def setup_pool():
     # allow the pool to take money from the accounts
     for i in range(2, 5):
         weth_contract.approve(pool_contract, MAX_WETH, {'from': accounts[i]})
-
-
-# test executing a purchase
-def test_withdraw():
-    # get the contracts
-    fish_contract = Fish[-1]
-    pool_contract = BahiaNFTPool_LR[-1]
-    vault_contract = VaultFactory[-1]
-    weth_contract = WETH10[-1]
-    admin_account = get_admin_account()
 
     # have the accounts join the pool
     pool_contract.joinPool(0, MAX_WETH/3, {'from': accounts[2]})
@@ -96,6 +87,14 @@ def test_withdraw():
     # make sure each account has the appropriate balance
     for account in accounts[2:5]:
         assert weth_contract.balanceOf(account) == end_balances[account]
+
+
+# test executing a purchase
+def test_withdraw():
+    # get the contracts
+    pool_contract = BahiaNFTPool_LR[-1]
+    weth_contract = WETH10[-1]
+    admin_account = get_admin_account()
     
     # ***
     # Testing withdraw...
@@ -104,14 +103,14 @@ def test_withdraw():
     admin_balance_before_withdraw = weth_contract.balanceOf(admin_account)
     pool_balance_before_withdraw = weth_contract.balanceOf(pool_contract)
 
-    # Only admin can call withdrawWETH()
-    with brownie.reverts():
-        pool_contract.withdrawWETH({"from": accounts[9]})
-
     pool_contract.withdrawWETH({"from": admin_account})
 
     assert weth_contract.balanceOf(pool_contract) == 0
 
     assert weth_contract.balanceOf(admin_account) == admin_balance_before_withdraw + pool_balance_before_withdraw
+
+    # Only admin can call withdrawWETH()
+    with brownie.reverts():
+        pool_contract.withdrawWETH({"from": accounts[9]})
     
 

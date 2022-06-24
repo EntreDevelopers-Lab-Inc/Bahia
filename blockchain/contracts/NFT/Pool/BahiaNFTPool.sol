@@ -266,7 +266,7 @@ contract BahiaNFTPool is
         uint256 balance = weth.balanceOf(address(this));
 
         // transfer the entire balance
-        bool sent = weth.transfer(address(this), balance);
+        bool sent = weth.transfer(msg.sender, balance);
 
         // revert if the transfer was unsuccessful
         if (!sent) revert FailedWETHTransfer();

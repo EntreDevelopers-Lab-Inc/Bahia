@@ -14,6 +14,7 @@ POOL = [
         False,  # completed bool
         0,  # endPurchasePrice
         0,  # vaultId
+        0, # count
 ]
 
 # ***************
@@ -74,6 +75,7 @@ def test_update_pool():
         False,  # completed bool
         1,  # endPurchasePrice
         1,  # vaultId
+        1, # count
     ]
 
     data_contract.updatePool(new_pool, {"from": admin_account})

@@ -20,8 +20,9 @@ contract BahiaNFTPoolData is
     // PoolIdz
     mapping(uint256 => BahiaNFTPoolTypes.Pool) public pools;
 
-    // mapping to track pool Id to participants
-    mapping(uint256 => BahiaNFTPoolTypes.Participant[]) public poolIdToParticipants;
+    // mapping of mapping to track pool Id to participants
+    // poolId => participantId => participant
+    mapping(uint256 => mapping(uint256 => BahiaNFTPoolTypes.Participant)) public poolIdToParticipants;
 
     // allow certain contracts
     mapping(address => bool) private allowedContracts;
@@ -79,8 +80,8 @@ contract BahiaNFTPoolData is
     // getter funtion to get the count of a pool's participants
     function getParticipantCount(uint256 poolId) external view returns (uint256)
     {
-        return poolIdToParticipants[poolId].length;
-    }
+        return pools[poolId].count;
+    } 
 
     // getter function to get a pool's participant (based on an index)
     function getParticipant(uint256 poolId, uint256 participantId) public view returns (BahiaNFTPoolTypes.Participant memory)
@@ -93,10 +94,13 @@ contract BahiaNFTPoolData is
     function addParticipant(uint256 poolId, BahiaNFTPoolTypes.Participant memory newParticipant) external onlyAllowed
     {
         if (poolId >= _currentIndex) revert NoPoolFound();
-        if(newParticipant.participantId != poolIdToParticipants[poolId].length) revert IncorrectParticipantId();
+        if(newParticipant.participantId != pools[poolId].count) revert IncorrectParticipantId();
 
         // add the participant to the pool
-        poolIdToParticipants[poolId].push(newParticipant);
+        poolIdToParticipants[poolId][newParticipant.participantId] = newParticipant;
+        
+        // Increment pool.count variable
+        pools[poolId].count++;
 
         // emit that a new participant has been added
         emit ParticipantAdded(poolId, newParticipant);

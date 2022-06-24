@@ -15,6 +15,7 @@ BLANK_POOL = [
     False,  # completed bool
     0,  # endPurchasePrice
     0,  # vaultId
+    0, # count
     ]
 
 # deploy and create a pool every time
@@ -97,6 +98,6 @@ def test_check_allowance():
 #     # Address(0) should be in the pool now...
 #     pool_contract.setContribution()
 
-    
+
 
 

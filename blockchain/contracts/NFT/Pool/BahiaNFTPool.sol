@@ -73,7 +73,8 @@ contract BahiaNFTPool is
                 creator: msg.sender,
                 completed: false,
                 endPurchasePrice: 0,
-                vaultId: 0
+                vaultId: 0,
+                count: 0
             });
 
         // add the pool to the data contract

@@ -21,4 +21,4 @@ def test_create_pool():
     # make sure the pool has been added to the data contract
     pool = data_contract.pools(0)
     assert pool == (0, fish_contract.address, 0,
-                    3, 9, accounts[2], False, 0, 0)
+                    3, 9, accounts[2], False, 0, 0, 0)

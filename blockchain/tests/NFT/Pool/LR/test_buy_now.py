@@ -6,6 +6,7 @@ from scripts.NFT.Pool.LR.ask import create_maker_ask
 from scripts.accounts import get_admin_account
 from scripts.constants import DEV_ROYALTY, NULL_ADDRESS
 
+MAX_WETH = 303
 
 # deploy and create a pool every time
 @pytest.fixture(autouse=True)
@@ -32,7 +33,7 @@ def setup_pool():
 
     # allow the pool to take money from the accounts
     for i in range(2, 5):
-        weth_contract.approve(pool_contract, 303, {'from': accounts[i]})
+        weth_contract.approve(pool_contract, MAX_WETH, {'from': accounts[i]})
 
 
 # test executing a purchase
@@ -44,9 +45,9 @@ def test_buy():
     weth_contract = WETH10[-1]
 
     # have the accounts join the pool
-    pool_contract.joinPool(0, 101, {'from': accounts[2]})
-    pool_contract.joinPool(0, 202, {'from': accounts[3]})
-    pool_contract.joinPool(0, 303, {'from': accounts[4]})
+    pool_contract.joinPool(0, MAX_WETH/3, {'from': accounts[2]})
+    pool_contract.joinPool(0, MAX_WETH * 2/3, {'from': accounts[3]})
+    pool_contract.joinPool(0, MAX_WETH, {'from': accounts[4]})
 
     # get the maker ask
     maker_ask = create_maker_ask(signer=accounts[1],

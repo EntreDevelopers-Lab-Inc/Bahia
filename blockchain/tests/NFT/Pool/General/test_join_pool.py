@@ -38,15 +38,15 @@ def test_join_pool():
     data_contract = BahiaNFTPoolData[-1]
     contribution = Web3.toWei(0.5, "ether")
 
-    # allow the contract to manage WETH balance
-    WETH10[-1].approve(pool_contract, contribution, {'from': accounts[1]})
-
     # join the pool
-    pool_contract.joinPool(0, contribution, {'from': accounts[1]})
+    for i in range(4):
+           # allow the contract to manage WETH balance
+        WETH10[-1].approve(pool_contract, contribution, {'from': accounts[i]})
+        pool_contract.joinPool(0, contribution, {'from': accounts[i]})
 
-    # make sure the participant has been added to the data contract
-    assert data_contract.getParticipantCount(0) == 1
-    assert data_contract.poolIdToParticipants(0, 0) == (0, accounts[1], contribution, 0)
+        # make sure the participant has been added to the data contract
+        assert data_contract.getParticipantCount(0) == i + 1
+        assert data_contract.poolIdToParticipants(0, i) == (i, accounts[i], contribution, 0)
 
 
 # check allowance and data contract will be checked in other tests

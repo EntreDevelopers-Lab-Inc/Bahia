@@ -1,5 +1,5 @@
 let CURRENT_ACCOUNT = null;
-let DAPP_LINK_IDS = ['#navSell', '#navBuy'];
+let DAPP_LINK_IDS = ['#navSell', '#navBuy', '#navStart', '#navJoin', '#navManage'];
 
 // set the chain
 async function setChain() {

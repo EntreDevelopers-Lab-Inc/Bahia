@@ -7,7 +7,9 @@ app = Flask(__name__)
 
 # run it!
 CORS(app, supports_credentials=True)
-from website import routes
+from website.routes.barter import barter
+
+app.register_blueprint(barter, url_prefix='/barter')
 
 if __name__ == '__main__':
     app.run(threaded=True)

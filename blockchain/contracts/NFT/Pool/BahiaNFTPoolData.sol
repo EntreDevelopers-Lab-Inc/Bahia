@@ -24,6 +24,9 @@ contract BahiaNFTPoolData is
     // poolId => participantId => participant
     mapping(uint256 => mapping(uint256 => BahiaNFTPoolTypes.Participant)) public poolIdToParticipants;
 
+    // poolId => address => participantId
+    mapping(uint256 => mapping(address => uint256)) public addressToParticipantId;
+
     // allow certain contracts
     mapping(address => bool) private allowedContracts;
 
@@ -40,7 +43,6 @@ contract BahiaNFTPoolData is
         if (!allowedContracts[msg.sender]) revert NotAllowed();
         _;
     }
-
 
     // ability to see pool count
     function getPoolCount() public view returns (uint256)
@@ -90,6 +92,10 @@ contract BahiaNFTPoolData is
         return poolIdToParticipants[poolId][participantId];
     }
 
+    function getParticipantId(uint256 poolId, address _address) external view returns (uint256) {
+        return addressToParticipantId[poolId][_address];
+    }
+
     // ability to add a participant to a pool (allows another sequential bid)
     function addParticipant(uint256 poolId, BahiaNFTPoolTypes.Participant memory newParticipant) external onlyAllowed
     {
@@ -98,6 +104,9 @@ contract BahiaNFTPoolData is
 
         // add the participant to the pool
         poolIdToParticipants[poolId][newParticipant.participantId] = newParticipant;
+
+        // update addressToParticipantId
+        addressToParticipantId[poolId][msg.sender] = newParticipant.participantId;
         
         // Increment pool.count variable
         pools[poolId].count++;

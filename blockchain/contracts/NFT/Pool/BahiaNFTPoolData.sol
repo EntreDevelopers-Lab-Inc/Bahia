@@ -85,10 +85,17 @@ contract BahiaNFTPoolData is
         return pools[poolId].count;
     } 
 
+
+    // Adjusted by 1 considering all pool.count are indexed @ 1 
+    function getNumberOfParticipants(uint256 poolId) external view returns(uint256) {
+       return pools[poolId].count - 1; 
+    }
+
     // getter function to get a pool's participant (based on an index)
     function getParticipant(uint256 poolId, uint256 participantId) public view returns (BahiaNFTPoolTypes.Participant memory)
     {
-        // otherwise, return the participant
+        // Return the participant; 
+        // Since participantIDs are indexed @ 1 and mappings are indexed @ 0, need to add 1 to the participantId
         return poolIdToParticipants[poolId][participantId];
     }
 

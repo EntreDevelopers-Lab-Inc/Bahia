@@ -14,7 +14,7 @@ POOL = [
         False,  # completed bool
         0,  # endPurchasePrice
         0,  # vaultId
-        0, # count
+        1, # count... *** Always must start @ 1
 ]
 
 # ***************
@@ -122,15 +122,23 @@ def test_add_participants():
     pool_id = 0
 
     participants = [
-        [0, "0x0000000000000000000000000000000000000007", 0, 0],
-        [1, "0x0000000000000000000000000000000000000008", 0, 0],
-        [2, "0x0000000000000000000000000000000000000009", 0, 0]
+        [1, "0x0000000000000000000000000000000000000007", 0, 0],
+        [2, "0x0000000000000000000000000000000000000008", 0, 0],
+        [3, "0x0000000000000000000000000000000000000009", 0, 0]
     ]
+
+    participant_bad_id = [0, "0x0000000000000000000000000000000000000010", 0, 0]
+
 
     # Pool must exist to add participant...
     with brownie.reverts():
         data_contract.addParticipant(
             5, participants[0], {"from": admin_account})
+
+    # Can't add initial participant with id 0... 
+    with brownie.reverts():
+        data_contract.addParticipant(
+            0, participant_bad_id, {"from": admin_account})
 
     # Can't add participants from non-permissioned account
     with brownie.reverts():
@@ -142,6 +150,8 @@ def test_add_participants():
         data_contract.addParticipant(pool_id, participants[1], {
                                      "from": admin_account})
 
+
+    # Adding first participant 
     data_contract.addParticipant(pool_id, participants[0], {
                                  "from": admin_account})
 
@@ -155,8 +165,8 @@ def test_add_participants():
     data_contract.addParticipant(pool_id, participants[2], {
                                  "from": admin_account})
 
-    for i in range(3):
-        assert data_contract.getParticipant(0, i) == participants[i]
+    for i in range(1, 4):
+        assert data_contract.getParticipant(0, i) == participants[i - 1]
 
     assert data_contract.getParticipantCount(0) == 3
 
@@ -171,30 +181,30 @@ def test_set_participant():
 
     assert data_contract.getParticipantCount(0) == 3
 
-    new_participant_zero = [0, admin_account, 1000, 100]
+    new_participant_one = [1, admin_account, 1000, 100]
 
     # Pool must exist to set participant...
     with brownie.reverts():
-        data_contract.setParticipant(5, new_participant_zero, {
+        data_contract.setParticipant(5, new_participant_one, {
                                      "from": admin_account})
 
-    data_contract.setParticipant(pool_id, new_participant_zero, {
+    data_contract.setParticipant(pool_id, new_participant_one, {
                                  "from": admin_account})
-    assert data_contract.getParticipant(pool_id, 0) == new_participant_zero
+    assert data_contract.getParticipant(pool_id, new_participant_one[0]) == new_participant_one
 
 
 def test_set_contribution():
     data_contract = BahiaNFTPoolData[-1]
     admin_account = get_admin_account()
-    other_account = get_dev_account()
+    random_account = accounts[7]
     pool_id = 0
-    participant_id = 0
+    participant_id = 1
     contribution = Web3.toWei(0.05, "ether")
 
-    # Admin account is not participant...
+    # Random account is not participant...
     with brownie.reverts():
         data_contract.setContribution(
-            pool_id, 1, contribution, {"from": admin_account})
+            pool_id, 1, contribution, {"from": random_account})
 
     data_contract.setContribution(
         pool_id, participant_id, contribution, {"from": admin_account})

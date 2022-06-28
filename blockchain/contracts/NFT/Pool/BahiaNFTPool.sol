@@ -74,7 +74,7 @@ contract BahiaNFTPool is
                 completed: false,
                 endPurchasePrice: 0,
                 vaultId: 0,
-                count: 0
+                count: 1
             });
 
         // add the pool to the data contract

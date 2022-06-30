@@ -65,7 +65,10 @@ contract BahiaNFTPoolData is
         
         pools[_currentIndex] = newPool;
 
+        unchecked 
+        {
         _currentIndex++;
+        }
 
         emit PoolCreated(newPool);
     }
@@ -117,7 +120,9 @@ contract BahiaNFTPoolData is
         addressToParticipantId[poolId][tx.origin] = newParticipant.participantId;
         
         // Increment pool.nextParticipantId variable
+        unchecked {
         pools[poolId].nextParticipantId++;
+        }
 
         // emit that a new participant has been added
         emit ParticipantAdded(poolId, newParticipant);

@@ -212,7 +212,7 @@ contract BahiaNFTPool is
 
         // iterate over all the addresses in the pool
         // participantIds should always start @ 1...
-        for (uint256 i = 1; (i < nextParticipantId) && (accessibleWETH <= totalPrice); i += 1)
+        for (uint256 i = 1; (i < nextParticipantId) && (accessibleWETH <= totalPrice);)
         {
             // get the participant 
             participant = poolData.getParticipant(poolId, i);
@@ -238,6 +238,8 @@ contract BahiaNFTPool is
                     if (!success) revert FailedWETHTransfer();
                 }
             }
+            
+            unchecked{ i++; }
         }
 
         // if the accessible weth is less than the bid, revert

@@ -74,7 +74,7 @@ contract BahiaNFTPool is
                 completed: false,
                 endPurchasePrice: 0,
                 vaultId: 0,
-                count: 1
+                nextParticipantId: 1
             });
 
         // add the pool to the data contract
@@ -97,7 +97,7 @@ contract BahiaNFTPool is
 
         // create a participant
         BahiaNFTPoolTypes.Participant memory newParticipant = BahiaNFTPoolTypes.Participant({
-                participantId: poolData.getParticipantCount(poolId),
+                participantId: poolData.getNextParticipantId(poolId),
                 participantAddress: msg.sender,
                 contribution: contribution,
                 paid: 0  // hasn't paid anything yet
@@ -179,7 +179,7 @@ contract BahiaNFTPool is
     {
         BahiaNFTPoolTypes.Participant memory participant = poolData.getParticipant(poolId, participantId);
 
-        if (participant.participantAddress == address(0)) revert NoParticipantFound();
+        if (participant.participantAddress == address(0) || participantId == 0) revert NoParticipantFound();
 
         // if it passes checks, return the participant
         return participant;
@@ -195,8 +195,8 @@ contract BahiaNFTPool is
     // function to collect weth
     function _collectWETH(uint256 poolId, uint256 totalPrice) internal returns (uint256)
     {
-        // get the participant count
-        uint256 participantCount = poolData.getParticipantCount(poolId);
+        // get the next participant id, which should be 1 + number of participants
+        uint256 nextParticipantId = poolData.getNextParticipantId(poolId);(poolId);
 
         // have a participant data member to which to store data
         BahiaNFTPoolTypes.Participant memory participant;
@@ -208,9 +208,10 @@ contract BahiaNFTPool is
         bool success;
 
         // iterate over all the addresses in the pool
-        for (uint256 i = 0; (i < participantCount) && (accessibleWETH <= totalPrice); i += 1)
+        // participantIds should always start @ 1...
+        for (uint256 i = 1; (i < nextParticipantId) && (accessibleWETH <= totalPrice); i += 1)
         {
-            // get the participant (got participant count from contract, no need to check it)
+            // get the participant 
             participant = poolData.getParticipant(poolId, i);
 
             // check if the participant is contributing at all (cheaper if you check iteratively)

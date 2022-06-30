@@ -57,4 +57,4 @@ def test_pause():
     pool_contract.createPool(fish_contract, 0, 3, 9, {
                              'from': accounts[1]})
     pool_contract.joinPool(0, CONTRIBUTION, {'from': accounts[3]}) 
-    pool_contract.setContribution(0, 0, CONTRIBUTION/2, {"from": accounts[1]}) 
+    pool_contract.setContribution(0, 1, CONTRIBUTION/2, {"from": accounts[1]}) 

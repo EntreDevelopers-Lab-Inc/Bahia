@@ -18,7 +18,10 @@ interface IBahiaNFTPoolData {
     function updatePool(BahiaNFTPoolTypes.Pool memory pool) external;
 
     // getter funtion to get the count of a pool's participants
-    function getParticipantCount(uint256 poolId) external view returns (uint256);
+    function getNextParticipantId(uint256 poolId) external view returns (uint256);
+
+    //gets number of participants in a pool
+    function getNumberOfParticipants(uint256 poolId) external view returns(uint256);
 
     // getter function to get a pool's participant (based on an index)
     function getParticipant(uint256 poolId, uint256 participantId) external returns (BahiaNFTPoolTypes.Participant memory);

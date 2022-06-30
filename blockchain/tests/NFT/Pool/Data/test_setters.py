@@ -168,7 +168,7 @@ def test_add_participants():
     for i in range(1, 4):
         assert data_contract.getParticipant(0, i) == participants[i - 1]
 
-    assert data_contract.getParticipantCount(0) == 3
+    assert data_contract.getNumberOfParticipants(0) == 3
 
 
 # Number of participants should be 3 from prior tests...
@@ -179,7 +179,7 @@ def test_set_participant():
     other_account = get_dev_account()
     pool_id = 0
 
-    assert data_contract.getParticipantCount(0) == 3
+    assert data_contract.getNumberOfParticipants(0) == 3
 
     new_participant_one = [1, admin_account, 1000, 100]
 

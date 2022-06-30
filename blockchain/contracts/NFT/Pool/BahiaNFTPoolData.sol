@@ -79,21 +79,21 @@ contract BahiaNFTPoolData is
         pools[_pool.poolId] = _pool;
     }
 
-    // getter funtion to get the count of a pool's participants
-    function getParticipantCount(uint256 poolId) external view returns (uint256)
+    // getter funtion to get the nextParticipantId of a pool
+    function getNextParticipantId(uint256 poolId) external view returns (uint256)
     {
-        return pools[poolId].count;
+        return pools[poolId].nextParticipantId;
     } 
 
 
     // Adjusted by 1 considering all pool.count are indexed @ 1 
     function getNumberOfParticipants(uint256 poolId) external view returns(uint256) {
-       return pools[poolId].count - 1; 
+       return pools[poolId].nextParticipantId - 1; 
     }
 
     // getter function to get a pool's participant (based on an index)
     function getParticipant(uint256 poolId, uint256 participantId) public view returns (BahiaNFTPoolTypes.Participant memory)
-    {
+    {    
         // Return the participant; 
         // Since participantIDs are indexed @ 1 and mappings are indexed @ 0, need to add 1 to the participantId
         return poolIdToParticipants[poolId][participantId];
@@ -107,7 +107,7 @@ contract BahiaNFTPoolData is
     function addParticipant(uint256 poolId, BahiaNFTPoolTypes.Participant memory newParticipant) external onlyAllowed
     {
         if (poolId >= _currentIndex) revert NoPoolFound();
-        if(newParticipant.participantId != pools[poolId].count) revert IncorrectParticipantId();
+        if(newParticipant.participantId != pools[poolId].nextParticipantId) revert IncorrectParticipantId();
 
         // add the participant to the pool
         poolIdToParticipants[poolId][newParticipant.participantId] = newParticipant;
@@ -115,8 +115,8 @@ contract BahiaNFTPoolData is
         // update addressToParticipantId
         addressToParticipantId[poolId][msg.sender] = newParticipant.participantId;
         
-        // Increment pool.count variable
-        pools[poolId].count++;
+        // Increment pool.nextParticipantId variable
+        pools[poolId].nextParticipantId++;
 
         // emit that a new participant has been added
         emit ParticipantAdded(poolId, newParticipant);

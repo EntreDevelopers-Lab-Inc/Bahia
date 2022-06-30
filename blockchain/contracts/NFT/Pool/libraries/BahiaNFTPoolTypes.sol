@@ -16,7 +16,7 @@ library BahiaNFTPoolTypes {
         uint256 endPurchasePrice;  // logs what the contract was executed at
 
         uint256 vaultId;  // the id of the fractional art vault (necessary to claim shares)
-        uint256 count; // keeps track of size of the pool / the id of the next participant
+        uint256 nextParticipantId; // keeps track of size of the pool / the id of the next participant
     }
 
     // participant data

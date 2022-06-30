@@ -39,13 +39,13 @@ def test_join_pool():
     contribution = Web3.toWei(0.5, "ether")
 
     # join the pool
-    for i in range(4):
+    for i in range(1,5):
            # allow the contract to manage WETH balance
         WETH10[-1].approve(pool_contract, contribution, {'from': accounts[i]})
         pool_contract.joinPool(0, contribution, {'from': accounts[i]})
 
         # make sure the participant has been added to the data contract
-        assert data_contract.getParticipantCount(0) == i + 1
+        assert data_contract.getNumberOfParticipants(0) == i
         assert data_contract.poolIdToParticipants(0, i) == (i, accounts[i], contribution, 0)
 
 

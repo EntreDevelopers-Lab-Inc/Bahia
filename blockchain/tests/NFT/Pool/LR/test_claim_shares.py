@@ -7,6 +7,13 @@ from scripts.accounts import get_admin_account
 from scripts.constants import DEV_ROYALTY, NULL_ADDRESS
 
 
+# ***
+# accounts[2].participantId == 1
+# accounts[3].participantId == 2
+# acounts[4].participantId == 3
+# ***
+
+
 # deploy and create a pool every time
 @pytest.fixture(autouse=True)
 def setup_pool():
@@ -77,11 +84,11 @@ def test_unpaid():
     # print each account balance
     for i in range(2, 5):
         print(
-            f"{accounts[i]}: {data_contract.poolIdToParticipants(0, (i - 2))}")
+            f"{accounts[i]}: {data_contract.poolIdToParticipants(0, (i - 1))}")
 
     # try and claim shares from account 4
     with brownie.reverts():
-        pool_contract.claimShares(0, 2, {'from': accounts[4]})
+        pool_contract.claimShares(0, 3, {'from': accounts[4]})
 
 
 # test partially paid
@@ -114,7 +121,7 @@ def test_paid():
     # print each account balance
     for i in range(2, 5):
         print(
-            f"{accounts[i]}: {data_contract.poolIdToParticipants(0, (i - 2))}")
+            f"{accounts[i]}: {data_contract.poolIdToParticipants(0, (i - 1))}")
 
     fractional_contract = FERC1155[-1]
     print(f"pool_contract balance of FERC1155: {fractional_contract.balanceOf(pool_contract, 1)}")
@@ -124,7 +131,8 @@ def test_paid():
 
     # try and claim shares from each account
     for i in range(2, 5):
-        pool_contract.claimShares(0, (i - 2), {'from': accounts[i]})
+        # ParticipantIds 
+        pool_contract.claimShares(0, (i - 1), {'from': accounts[i]})
 
         # assert that the balance of the account is correct
 

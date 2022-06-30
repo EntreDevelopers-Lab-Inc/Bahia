@@ -68,6 +68,8 @@ contract BahiaNFTPool_LR is
         _createVault(pool);
     }
 
+    
+
     // some function for withdrawing all looks from contract to owner
     function withdrawLooks() external onlyOwner nonReentrant
     {

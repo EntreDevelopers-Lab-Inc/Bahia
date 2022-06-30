@@ -49,4 +49,23 @@ def test_join_pool():
         assert data_contract.poolIdToParticipants(0, i) == (i, accounts[i], contribution, 0)
 
 
+# test joining a pool
+def test_join_pool_twice():
+    pool_contract = BahiaNFTPool[-1]
+    data_contract = BahiaNFTPoolData[-1]
+    contribution = Web3.toWei(0.5, "ether")
+
+
+    # allow the contract to manage WETH balance
+    WETH10[-1].approve(pool_contract, contribution, {'from': accounts[3]})
+    pool_contract.joinPool(0, contribution, {'from': accounts[3]})
+
+    print(f"{data_contract.addressToParticipantId(0, accounts[3])}")
+    print(f"{data_contract.getNumberOfParticipants(0)}")
+
+    # Can't join pool twice...
+    with brownie.reverts():
+       pool_contract.joinPool(0, contribution, {'from': accounts[3]}) 
+
+
 # check allowance and data contract will be checked in other tests

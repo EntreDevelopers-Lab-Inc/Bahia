@@ -27,6 +27,7 @@ error PoolIncomplete();
 error NotParticipant();
 error InsufficientFunds();
 error NoShares();
+error AlreadyJoinedPool();
 
 contract BahiaNFTPool is
     Bahia,
@@ -91,6 +92,8 @@ contract BahiaNFTPool is
 
         // if the pool has been completed, it cannot be joined
         if (pool.completed) revert PoolCompleted();
+
+        if(poolData.getParticipantIdFromAddress(poolId, msg.sender) != 0) revert AlreadyJoinedPool(); 
 
         // make sure that the contract is allowed to spend the contribution (stops people from joining without the intention of paying --> creates excess gas for the user if they want to execute a trade)
         _checkAllowance(contribution);

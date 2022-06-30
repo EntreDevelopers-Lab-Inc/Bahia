@@ -20,6 +20,9 @@ interface IBahiaNFTPoolData {
     // getter funtion to get the count of a pool's participants
     function getNextParticipantId(uint256 poolId) external view returns (uint256);
 
+    // getter function to get participantId from address 
+    function getParticipantIdFromAddress(uint256 poolId, address _address) external view returns (uint256);
+    
     //gets number of participants in a pool
     function getNumberOfParticipants(uint256 poolId) external view returns(uint256);
 

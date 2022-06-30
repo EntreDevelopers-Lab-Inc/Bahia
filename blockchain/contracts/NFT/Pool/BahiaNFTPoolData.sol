@@ -99,7 +99,7 @@ contract BahiaNFTPoolData is
         return poolIdToParticipants[poolId][participantId];
     }
 
-    function getParticipantId(uint256 poolId, address _address) external view returns (uint256) {
+    function getParticipantIdFromAddress(uint256 poolId, address _address) external view returns (uint256) {
         return addressToParticipantId[poolId][_address];
     }
 
@@ -111,9 +111,10 @@ contract BahiaNFTPoolData is
 
         // add the participant to the pool
         poolIdToParticipants[poolId][newParticipant.participantId] = newParticipant;
-
+         
         // update addressToParticipantId
-        addressToParticipantId[poolId][msg.sender] = newParticipant.participantId;
+        // must be tx.origin since msg.sender will always be another contract...
+        addressToParticipantId[poolId][tx.origin] = newParticipant.participantId;
         
         // Increment pool.nextParticipantId variable
         pools[poolId].nextParticipantId++;

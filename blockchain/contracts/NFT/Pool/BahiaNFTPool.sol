@@ -182,7 +182,7 @@ contract BahiaNFTPool is
     {
         BahiaNFTPoolTypes.Participant memory participant = poolData.getParticipant(poolId, participantId);
 
-        if (participant.participantAddress == address(0) || participantId == 0) revert NoParticipantFound();
+        if (participant.participantAddress == address(0)) revert NoParticipantFound();
 
         // if it passes checks, return the participant
         return participant;

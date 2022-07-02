@@ -4,7 +4,7 @@ import brownie
 from web3 import Web3
 from brownie import BahiaNFTPoolData
 
-POOL = [
+POOL = (
     0,  # poolId
     "0x0000000000000000000000000000000000000001",  # collection address
     0,  # nftId
@@ -15,7 +15,21 @@ POOL = [
         0,  # endPurchasePrice
         0,  # vaultId
         1, # count... *** Always must start @ 1
-]
+)
+
+POOL2 = (
+    1,  # poolId
+    "0x0000000000000000000000000000000000000001",  # collection address
+    0,  # nftId
+    0,  # maxContributions
+    0,  # shareSupply
+    "0x0000000000000000000000000000000000000002",  # creator address
+        False,  # completed bool
+        0,  # endPurchasePrice
+        0,  # vaultId
+        1, # count... *** Always must start @ 1
+)
+
 
 # ***************
 # ALL TESTS IN test_setters.py are SEQUENTIAL
@@ -47,9 +61,11 @@ def test_add_pool():
     assert data_contract.getPoolCount() == 1
     assert data_contract.getPool(0) == POOL
 
-    other_pool = POOL
-    other_pool[0] == 1
-    data_contract.addPool(other_pool, {"from": admin_account})
+    data_contract.addPool(POOL2, {"from": admin_account})
+
+    # Can't add pool twice...
+    with brownie.reverts():
+        data_contract.addPool(POOL, {"from": admin_account})
 
     assert data_contract.getPoolCount() == 2
 

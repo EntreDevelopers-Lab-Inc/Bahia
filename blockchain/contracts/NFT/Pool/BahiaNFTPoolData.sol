@@ -66,10 +66,7 @@ contract BahiaNFTPoolData is
         
         pools[_currentIndex] = newPool;
 
-        unchecked 
-        {
-        _currentIndex++;
-        }
+        unchecked { _currentIndex++; }
 
         emit PoolCreated(newPool);
     }

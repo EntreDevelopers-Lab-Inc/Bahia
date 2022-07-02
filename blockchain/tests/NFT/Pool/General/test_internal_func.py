@@ -6,7 +6,7 @@ from scripts.accounts import get_admin_account
 from scripts.NFT.Pool.General.helpful_scripts import deploy
 
 BLANK_POOL = [
-    0,  # poolId
+    1,  # next poolId after initial pool added...
     "0x0000000000000000000000000000000000000000",  # collection address
     0,  # nftId
     0,  # maxContributions

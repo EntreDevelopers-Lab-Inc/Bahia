@@ -40,10 +40,10 @@ contract BahiaNFTPool is
     // events
 
     // keep track of the data
-    IBahiaNFTPoolData poolData;
+    IBahiaNFTPoolData public poolData;
 
     // interfaces to use
-    IFractionalArt fractionalArt;
+    IFractionalArt public fractionalArt;
 
     // keep ERC20 handlers for the important currencies
     IERC20 weth;
@@ -192,61 +192,6 @@ contract BahiaNFTPool is
     function _checkAllowance(uint256 contribution) internal
     {
         if (weth.allowance(msg.sender, address(this)) < contribution) revert ContributionNotAllowed();
-    }
-
-
-    // function to collect weth
-    function _collectWETH(uint256 poolId, uint256 totalPrice) internal returns (uint256)
-    {
-        // get the next participant id, which should be 1 + number of participants
-        uint256 nextParticipantId = poolData.getNextParticipantId(poolId);(poolId);
-
-        // have a participant data member to which to store data
-        BahiaNFTPoolTypes.Participant memory participant;
-
-        // internally count the amount of WETH that the contract has access to
-        uint256 accessibleWETH;
-
-        // boolean to track success of transfer
-        bool success;
-
-        // iterate over all the addresses in the pool
-        // participantIds should always start @ 1...
-        for (uint256 i = 1; (i < nextParticipantId) && (accessibleWETH <= totalPrice);)
-        {
-            // get the participant 
-            participant = poolData.getParticipant(poolId, i);
-
-            // check if the participant is contributing at all (cheaper if you check iteratively)
-            if (participant.contribution > 0)
-            {
-                // check if the amount allowed matches the contribution, and that the participant can spend that much
-                if ((weth.allowance(participant.participantAddress, address(this)) >= participant.contribution) && (weth.balanceOf(participant.participantAddress) >= participant.contribution))
-                {
-                    // set the paid amount to the minimum
-                    participant.paid = _min(participant.contribution, (totalPrice - accessibleWETH));
-
-                    // push payment update to data contract (no neeed to check success, as we got the participant from the contract)
-                    poolData.setParticipant(poolId, participant);
-
-                    // add the paid amount to the accessible weth
-                    accessibleWETH += participant.paid;
-
-                    // collect weth from the participant up to their contribution OR taker order (this is optimal if we guarantee that the contract has enough WETH to buy it --> check off-chain)
-                    success = weth.transferFrom(participant.participantAddress, address(this), participant.paid);
-
-                    if (!success) revert FailedWETHTransfer();
-                }
-            }
-            
-            unchecked{ i++; }
-        }
-
-        // if the accessible weth is less than the bid, revert
-        if (accessibleWETH < totalPrice) revert InsufficientFunds();
-
-        // return the weth that was transferred
-        return accessibleWETH;
     }
 
     // create the vault

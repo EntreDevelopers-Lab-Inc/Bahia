@@ -124,7 +124,19 @@ contract BahiaNFTPool_LR is
         _createVault(pool);
     }
 
-    
+       // some function for withdrawing all weth from contract to owner (unlikely to use, as contract does not store weth)
+    function withdrawWETH() external onlyOwner nonReentrant
+    {
+        // get the balance
+        uint256 balance = weth.balanceOf(address(this));
+
+        // transfer the entire balance
+        bool sent = weth.transfer(msg.sender, balance);
+
+        // revert if the transfer was unsuccessful
+        if (!sent) revert FailedWETHTransfer();
+    }
+ 
 
     // some function for withdrawing all looks from contract to owner
     function withdrawLooks() external onlyOwner nonReentrant

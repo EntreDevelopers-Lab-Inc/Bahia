@@ -1,7 +1,7 @@
 from multiprocessing import pool
 import pytest
 import brownie
-from brownie import BahiaNFTPool_LR, Fish, WETH10, StrategyStandardSaleForFixedPrice, TransferManagerERC721, VaultFactory, accounts, chain
+from brownie import BahiaNFTPool_LR, Fish, WETH10, StrategyStandardSaleForFixedPrice, TransferManagerERC721, VaultFactory, accounts, chain, LooksRareToken
 from scripts.NFT.Pool.LR.helpful_scripts import deploy
 from scripts.NFT.Pool.LR.ask import create_maker_ask
 from scripts.accounts import get_admin_account
@@ -112,5 +112,22 @@ def test_withdraw():
     # Only admin can call withdrawWETH()
     with brownie.reverts():
         pool_contract.withdrawWETH({"from": accounts[9]})
+
+def test_withdraw_looks():
+    admin_account = get_admin_account()
+    random_account = accounts[3]
+    looks_rare_token = LooksRareToken[-1]
+    pool_contract = BahiaNFTPool_LR[-1]
+
+    looks_rare_token.mint(random_account, 1000, {'from': admin_account})
+
+    looks_rare_token.transfer(pool_contract, 1000, {'from': random_account})
+
+    assert looks_rare_token.balanceOf(pool_contract) == 1000
+
+    assert looks_rare_token.balanceOf(admin_account) == 0
+    pool_contract.withdrawLooks({'from': admin_account})
+    assert looks_rare_token.balanceOf(admin_account) == 1000
+
     
 

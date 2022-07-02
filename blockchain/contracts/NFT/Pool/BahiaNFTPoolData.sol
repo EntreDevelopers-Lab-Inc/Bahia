@@ -8,6 +8,7 @@ error NoPoolFound();
 error NotAllowed();
 error NotParticipant();
 error IncorrectParticipantId();
+error IncorrectPoolId();
 
 contract BahiaNFTPoolData is
     IBahiaNFTPoolData
@@ -61,7 +62,7 @@ contract BahiaNFTPoolData is
     // function to add a pool
     function addPool(BahiaNFTPoolTypes.Pool memory newPool) external onlyAllowed
     {        
-        newPool.poolId = _currentIndex;
+        if (newPool.poolId != _currentIndex) revert IncorrectPoolId();
         
         pools[_currentIndex] = newPool;
 

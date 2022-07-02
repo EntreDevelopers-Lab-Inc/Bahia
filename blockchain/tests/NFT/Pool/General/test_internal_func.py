@@ -74,30 +74,14 @@ def test_check_allowance():
 # ***
 # Using pool_contract.setContribution to test internal function _safeParticipant()
 # ***
-# def test_safe_participant():
-#     pool_contract = BahiaNFTPool[-1] 
-#     data_contract = BahiaNFTPoolData[-1]
-#     contribution = Web3.toWei(0.25, "ether")
+def test_safe_participant():
+    pool_contract = BahiaNFTPool[-1] 
+    contribution = Web3.toWei(0.25, "ether")
 
-#     # No one should have joined the pool, meaning that _safeParticipant() should revert the tx
-#     # _safeParticipant will revert given the list should be empty
-#     with brownie.reverts():
-#         pool_contract.setContribution(0, 0, contribution)
+    # _safeParticipant will revert given participantId is 0
+    with brownie.reverts():
+        pool_contract.setContribution(0, 0, contribution)
     
-#     null_account = "0x0000000000000000000000000000000000000000"
-    
-#     # allow the contract to manage WETH balance
-#     WETH10[-1].approve(pool_contract, contribution, {'from': null_account})
-
-#     # join the pool
-#     pool_contract.joinPool(0, contribution, {'from': null_account})
-
-#     # make sure the participant has been added to the data contract
-#     assert data_contract.getParticipantCount(0) == 1
-    
-#     # Address(0) should be in the pool now...
-#     pool_contract.setContribution()
-
 
 
 

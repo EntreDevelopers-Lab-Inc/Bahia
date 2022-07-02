@@ -13,6 +13,8 @@ from scripts.constants import DEV_ROYALTY, NULL_ADDRESS
 # acounts[4].participantId == 3
 # ***
 
+SHARE_SUPPLY = 10000
+
 
 # deploy and create a pool every time
 @pytest.fixture(autouse=True)
@@ -34,7 +36,7 @@ def setup_pool():
         lr_transfer_contract, True, {'from': accounts[1]})
 
     # create a pool from an account
-    pool_contract.createPool(fish_contract, 0, 606, 3000, {
+    pool_contract.createPool(fish_contract, 0, 606, SHARE_SUPPLY, {
                              'from': accounts[2]})
 
     # allow the pool to take money from the accounts

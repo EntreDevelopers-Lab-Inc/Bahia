@@ -41,10 +41,15 @@ def test_set_contribution_false_caller():
 def test_set_contribution():
     pool_contract = BahiaNFTPool[-1]
 
-    print(BahiaNFTPoolData[-1].poolIdToParticipants(0, 0))
-
     # try setting account 1's contribution to 1
     pool_contract.setContribution(0, 1, 1, {'from': accounts[1]})
+
+# set the contribution of a real pool and a fake pool
+def test_participant_id_zero():
+    pool_contract = BahiaNFTPool[-1]
+
+    with brownie.reverts():
+        pool_contract.setContribution(0, 0, 1, {'from': accounts[1]})
 
 
 # set the contribution of a real pool and a fake pool

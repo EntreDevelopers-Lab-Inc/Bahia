@@ -52,6 +52,10 @@ def test_buy():
     pool_contract.joinPool(0, 202, {'from': accounts[4]})
     pool_contract.joinPool(0, 303, {'from': accounts[5]})
 
+    # can't join pool twice
+    with brownie.reverts():
+       pool_contract.joinPool(0, 0, {'from': accounts[2]}) 
+
     # get the maker ask
     maker_ask = create_maker_ask(signer=accounts[1],
                                  collection_address=fish_contract,
@@ -98,6 +102,11 @@ def test_buy():
     for account in accounts[2:6]:
         assert weth_contract.balanceOf(account) == end_balances[account]
         print(f"Balance of {account} is correct")
+
+    # can't join completed pool
+    
+    with brownie.reverts():
+        pool_contract.joinPool(0, 250, {'from:': accounts[5]})
 
 
 # test executing a purchase with a price that's too high
@@ -191,4 +200,35 @@ def test_collect_weth_no_balance():
         assert weth_contract.balanceOf(account) == end_balances[account] 
         print(f"Account: {account}")
 
+def test_price_higher_than_accessible_weth():
+    # get the contracts
+    fish_contract = Fish[-1]
+    pool_contract = BahiaNFTPool_LR[-1]
+    max_contribution = 800
 
+    pool_contract.createPool(fish_contract, 0, max_contribution, SHARE_SUPPLY, {
+                            'from': accounts[2]})
+
+
+    # have the accounts join the pool
+    pool_contract.joinPool(0, 101, {'from': accounts[2]})
+    pool_contract.joinPool(0, 202, {'from': accounts[3]})
+    pool_contract.joinPool(0, 303, {'from': accounts[4]})
+
+    # get the maker ask
+    maker_ask = create_maker_ask(signer=accounts[1],
+                                 collection_address=fish_contract,
+                                 price=700,
+                                 token_id=0,
+                                 amount=1,
+                                 strategy=StrategyStandardSaleForFixedPrice[-1],
+                                 currency=WETH10[-1],
+                                 nonce=0,  # first nft listed by this account
+                                 start_time=chain.time(),
+                                 end_time=chain.time() + 600,  # 10 minutes later
+                                 min_percentage_to_ask=8500  # collect 85% of the order
+                                 )
+
+    # try to buy the item (should fail)
+    with brownie.reverts():
+        pool_contract.buyNow(0, maker_ask, 8500, '', {'from': accounts[2]})

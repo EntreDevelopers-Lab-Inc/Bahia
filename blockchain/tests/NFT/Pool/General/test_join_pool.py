@@ -1,7 +1,7 @@
 import pytest
 import brownie
 from web3 import Web3
-from brownie import BahiaNFTPool, BahiaNFTPoolData, Fish, WETH10, accounts
+from brownie import BahiaNFTPool, BahiaNFTPoolData, Fish, WETH10, accounts, BahiaNFTPool_LR, StrategyStandardSaleForFixedPrice, TransferManagerERC721
 from scripts.NFT.Pool.General.helpful_scripts import deploy
 
 
@@ -65,7 +65,7 @@ def test_join_pool_twice():
 
     # Can't join pool twice...
     with brownie.reverts():
-       pool_contract.joinPool(0, contribution, {'from': accounts[3]}) 
+       pool_contract.joinPool(0, contribution, {'from': accounts[3]})
 
 
 # check allowance and data contract will be checked in other tests

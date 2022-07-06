@@ -1,0 +1,67 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<link href="{{url_for('static', filename='assets/css/buy/buy.css')}}" rel="stylesheet"/>
+<section>
+  <canvas class="transparent_effect fixed" id="banner_canvas">
+  </canvas>
+  <div class="container">
+    <div class="row">
+      <div class="col-12">
+        <div class="title_default_light title_border text-center">
+          <h4 class="animation animated fadeInUp" data-animation="fadeInUp" data-animation-delay="0.2s" style="animation-delay: 0.2s; opacity: 1;">Start</h4>
+        </div>
+      </div>
+   </div>
+    <div class="row field_form">
+      <div class="form-group col-12 animation animated fadeInUp" data-animation="fadeInUp" data-animation-delay="0.4" style="animation-delay: 0.4s; opacity: 1;">
+        <input type="text" required="required" placeholder="Collection Address" id="collection-address" class="form-control">
+      </div>
+    </div>
+    <div id="nft-data">
+      <div class="row small_space">
+        <div class="col-lg-6 col-md-6 col-sm-12 res_md_mb_30 res_sm_mb_20 text-center animation animated fadeInUp" data-animation="fadeInUp" data-animation-delay="0.4" style="animation-delay: 0.4s; opacity: 1;">
+          <a class="tab-link">
+            <img class="center" src="{{ url_for('static', filename='assets/images/qmark.png') }}" id="image">
+            <h4 class="small_space" id="name"></h4>
+          </a>
+        </div>
+        <div class="col-lg-6 col-md-6 col-sm-12">
+          <div class="row small_space field_form">
+            <div class="col-6">
+              <input type="number" required="required" placeholder="Token ID" id="token-id" class="form-control">
+            </div>
+            <div class="col-6">
+              <a class="btn btn-default btn-radius btn-block" onclick="">Preview</a>
+            </div>
+          </div>
+          <div class="row small_space field_form">
+            <div class="col-6">
+              <input type="number" required="required" placeholder="Max Price" id="max-price" class="form-control">
+            </div>
+            <div class="col-6">
+              <input type="number" required="required" placeholder="Total Shares" id="total-shares" class="form-control">
+            </div>
+          </div>
+          <div class="row small_space">
+            <div class="col-12">
+              <a class="btn btn-default btn-radius btn-block disabled" onclick="">Create Pool</a>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+   </div>
+
+</section>
+
+<!--templates-->
+{% raw %}
+{% endraw %}
+
+{% endblock content %}
+
+{% block scripts %}
+{% endblock %}

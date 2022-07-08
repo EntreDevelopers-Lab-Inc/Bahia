@@ -12,6 +12,7 @@ var saleData = {};
 // keep track of the offset
 var NFT_OFFSET = 0;
 var NFT_LIMIT = 20;
+var getcall;
 
 
 // synchronous function for adding an nft (will want to do this sequentially to maintain structure for the user)
@@ -29,6 +30,26 @@ function addNFT(data)
     NFT_OBJECTS.append(newNft);
 }
 
+async function addAllNFTs(nfts)
+{
+    // iterate over the nfts and add them to the list
+    for (var i = 0; i < nfts.length; i += 1)
+    {
+        addNFT(nfts[i]);
+    }
+
+    // if the number of children less than the limit, there not another page, so hide the next button
+    if ($('#nft-objects').children().length < NFT_LIMIT)
+    {
+        $('#next-btn').hide();
+    }
+    // else, show the button
+    else
+    {
+        $('#next-btn').show();
+    }
+}
+
 
 // load the nfts
 async function loadNFTs()
@@ -36,33 +57,17 @@ async function loadNFTs()
     // clear all nfts
     $('#nft-objects').empty();
 
-    // get all the nfts from the moralis api
-    Moralis.Web3API.account.getNFTs({address: window.ethereum.selectedAddress, chain: CHAIN_ID_STR, limit: NFT_LIMIT, offset: NFT_OFFSET}).then(function(resp) {
+    if (NFT_OFFSET == 0)
+    {
+        getCall = await Moralis.Web3API.account.getNFTs({address: window.ethereum.selectedAddress, chain: CHAIN_ID_STR, limit: NFT_LIMIT});
+    }
+    else
+    {
+        getCall = await getCall.next();
+    }
 
-        // add each nft from the result
-        var nfts = resp.result;
-
-        // iterate over the nfts and add them to the list
-        for (var i = 0; i < nfts.length; i += 1)
-        {
-            addNFT(nfts[i]);
-        }
-
-        // if the number of children less than the limit, there not another page, so hide the next button
-        if ($('#nft-objects').children().length < NFT_LIMIT)
-        {
-            $('#next-btn').hide();
-        }
-        // else, show the button
-        else
-        {
-            $('#next-btn').show();
-        }
-
-    }).catch((error) => {
-        alert('You have requested too much data. Please wait and try again later.');
-        console.log(error);
-    });
+    // add all the nfts
+    addAllNFTs(getCall.result);
 }
 
 

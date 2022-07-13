@@ -1,19 +1,24 @@
 dependencies:
   - chiru-labs/ERC721A@3.0.0
-  - OpenZeppelin/openzeppelin-contracts@4.5.0
+  - OpenZeppelin/openzeppelin-contracts@4.6.0
 
 # remap using the compiler
 compiler:
   solc:
     remappings:
       - '@chiru-labs=chiru-labs/ERC721A@3.0.0'
-      - '@openzeppelin=OpenZeppelin/openzeppelin-contracts@4.5.0'
+      - '@openzeppelin=OpenZeppelin/openzeppelin-contracts@4.6.0'
 
 # set the wallet
 wallets:
   from_key: ${PRIVATE_KEY}  # can get the key from the environment variables
+  dev_test_wallet: ${DEVELOPMENT_KEY}
   DEVELOPMENT_KEY: testAccount
   password: 'password'
+wallets:
+  from_key: ${PRIVATE_KEY}
+
+
 
 networks:
   default: development

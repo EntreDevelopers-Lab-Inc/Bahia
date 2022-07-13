@@ -1,6 +1,19 @@
-from brownie import accounts
+from brownie import accounts, network, config 
 
+LOCAL_BLOCKCHAIN_ENVIRONMENTS = ["development", "ganache-local"]
 
-# set some admin account
 def get_admin_account():
-    return accounts[0]
+    if network.show_active() in LOCAL_BLOCKCHAIN_ENVIRONMENTS:
+        return accounts[0]
+    else:
+        return accounts.add(config["wallets"]["from_key"])
+
+
+def get_dev_account():
+    if network.show_active() in LOCAL_BLOCKCHAIN_ENVIRONMENTS:
+        return accounts[1]
+    else:
+        # return accounts.load(
+        #     config["wallets"]["DEVELOPMENT_KEY"], password=config["wallets"]["password"]
+        # )
+        return accounts.add(config["wallets"]["DEVELOPMENT_KEY"])

@@ -1,4 +1,4 @@
-// SPDX License-Identifier: MIT
+// SPDX-License-Identifier: MIT
 
 pragma solidity ^0.8.12;
 
@@ -60,6 +60,7 @@ contract BahiaNFTRaffle is
     modifier raffleLive(uint256 raffleId)
     {
         if (raffles[raffleId].expiration < block.timestamp) revert RaffleExpired();
+        _;
     }
 
     // create a raffle
@@ -116,7 +117,7 @@ contract BahiaNFTRaffle is
         }
 
         // refund the excess
-        if (msg.value)
+        //if (msg.value)
     }
 
     // draw the winning ticket

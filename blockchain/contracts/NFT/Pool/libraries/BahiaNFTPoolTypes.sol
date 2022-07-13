@@ -7,15 +7,16 @@ library BahiaNFTPoolTypes {
         uint256 poolId;  // self-aware
         address collection;
         uint256 nftId;
-        uint256 approvalPercent;  // out of 100,000 --> amount to raise bid (for fractional.art)
         uint256 maxContributions;  // limits NFT owner from manipulating markets
-        string shareName;  // fractional art
-        string shareSymbol;  // fractional art
-        uint256 startListPrice;  // fractional art
+
+        uint256 shareSupply;  // fractional art
 
         address creator; // make sure that the creator is recognized
         bool completed;
         uint256 endPurchasePrice;  // logs what the contract was executed at
+
+        uint256 vaultId;  // the id of the fractional art vault (necessary to claim shares)
+        uint256 nextParticipantId; // keeps track of size of the pool / the id of the next participant
     }
 
     // participant data

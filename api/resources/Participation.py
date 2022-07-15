@@ -1,5 +1,6 @@
-from api.models import ParticipationModel
+from api.models import db, ParticipationModel
 from api.resources import load_json
+from api.tools.pool import POOL_CONTRACT
 from flask_restful import Resource
 
 
@@ -10,12 +11,27 @@ class BaseParticipationResource(Resource):
     def post(self):
         data = load_json()
 
-        # turn the input into a pool id
-        pool_id = ''
+        # get the function input
+        function, input_data = POOL_CONTRACT.decode_function_input(
+            data['input'])
 
-        # log a new partipation
+        # if the function name is not joinging the pool, just return
+        if function.fn_name != 'joinPool':
+            return {'status': 'no computation necessary'}, 202
+
+        # if the participation exists, exit
+        if ParticipationModel.query.filter_by(transaction_hash=data['hash']).first():
+            return {'status': 'already added participation'}, 203
+
+        # log a new partipation if it does not exist
         participation = ParticipationModel(
-            network=self.network, transaction_hash=data['hash'], address=data['from'], pool_id=pool_id)
+            network=self.network, transaction_hash=data['hash'], address=data['from'], pool_id=input_data['poolId'])
+
+        # add the participation to the database
+        db.session.add(participation)
+        db.session.commit()
+
+        return {'status': 'success'}, 201
 
 
 # make a mainnet resource

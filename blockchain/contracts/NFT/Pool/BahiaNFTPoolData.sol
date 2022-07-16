@@ -3,8 +3,12 @@
 pragma solidity ^0.8.12;
 
 import "../../../interfaces/NFT/Pool/IBahiaNFTPoolData.sol";
-import "../../Bahia.sol";
 
+error NoPoolFound();
+error NotAllowed();
+error NotParticipant();
+error IncorrectParticipantId();
+error IncorrectPoolId();
 
 contract BahiaNFTPoolData is
     IBahiaNFTPoolData
@@ -14,14 +18,20 @@ contract BahiaNFTPoolData is
     event ParticipantAdded(uint256 poolId, BahiaNFTPoolTypes.Participant);
     event ContributionSet(uint256 poolId, BahiaNFTPoolTypes.Participant);
 
-    // just a log of all the pools ever created
-    BahiaNFTPoolTypes.Pool[] public pools;
+    // PoolIdz
+    mapping(uint256 => BahiaNFTPoolTypes.Pool) public pools;
 
-    // mapping to track pool Id to participants
-    mapping(uint256 => BahiaNFTPoolTypes.Participant[]) poolIdToParticipants;
+    // mapping of mapping to track pool Id to participants
+    // poolId => participantId => participant
+    mapping(uint256 => mapping(uint256 => BahiaNFTPoolTypes.Participant)) public poolIdToParticipants;
+
+    // poolId => address => participantId
+    mapping(uint256 => mapping(address => uint256)) public addressToParticipantId;
 
     // allow certain contracts
-    mapping(address => bool) internal allowedContracts;
+    mapping(address => bool) private allowedContracts;
+
+    uint256 private _currentIndex; 
 
     constructor()
     {
@@ -35,111 +45,121 @@ contract BahiaNFTPoolData is
         _;
     }
 
-
     // ability to see pool count
     function getPoolCount() public view returns (uint256)
     {
-        return pools.length;
+        return _currentIndex;
     }
 
     // getter function for the pool
     function getPool(uint256 poolId) public view returns (BahiaNFTPoolTypes.Pool memory)
     {
-        // if the pool id is greater than the total length, return an empty pool
-        if (poolId >= getPoolCount())
-        {
-            return _blankPool();
-        }
+        if (poolId >= _currentIndex) revert NoPoolFound();
         // else return a real pool
         return pools[poolId];
-
     }
 
     // function to add a pool
     function addPool(BahiaNFTPoolTypes.Pool memory newPool) external onlyAllowed
-    {
-        pools.push(newPool);
+    {        
+        if (newPool.poolId != _currentIndex) revert IncorrectPoolId();
+        
+        pools[_currentIndex] = newPool;
+
+        unchecked { _currentIndex++; }
 
         emit PoolCreated(newPool);
     }
 
-    // getter funtion to get the count of a pool's participants
-    function getParticipantCount(uint256 poolId) external view returns (uint256)
+    // function to update a pool
+    function updatePool(BahiaNFTPoolTypes.Pool memory _pool) external onlyAllowed
     {
-        return poolIdToParticipants[poolId].length;
+        if (_pool.poolId >= _currentIndex) revert NoPoolFound();
+        
+        // set the pool 
+        pools[_pool.poolId] = _pool;
+    }
+
+    // getter funtion to get the nextParticipantId of a pool
+    function getNextParticipantId(uint256 poolId) external view returns (uint256)
+    {
+        return pools[poolId].nextParticipantId;
+    } 
+
+
+    // Adjusted by 1 considering all pool.count are indexed @ 1 
+    function getNumberOfParticipants(uint256 poolId) external view returns(uint256) {
+       return pools[poolId].nextParticipantId - 1; 
     }
 
     // getter function to get a pool's participant (based on an index)
     function getParticipant(uint256 poolId, uint256 participantId) public view returns (BahiaNFTPoolTypes.Participant memory)
-    {
-        // if there is no matching participant, return a blank one
-        if (participantId <= poolIdToParticipants[poolId].length)
-        {
-            return _blankParticipant();
-        }
-
-        // otherwise, return the participant
+    {    
+        // Return the participant; 
+        // Since participantIDs are indexed @ 1 and mappings are indexed @ 0, need to add 1 to the participantId
         return poolIdToParticipants[poolId][participantId];
     }
 
+    function getParticipantIdFromAddress(uint256 poolId, address _address) external view returns (uint256) {
+        return addressToParticipantId[poolId][_address];
+    }
+
     // ability to add a participant to a pool (allows another sequential bid)
-    function addParticipant(uint256 poolId, BahiaNFTPoolTypes.Participant memory newParticipant) external onlyAllowed returns (bool)
+    function addParticipant(uint256 poolId, BahiaNFTPoolTypes.Participant memory newParticipant) external onlyAllowed
     {
-        // check if the pool exists
-        if (poolId >= getPoolCount())
-        {
-            return false;
-        }
+        if (poolId >= _currentIndex) revert NoPoolFound();
+        if(newParticipant.participantId != pools[poolId].nextParticipantId) revert IncorrectParticipantId();
 
         // add the participant to the pool
-        poolIdToParticipants[poolId].push(newParticipant);
+        poolIdToParticipants[poolId][newParticipant.participantId] = newParticipant;
+         
+        // update addressToParticipantId
+        // must be tx.origin since msg.sender will always be another contract...
+        addressToParticipantId[poolId][tx.origin] = newParticipant.participantId;
+        
+        // Increment pool.nextParticipantId variable
+        unchecked {
+        pools[poolId].nextParticipantId++;
+        }
 
         // emit that a new participant has been added
         emit ParticipantAdded(poolId, newParticipant);
-
-        // return that the participant has been added
-        return true;
     }
 
+    // setter function to update participant information
+    function setParticipant(uint256 poolId, BahiaNFTPoolTypes.Participant memory participant) external onlyAllowed
+    {
+        // if there is no matching pool, return false
+        if (poolId >= _currentIndex) revert NoPoolFound();
+
+        // otherwise, set the participant
+        // if no participant exists, the assignment will revert...
+        poolIdToParticipants[poolId][participant.participantId] = participant;
+    }
+
+
     // option to change contribution
-    function setContribution(uint256 poolId, uint256 participantId, uint256 newContribution) external onlyAllowed returns (bool)
+    function setContribution(uint256 poolId, uint256 participantId, uint256 newContribution) external onlyAllowed
     {
         // check if the pool exists
-        if (poolId >= getPoolCount())
-        {
-            return false;
-        }
+        if (poolId >= _currentIndex) revert NoPoolFound();
 
         // get the participant
-        BahiaNFTPoolTypes.Participant memory participant = poolIdToParticipants[poolId][participantId];
+        BahiaNFTPoolTypes.Participant storage participant = poolIdToParticipants[poolId][participantId];
 
         // check that the participant is the transaction sender
-        if (participant.participantAddress != tx.origin)
-        {
-            return false;
-        }
+        if (participant.participantAddress != tx.origin) revert NotParticipant();
 
         // set the contribution
         participant.contribution = newContribution;
 
         // emit that the contribution has been set
         emit ContributionSet(poolId, participant);
-
-        // return that the contribution has been set
-        return true;
     }
 
-    // empty pool
-    function _blankPool() internal pure returns (BahiaNFTPoolTypes.Pool memory)
+    // set the allowed permission
+    function setAllowedPermission(address address_, bool permission_) external onlyAllowed
     {
-        BahiaNFTPoolTypes.Pool memory blankPool = BahiaNFTPoolTypes.Pool(0, address(0), 0, 0, 0, "", "", 0, address(0), false, 0);
-        return blankPool;
-    }
-
-    // empty participant
-    function _blankParticipant() internal pure returns (BahiaNFTPoolTypes.Participant memory)
-    {
-        BahiaNFTPoolTypes.Participant memory blankParticipant = BahiaNFTPoolTypes.Participant(0, address(0), 0, 0);
-        return blankParticipant;
+        allowedContracts[address_] = permission_;
     }
 }

@@ -71,7 +71,16 @@ def test_check_allowance():
     # Ensure that prior behavior was correct by joining pool 
     pool_contract.joinPool(0, Web3.toWei(0.25, "ether"), {'from': accounts[1]} )
     
+# ***
+# Using pool_contract.setContribution to test internal function _safeParticipant()
+# ***
+def test_safe_participant():
+    pool_contract = BahiaNFTPool[-1] 
+    contribution = Web3.toWei(0.25, "ether")
 
+    # _safeParticipant will revert given participantId is 0
+    with brownie.reverts():
+        pool_contract.setContribution(0, 0, contribution)
     
 
 

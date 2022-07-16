@@ -1,35 +1,45 @@
-// // Get modal elment 
-// var joinModal = document.getElementById('join-modal')
+// load the nft template and objects
+const NFT_TEMPLATE = $('#nft-template').html();
+var NFT_OBJECTS = $('#nft-objects');
 
-// //Get open modal button
-// var joinBtn = document.getElementById('join-btn');
+// load the sale tempalte and objects
+const SALE_TEMPLATE = '';
+var SALE_OBJECTS = $('#sale-objects');
 
-// // Get close button
-// // var closeBtn = document.getElementsByClassName('closeBtn')[0];
+// keep the sale data on hand
+var saleData = {};
 
-// // Listen for open click
-// joinBtn.addEventListener('click', openModal)
+// keep track of the offset
+var NFT_OFFSET = 0;
+var NFT_LIMIT = 20;
+var getcall;
 
-// // // Listen for close click 
-// // closeBtn.addEventListener('click', closeModal);
+// show modal
+function showJoinModal()
+{   
+    if (saleData['name'] == undefined)
+    {
+        alert('Must select an NFT to sell first');
+        return;
+    }
 
-// // Listen for outside click
-// window.addEventListener('click', clickOutside)
+    // set the name
+    $('#sell-nft-name').text(saleData['name'])
 
+    // set the collection address
+    $('#sell-nft-collection-address').text(saleData['address']);
 
-// function openModal(){
-//     joinModal.style.visibility = 'visible';
-//     joinModal.style.opacity = 1;
-//     console.log("Is this working?")
+    // set the etherscan
+    $('#sell-nft-etherscan').attr('href', ETHERSCAN_BASE + saleData['address']);
 
-// }
+    // set the looksrare
+    $('#sell-nft-looksrare').attr('href', LOOKSRARE_BASE + saleData['address']);
 
-// // function closeModal() {
-// //     modal.style.display = 'none';
-// // }
+    // show the modal
+    toggleModal();
+    $('#sell-nft-modal').show();
 
-// function clickOutside(e) {
-//     if(e.target == modal) {
-//     joinModal.style.visiblity = 'hidden';
-//     }
-// }
+    // show the right stuff
+    $('#create-sale').show();
+    $('#sale-loading').hide();
+}

@@ -6,7 +6,7 @@ if (window.ethereum == undefined)
 }
 
 // DAN FILLS THIS
-let POOL_CONTRACT_ADDRESS = '';
+let POOL_CONTRACT_ADDRESS = '0xb2a852e33Ff6D3720DFEdABa65A7788E035898ce';
 
 // contract provider https://github.com/mikec3/my_tutorials/blob/master/simple_storage/src/SimpleStorage.js
 let CONTRACT_PROVIDER = new ethers.providers.Web3Provider(window.ethereum, network=CHAIN_STRING);

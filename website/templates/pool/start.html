@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 
 {% block content %}
-<link href="{{url_for('static', filename='assets/css/buy/buy.css')}}" rel="stylesheet"/>
+<link href="{{url_for('static', filename='assets/css/nftTools/nftObjects.css')}}" rel="stylesheet"/>
 <section>
   <canvas class="transparent_effect fixed" id="banner_canvas">
   </canvas>
@@ -13,46 +13,71 @@
         </div>
       </div>
    </div>
-    <div class="row field_form">
-      <div class="form-group col-12 animation animated fadeInUp" data-animation="fadeInUp" data-animation-delay="0.4" style="animation-delay: 0.4s; opacity: 1;">
-        <input type="text" required="required" placeholder="Collection Address" id="collection-address" class="form-control">
-      </div>
+    <div class="row newsletter_form col-12">
+        <input class="input-rounded" type="text" required="" placeholder="Collection">
+        <button class="btn-info" style="margin-right: 1rem;">Search</button>
     </div>
-    <div id="nft-data">
-      <div class="row small_space">
-        <div class="col-lg-6 col-md-6 col-sm-12 res_md_mb_30 res_sm_mb_20 text-center animation animated fadeInUp" data-animation="fadeInUp" data-animation-delay="0.4" style="animation-delay: 0.4s; opacity: 1;">
-          <a class="tab-link">
-            <img class="center" src="{{ url_for('static', filename='assets/images/qmark.png') }}" id="image">
-            <h4 class="small_space" id="name"></h4>
-          </a>
-        </div>
-        <div class="col-lg-6 col-md-6 col-sm-12">
-          <div class="row small_space field_form">
-            <div class="col-6">
-              <input type="number" required="required" placeholder="Token ID" id="token-id" class="form-control">
-            </div>
-            <div class="col-6">
-              <a class="btn btn-default btn-radius btn-block" onclick="">Preview</a>
-            </div>
-          </div>
-          <div class="row small_space field_form">
-            <div class="col-6">
-              <input type="number" required="required" placeholder="Max Price" id="max-price" class="form-control">
-            </div>
-            <div class="col-6">
-              <input type="number" required="required" placeholder="Total Shares" id="total-shares" class="form-control">
-            </div>
-          </div>
-          <div class="row small_space">
-            <div class="col-12">
-              <a class="btn btn-default btn-radius btn-block disabled" onclick="">Create Pool</a>
-              </div>
-            </div>
-          </div>
+    <div class="row small_space" id="collection-choices">
+      <div class="col-4 text-center">
+        <a class="tab-link" onclick="selectNFT('0xd4c4643053e46eacffa06e2573641907a54125fb', 167);" nft-id="167">
+          <img class="center" src="https://arweave.net/239A8bPxmtSCIZ9gA6ZdvOBNsZVPcTpkhSJTS8HPbQM">
+          <h4><span>newStore</span> #<span>167</span></h4>
+        </a>
+      </div>
 
-        </div>
+      <div class="col-4 text-center">
+        <a class="tab-link" onclick="selectNFT('0xc97dfbda6ea3dd40097eca738cc46c380718899a', 232);" nft-id="232">
+          <img class="center" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB2aWV3Qm94PSIwIDAgNDAwIDQwMCI+PGRlZnM+PHN0eWxlPi5jbHMtMXtmaWxsOiNmYWU3Y2U7fS5jbHMtMntmaWxsOnVybCgjbGluZWFyLWdyYWRpZW50KTt9LmNscy0ze2ZpbGw6dXJsKCNsaW5lYXItZ3JhZGllbnQtMik7fS5jbHMtNHtmaWxsOnVybCgjbGluZWFyLWdyYWRpZW50LTMpO30uY2xzLTV7ZmlsbDp1cmwoI2xpbmVhci1ncmFkaWVudC00KTt9LmNscy02e29wYWNpdHk6MC4zO30uY2xzLTd7ZmlsbDojMzUyMTFjO30uY2xzLTh7ZmlsbDp1cmwoI3JhZGlhbC1ncmFkaWVudCk7fS5jbHMtOXtmaWxsOnVybCgjcmFkaWFsLWdyYWRpZW50LTIpO30uY2xzLTEwe2ZpbGw6dXJsKCNyYWRpYWwtZ3JhZGllbnQtMyk7fTwvc3R5bGU+PGxpbmVhckdyYWRpZW50IGlkPSJsaW5lYXItZ3JhZGllbnQiIHgxPSIxNjguODgiIHkxPSIzMzEiIHgyPSIyMTguODkiIHkyPSIzMzEiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIj48c3RvcCBvZmZzZXQ9IjAuMTkiIHN0b3AtY29sb3I9IiNmZmQ3ODgiLz48c3RvcCBvZmZzZXQ9IjAuOTYiIHN0b3AtY29sb3I9IiNmN2EyNjUiLz48L2xpbmVhckdyYWRpZW50PjxsaW5lYXJHcmFkaWVudCBpZD0ibGluZWFyLWdyYWRpZW50LTIiIHgxPSIxNTUuNjQiIHkxPSIzMDMuMTciIHgyPSIyMjcuNjciIHkyPSIzMDMuMTciIHhsaW5rOmhyZWY9IiNsaW5lYXItZ3JhZGllbnQiLz48bGluZWFyR3JhZGllbnQgaWQ9ImxpbmVhci1ncmFkaWVudC0zIiB4MT0iMTQ0LjIzIiB5MT0iMjc3LjY2IiB4Mj0iMjUzLjY2IiB5Mj0iMjc3LjY2IiB4bGluazpocmVmPSIjbGluZWFyLWdyYWRpZW50Ii8+PGxpbmVhckdyYWRpZW50IGlkPSJsaW5lYXItZ3JhZGllbnQtNCIgeDE9IjE4Mi4xMiIgeTE9IjM1OC42MSIgeDI9IjIxMC4xIiB5Mj0iMzU4LjYxIiB4bGluazpocmVmPSIjbGluZWFyLWdyYWRpZW50Ii8+PHJhZGlhbEdyYWRpZW50IGlkPSJyYWRpYWwtZ3JhZGllbnQiIGN4PSIxNzQuMTUiIGN5PSIxOTIuMjciIHI9IjEwMi45NiIgZ3JhZGllbnRVbml0cz0idXNlclNwYWNlT25Vc2UiPjxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iI2ZmZDlkMiIvPjxzdG9wIG9mZnNldD0iMC4wNCIgc3RvcC1jb2xvcj0iI2ZmZDVjZiIvPjxzdG9wIG9mZnNldD0iMC4yNSIgc3RvcC1jb2xvcj0iI2ZmYzVjNCIvPjxzdG9wIG9mZnNldD0iMC40MSIgc3RvcC1jb2xvcj0iI2ZmYzBjMCIvPjxzdG9wIG9mZnNldD0iMC42IiBzdG9wLWNvbG9yPSIjZmZiZGJkIi8+PHN0b3Agb2Zmc2V0PSIwLjc1IiBzdG9wLWNvbG9yPSIjZmViMmIyIi8+PHN0b3Agb2Zmc2V0PSIwLjkiIHN0b3AtY29sb3I9IiNmZGEwYTAiLz48c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiNmYzkwOTAiLz48L3JhZGlhbEdyYWRpZW50PjxyYWRpYWxHcmFkaWVudCBpZD0icmFkaWFsLWdyYWRpZW50LTIiIGN4PSIxNzguODkiIGN5PSIxMjUuNjQiIHI9Ijg5LjIzIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjZmZmIi8+PHN0b3Agb2Zmc2V0PSIwLjI3IiBzdG9wLWNvbG9yPSIjZmZmY2VmIi8+PHN0b3Agb2Zmc2V0PSIwLjQ4IiBzdG9wLWNvbG9yPSIjZmZmYmU5Ii8+PHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjZmNmMmNhIi8+PC9yYWRpYWxHcmFkaWVudD48cmFkaWFsR3JhZGllbnQgaWQ9InJhZGlhbC1ncmFkaWVudC0zIiBjeD0iMTgwLjY0IiBjeT0iNjAuODYiIHI9Ijk4LjE1IiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjZmZmOWE5Ii8+PHN0b3Agb2Zmc2V0PSIwLjQ3IiBzdG9wLWNvbG9yPSIjZmZkODk5Ii8+PHN0b3Agb2Zmc2V0PSIwLjcxIiBzdG9wLWNvbG9yPSIjZjBiNjYyIi8+PHN0b3Agb2Zmc2V0PSIwLjkiIHN0b3AtY29sb3I9IiNlNjlkM2MiLz48c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiNlMjk0MmQiLz48L3JhZGlhbEdyYWRpZW50PjwvZGVmcz48cmVjdCBjbGFzcz0iY2xzLTEiIHdpZHRoPSI0MDAiIGhlaWdodD0iNDAwIi8+PHBvbHlnb24gY2xhc3M9ImNscy0yIiBwb2ludHM9IjIxOC44OSAzMzUuMiAxNjguODggMzA5LjYzIDE3OS4xMiAzMzUuNSAyMTIuMDkgMzUyLjM3IDIxOC44OSAzMzUuMiIvPjxwb2x5Z29uIGNsYXNzPSJjbHMtMyIgcG9pbnRzPSIxNjUuODggMzAyLjA1IDIyMC44NyAzMzAuMTggMjI3LjY3IDMxMy4wMSAxNTUuNjQgMjc2LjE3IDE2NS44OCAzMDIuMDUiLz48cG9seWdvbiBjbGFzcz0iY2xzLTQiIHBvaW50cz0iMjI5LjY2IDMwNy45OSAyNTMuNjYgMjQ3LjM0IDE0NC4yMyAyNDcuMzQgMTUyLjY0IDI2OC41OSAyMjkuNjYgMzA3Ljk5Ii8+PHBhdGggY2xhc3M9ImNscy01IiBkPSJNMTgyLjEyLDM0My4wOGwxMC42MiwyNi44NGE2LjY3LDYuNjcsMCwwLDAsMTIuNDEsMGw0Ljk1LTEyLjUyWiIvPjxnIGNsYXNzPSJjbHMtNiI+PHBhdGggY2xhc3M9ImNscy03IiBkPSJNMjY1LjM5LDIyOS41NWExNi41LDE2LjUsMCwwLDAtOC43NS05LjQ2LDEyLjQsMTIuNCwwLDAsMS03LjA5LTEwLjU3LDUwLjcsNTAuNywwLDAsMC0xMDEuMTksMCwxMi40NSwxMi40NSwwLDAsMS03LjA5LDEwLjYsMTYuNDYsMTYuNDYsMCwwLDAtOC43Nyw5LjQ3LDE2LjcsMTYuNywwLDAsMCwyMS43MywyMS4yNSwxMy4zLDEzLjMsMCwwLDEsMTMuMTgsMS42OSw1MC45LDUwLjksMCwwLDAsMjIuMzcsMTAuMTdjNi4zMSwxLjE3LDExLjE0LDUuODUsMTQsMTEuNmEyMy4zLDIzLjMsMCwwLDAsNDQuMTMtOS4zMmMuMy02LjYyLDQuODQtMTIsMTAuNDktMTUuNDdhMTkuMTMsMTkuMTMsMCwwLDAsMS45Mi0xLjM2QTE2LjgxLDE2LjgxLDAsMCwwLDI2NS4zOSwyMjkuNTVaIi8+PC9nPjxnIGNsYXNzPSJjbHMtNiI+PHBhdGggY2xhc3M9ImNscy03IiBkPSJNMjY1LjM5LDE2NC4yM2ExNi41LDE2LjUsMCwwLDAtOC43NS05LjQ2LDEyLjQsMTIuNCwwLDAsMS03LjA5LTEwLjU3LDUwLjcsNTAuNywwLDAsMC0xMDEuMTksMCwxMi40NSwxMi40NSwwLDAsMS03LjA5LDEwLjYsMTYuNDYsMTYuNDYsMCwwLDAtOC43Nyw5LjQ3LDE2LjcsMTYuNywwLDAsMCwyMS43MywyMS4yNSwxMy4zLDEzLjMsMCwwLDEsMTMuMTgsMS42OSw1MC45LDUwLjksMCwwLDAsMjIuMzcsMTAuMTdjNi4zMSwxLjE3LDExLjE0LDUuODUsMTQsMTEuNmEyMy4zLDIzLjMsMCwwLDAsNDQuMTMtOS4zMmMuMy02LjYyLDQuODQtMTIsMTAuNDktMTUuNDdhMTkuMTMsMTkuMTMsMCwwLDAsMS45Mi0xLjM2QTE2LjgxLDE2LjgxLDAsMCwwLDI2NS4zOSwxNjQuMjNaIi8+PC9nPjxnIGNsYXNzPSJjbHMtNiI+PHBhdGggY2xhc3M9ImNscy03IiBkPSJNMjY1LjM5LDE2NC4yM2ExNi41LDE2LjUsMCwwLDAtOC43NS05LjQ2LDEyLjQsMTIuNCwwLDAsMS03LjA5LTEwLjU3LDUwLjcsNTAuNywwLDAsMC0xMDEuMTksMCwxMi40NSwxMi40NSwwLDAsMS03LjA5LDEwLjYsMTYuNDYsMTYuNDYsMCwwLDAtOC43Nyw5LjQ3LDE2LjcsMTYuNywwLDAsMCwyMS43MywyMS4yNSwxMy4zLDEzLjMsMCwwLDEsMTMuMTgsMS42OSw1MC45LDUwLjksMCwwLDAsMjIuMzcsMTAuMTdjNi4zMSwxLjE3LDExLjE0LDUuODUsMTQsMTEuNmEyMy4zLDIzLjMsMCwwLDAsNDQuMTMtOS4zMmMuMy02LjYyLDQuODQtMTIsMTAuNDktMTUuNDdhMTkuMTMsMTkuMTMsMCwwLDAsMS45Mi0xLjM2QTE2LjgxLDE2LjgxLDAsMCwwLDI2NS4zOSwxNjQuMjNaIi8+PC9nPjxnIGNsYXNzPSJjbHMtNiI+PHBhdGggY2xhc3M9ImNscy03IiBkPSJNMjY1LjM5LDk4LjkxYTE2LjUsMTYuNSwwLDAsMC04Ljc1LTkuNDYsMTIuNCwxMi40LDAsMCwxLTcuMDktMTAuNTcsNTAuNyw1MC43LDAsMCwwLTEwMS4xOSwwLDEyLjQ1LDEyLjQ1LDAsMCwxLTcuMDksMTAuNiwxNi40NiwxNi40NiwwLDAsMC04Ljc3LDkuNDcsMTYuNywxNi43LDAsMCwwLDIxLjczLDIxLjI1LDEzLjMsMTMuMywwLDAsMSwxMy4xOCwxLjY5QTUwLjksNTAuOSwwLDAsMCwxODkuNzgsMTMyYzYuMzEsMS4xNywxMS4xNCw1Ljg1LDE0LDExLjZhMjMuMywyMy4zLDAsMCwwLDQ0LjEzLTkuMzJjLjMtNi42Miw0Ljg0LTEyLDEwLjQ5LTE1LjQ3YTE5LjEzLDE5LjEzLDAsMCwwLDEuOTItMS4zNkExNi44MSwxNi44MSwwLDAsMCwyNjUuMzksOTguOTFaIi8+PC9nPjxwYXRoIGNsYXNzPSJjbHMtOCIgZD0iTTI2NS4zOSwyMjRhMTYuNDksMTYuNDksMCwwLDAtOC43NS05LjQ3LDEyLjM5LDEyLjM5LDAsMCwxLTcuMDktMTAuNTcsNTAuNyw1MC43LDAsMCwwLTEwMS4xOSwwLDEyLjQ1LDEyLjQ1LDAsMCwxLTcuMDksMTAuNkExNi40OSwxNi40OSwwLDAsMCwxMzIuNSwyMjRhMTYuNjksMTYuNjksMCwwLDAsMjEuNzMsMjEuMjUsMTMuMywxMy4zLDAsMCwxLDEzLjE4LDEuNjksNTAuOSw1MC45LDAsMCwwLDIyLjM3LDEwLjE3YzYuMzEsMS4xNywxMS4xNCw1Ljg1LDE0LDExLjZhMjMuMywyMy4zLDAsMCwwLDQ0LjEzLTkuMzJjLjMtNi42Miw0Ljg0LTEyLDEwLjQ5LTE1LjQ3YTE2LjM3LDE2LjM3LDAsMCwwLDEuOTItMS4zNkExNi44LDE2LjgsMCwwLDAsMjY1LjM5LDIyNFoiLz48cGF0aCBjbGFzcz0iY2xzLTkiIGQ9Ik0yNjUuMzksMTU4LjY1YTE2LjUsMTYuNSwwLDAsMC04Ljc1LTkuNDYsMTIuMzksMTIuMzksMCwwLDEtNy4wOS0xMC41Nyw1MC43LDUwLjcsMCwwLDAtMTAxLjE5LDAsMTIuNDUsMTIuNDUsMCwwLDEtNy4wOSwxMC42LDE2LjQ5LDE2LjQ5LDAsMCwwLTguNzcsOS40NywxNi42OSwxNi42OSwwLDAsMCwyMS43MywyMS4yNSwxMy4zLDEzLjMsMCwwLDEsMTMuMTgsMS42OSw1MC45LDUwLjksMCwwLDAsMjIuMzcsMTAuMTdjNi4zMSwxLjE3LDExLjE0LDUuODUsMTQsMTEuNkEyMy4zLDIzLjMsMCwwLDAsMjQ3LjksMTk0Yy4zLTYuNjIsNC44NC0xMiwxMC40OS0xNS40N2ExNi4zNywxNi4zNywwLDAsMCwxLjkyLTEuMzZBMTYuODEsMTYuODEsMCwwLDAsMjY1LjM5LDE1OC42NVoiLz48cGF0aCBjbGFzcz0iY2xzLTEwIiBkPSJNMjY1LjM5LDkzLjMzYTE2LjUsMTYuNSwwLDAsMC04Ljc1LTkuNDYsMTIuMzksMTIuMzksMCwwLDEtNy4wOS0xMC41Nyw1MC43LDUwLjcsMCwwLDAtMTAxLjE5LDAsMTIuNDUsMTIuNDUsMCwwLDEtNy4wOSwxMC42LDE2LjQ5LDE2LjQ5LDAsMCwwLTguNzcsOS40NywxNi42OSwxNi42OSwwLDAsMCwyMS43MywyMS4yNSwxMy4zLDEzLjMsMCwwLDEsMTMuMTgsMS42OSw1MC45LDUwLjksMCwwLDAsMjIuMzcsMTAuMTdjNi4zMSwxLjE3LDExLjE0LDUuODUsMTQsMTEuNmEyMy4zLDIzLjMsMCwwLDAsNDQuMTMtOS4zMmMuMy02LjYyLDQuODQtMTIsMTAuNDktMTUuNDdhMTYuMzcsMTYuMzcsMCwwLDAsMS45Mi0xLjM2QTE2LjgxLDE2LjgxLDAsMCwwLDI2NS4zOSw5My4zM1oiLz48dGV4dCB4PSIyNSIgeT0iMjUiPkxJQ0tTOiAwPC90ZXh0Pjwvc3ZnPg==">
+          <h4><span>Ice Cream NFT</span> #<span>232</span></h4>
+        </a>
+      </div>
+
+      <div class="col-4 text-center">
+        <a class="tab-link" onclick="selectNFT('0x86881e9aa63b63114a34f539f7b779244b0e1033', 29);" nft-id="29">
+          <img class="center" src="https://arweave.net/1raYAbLBM-JaKTkmnPfoS5vT6VhJb6gkUW6RZXKiGnQ">
+          <h4><span>Bored Ape Fake Club</span> #<span>29</span></h4>
+        </a>
       </div>
     </div>
+    <div class="row small_space">
+      <div class="col-lg-9 col-md-9 col-sm-6"></div>
+    </div>
+    <div class="row small_space" id="nft-objects">
+      <div class="col-lg-3 col-md-6 col-sm-6 res_md_mb_30 res_sm_mb_20 text-center">
+        <a class="tab-link" onclick="selectNFT('0x86881e9aa63b63114a34f539f7b779244b0e1033', 29);" nft-id="29">
+          <img class="center" src="https://arweave.net/1raYAbLBM-JaKTkmnPfoS5vT6VhJb6gkUW6RZXKiGnQ">
+          <h4><span>Bored Ape Fake Club</span> #<span>29</span></h4>
+        </a>
+      </div>
+      <div class="col-lg-3 col-md-6 col-sm-6 res_md_mb_30 res_sm_mb_20 text-center">
+        <a class="tab-link" onclick="selectNFT('0x86881e9aa63b63114a34f539f7b779244b0e1033', 29);" nft-id="29">
+          <img class="center" src="https://arweave.net/1raYAbLBM-JaKTkmnPfoS5vT6VhJb6gkUW6RZXKiGnQ">
+          <h4><span>Bored Ape Fake Club</span> #<span>29</span></h4>
+        </a>
+      </div>
+      <div class="col-lg-3 col-md-6 col-sm-6 res_md_mb_30 res_sm_mb_20 text-center">
+        <a class="tab-link" onclick="selectNFT('0x86881e9aa63b63114a34f539f7b779244b0e1033', 29);" nft-id="29">
+          <img class="center" src="https://arweave.net/1raYAbLBM-JaKTkmnPfoS5vT6VhJb6gkUW6RZXKiGnQ">
+          <h4><span>Bored Ape Fake Club</span> #<span>29</span></h4>
+        </a>
+      </div>
+      <div class="col-lg-3 col-md-6 col-sm-6 res_md_mb_30 res_sm_mb_20 text-center">
+        <a class="tab-link" onclick="selectNFT('0x86881e9aa63b63114a34f539f7b779244b0e1033', 29);" nft-id="29">
+          <img class="center" src="https://arweave.net/1raYAbLBM-JaKTkmnPfoS5vT6VhJb6gkUW6RZXKiGnQ">
+          <h4><span>Bored Ape Fake Club</span> #<span>29</span></h4>
+        </a>
+      </div>
+    </div>
+
+    <div class="row small_space">
+      <div class="col-2">
+        <a class="pagination-btn btn-default" id="previous-btn" onclick="previousNFTs();" style="display: none;"><i class="pagination-icon ion-ios-arrow-left"></i></a>
+      </div>
+      <div class="col-8"></div>
+      <div class="col-2">
+        <a class="pagination-btn btn-default" style="float: right;" id="next-btn" onclick="nextNFTs();"><i class="pagination-icon ion-ios-arrow-right"></i></a>
+      </div>
+      </div>
    </div>
 
 </section>
@@ -64,4 +89,5 @@
 {% endblock content %}
 
 {% block scripts %}
+  <script src="{{url_for('static', filename='assets/js/nftTools/nftObjects.js')}}"></script>
 {% endblock %}

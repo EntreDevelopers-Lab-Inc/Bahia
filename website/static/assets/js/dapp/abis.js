@@ -446,7 +446,7 @@ const CONTRACT_ABI = [
     }
   ]
 
-ERC721_ABI = [
+const ERC721_ABI = [
     {
       "inputs": [],
       "stateMutability": "nonpayable",

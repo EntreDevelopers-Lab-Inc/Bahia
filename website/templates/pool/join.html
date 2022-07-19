@@ -118,7 +118,7 @@
 {% raw %}
 <template id="pool-template">
   <div class="col-lg-3 col-md-6 col-sm-6 res_md_mb_30 res_sm_mb_20 text-center">
-    <a class="tab-link" onclick="selectPool('{{pool_address}}', {{pool_id}});" pool-id="{{token_id}}">
+    <a class="tab-link" onclick="selectPool('{{collection_address}}', '{{pool_id}}');" pool-id="{{pool_id}}">
       <img class="center" src="{{link}}">
       <h4><span>{{name}}</span> #<span>{{token_id}}</h4>
     </a>
@@ -127,9 +127,9 @@
 <template id="join-template">
   <tr class="animation animated fadeInUp" data-animation="fadeInUp" data-animation-delay="0.2s" style="animation-delay: 0.2s; opacity: 1;">
     <td>{{name}}</td>
-    <td>{{cost}}</td>
-    <td>{{expiration}}</td>
-    <td>{{buyerAddress}}</td>
+    <td>{{maxContributions}}</td>
+    <td>{{creator}}</td>
+    <td>{{collection}}</td>
     <td>
       <a onclick="copyAddress('{{tradeAddress}}');"><span trade-address="{{tradeAddress}}">{{tradeAddress}}</span><span> </span><i trade-address="{{tradeAddress}}" class="fa fa-copy" style="font-size:12px"></i></a>
     </td>

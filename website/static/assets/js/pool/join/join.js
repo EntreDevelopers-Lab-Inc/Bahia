@@ -18,22 +18,24 @@ var pools = [];
 var getcall;
 
 
+function renameKey ( obj, oldKey, newKey ) {
+    obj[newKey] = obj[oldKey];
+    delete obj[oldKey];
+  }
 
 // synchronous function for adding pool (will want to do this sequentially to maintain structure for the user)
 function addPool(pool)
 {
-    // add the link
-    var metadata = JSON.parse(data.metadata);
- 
     var collection_address = pool[1];
 
-    let nft_contract = new ethers.Contract(collection_address, ERC721_ABI, CONTRACT_PROVIDER);
-    var metadata = JSON.parse(nft_contract.tokenURI())
+    var getCall = await Moralis.Web3API.token.getNFTMetadata({address: collection_address, chain: CHAIN_ID_STR});
+    var metadata = getCall.result();
 
+    // Get necessary metadata from token_uri
+    pool['name'] = metadata['name'];
     pool['link'] = getIPFSLink(metadata.image);
+
     // refer to blockchain/contracts/NFT/Pool/libraries/BahiaNFTPoolTypes.sol
-    // pool['poolId'] = pool[0];
-    pool['maxContributions'] = pool[3];
 
     // render the template
     var newPool = Mustache.render(POOL_TEMPLATE, pool);
@@ -48,7 +50,7 @@ async function addAllPools(pools)
     for (var i = 0; i < pools_count; i += 1)
     {
         // Only add pools that aren't completed...
-        if (!pools[0][6]) {
+        if (!pools[0]['completed']) {
             addPool(pools[i]);
         }
     }
@@ -75,32 +77,48 @@ async function loadPools()
     pools_count = await POOL_DATA_CONTRACT.getPoolCount();
 
     for (var i = 0; i < pools_count; i++) {
-        pool = await POOL_DATA_CONTRACT.getPool(i);
-        pools.push(pool);
+        var pool_array = await POOL_DATA_CONTRACT.getPool(i);
+        var pool_json = JSON.stringify(pool_array);
+
+        renameKey(pool_json, '0', 'pool_id');
+        renameKey(pool_json, '1', 'collection_address');
+        renameKey(pool_json, '2', 'token_id');
+        renameKey(pool_json, '3', 'maxContributions');
+        renameKey(pool_json, '5', 'creator');
+        renameKey(pool_json, '6', 'completed');
+
+        pools.push(pool_json);
+        // See what this looks like in the console for debugging...
+        console.log(pool_json);
     }
 
     // add all the nfts
     addAllPools(pools);
 }
 
+function random()
+{
+    console.log('random');
+}
+
 // show modal
 function showJoinModal()
 {   
-    // if (saleData['name'] == undefined)
-    // {
-    //     alert('Must select an NFT to sell first');
-    //     return;
-    // }
+    if (poolData['name'] == undefined)
+    {
+        alert('Must select a pool to join first');
+        return;
+    }
     console.log("This is working")
 
     // set the name
     $('#join-pool-name').text(poolData['name'])
 
     // set the collection address
-    $('#pool-nft-collection-address').text(poolData['address']);
+    $('#pool-nft-collection-address').text(poolData['collection_address']);
 
     // set the etherscan
-    $('#pool-nft-etherscan').attr('href', ETHERSCAN_BASE + poolData['address']);
+    $('#pool-nft-etherscan').attr('href', ETHERSCAN_BASE + poolData['collection_address']);
 
     // show the modal
     toggleModal();

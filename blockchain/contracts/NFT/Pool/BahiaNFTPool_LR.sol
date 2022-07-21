@@ -94,7 +94,6 @@ contract BahiaNFTPool_LR is
         // pool storage variable
         BahiaNFTPoolTypes.Pool memory pool = _safePool(poolId);
 
-
         // calculate total price including fees
         uint256 totalPrice = makerAsk.price + (makerAsk.price * devRoyalty / 100000);
 

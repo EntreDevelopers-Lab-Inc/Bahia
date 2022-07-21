@@ -154,12 +154,14 @@ contract BahiaNFTPoolData is
         emit ContributionSet(poolId, participantId);
     }
 
-    function exitPool(uint256 poolId) {
+    function exitPool(uint256 poolId, uint256 participantId) external onlyAllowed {
         // check if the pool exists
-        if (poolId >= _currentIndex) revert NoPoolFound(); 
+        if (poolId >= _currentIndex) revert NoPoolFound();
+
+        // check that the participant is the transaction sender
+        if (poolIdToParticipants[poolId][participantId].participantAddress != tx.origin) revert NotParticipant(); 
 
         delete poolIdToParticipants[poolId][participantId].contribution; 
-        
     }
 
 

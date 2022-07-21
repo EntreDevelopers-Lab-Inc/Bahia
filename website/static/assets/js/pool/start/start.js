@@ -17,6 +17,10 @@ async function addCollectionsChoices(choices)
 // show the collection's NFTs
 async function showCollectionNFTs(nfts)
 {
+    // remove the highlight from all the collections
+
+    // add a highlight to the correct collection
+
     // iterate over the nfts
     for (var i = 0; i < nfts.length; i += 1)
     {
@@ -79,8 +83,18 @@ async function loadNFTs()
 async function loadDocument()
 {
     // get the top NFT collections from looksrare using AJAX
+    $.ajax({
+        url: LOOKSRARE_API_BASE + 'collections/listing-rewards',
+        method: "GET",
+        success: function (response) {
+            console.log(response);
+
+        }
+    });
 
         // add each collection to the page using mustache
 
     // select the top collection on the page
 }
+
+loadDocument();

@@ -20,7 +20,7 @@ async function showCollectionNFTs(nfts)
     // iterate over the nfts
     for (var i = 0; i < nfts.length; i += 1)
     {
-        //
+        // render each template in mustach JS
     }
 }
 
@@ -79,6 +79,7 @@ async function loadNFTs()
 async function loadDocument()
 {
     // get the top NFT collections from looksrare using AJAX
+
         // add each collection to the page using mustache
 
     // select the top collection on the page

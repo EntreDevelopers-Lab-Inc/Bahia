@@ -127,6 +127,9 @@ contract BahiaNFTPool is
         poolData.setContribution(poolId, participant.participantId, newContribution);
     }
 
+    function exitPool(uint256 poolId, uint256 participantId) external whenNotPaused {
+        poolData._exitPool(poolId, participantId);
+    }
 
 
     // function to claim the fractionalized shares (anyone can call, allowing people to lead pooling and airdrop shares)

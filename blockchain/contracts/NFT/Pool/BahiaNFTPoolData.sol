@@ -154,7 +154,7 @@ contract BahiaNFTPoolData is
         emit ContributionSet(poolId, participantId);
     }
 
-    function exitPool(uint256 poolId, uint256 participantId) external onlyAllowed {
+    function _exitPool(uint256 poolId, uint256 participantId) external onlyAllowed {
         // check if the pool exists
         if (poolId >= _currentIndex) revert NoPoolFound();
 

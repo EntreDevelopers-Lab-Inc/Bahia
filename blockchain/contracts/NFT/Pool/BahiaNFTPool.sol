@@ -67,9 +67,9 @@ contract BahiaNFTPool is
         // create a new pool
         BahiaNFTPoolTypes.Pool memory newPool = BahiaNFTPoolTypes.Pool({
                 poolId: poolData.getPoolCount(),
-                collection: collection_,
                 nftId: nftId_,
                 maxContributions: maxContributions_,
+                collection: collection_,
                 shareSupply: shareSupply_,
                 creator: msg.sender,
                 completed: false,

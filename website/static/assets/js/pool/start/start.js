@@ -1,16 +1,31 @@
-// add a collection choice (want this to be sequential to maintain structure)
-function addCollectionChoice(data)
+// add a collection choice
+async function addCollectionChoice(data)
 {
-    // use mustache to render the data from the collection choice
+    console.log(data);
+
+    // use ajax to get a collection image (await it for synchronous operation)
+    await $.ajax({
+        url: LOOKSRARE_API_BASE + 'tokens',
+        method: 'GET',
+        headers: {
+            collection: data.address,
+            tokenId: 1
+        },
+        success: function(response) {
+            // use mustache to render the data from the collection choice
+
+        }
+    });
+
 }
 
 // add many collection choices --> can be used when loading the document and searching collections (just writing a for loop once instead of twice)
 async function addCollectionsChoices(choices)
 {
-    // iterate over all the choices and call add collection choice
+    // iterate over all the choices and call add collection choice (want this to be sequential to maintain structure)
     for (var i = 0; i < choices.length; i += 1)
     {
-        addCollectionChoice(choices[i]);
+        await addCollectionChoice(choices[i]);
     }
 }
 
@@ -87,8 +102,7 @@ async function loadDocument()
         url: LOOKSRARE_API_BASE + 'collections/listing-rewards',
         method: "GET",
         success: function (response) {
-            console.log(response);
-
+            addCollectionsChoices(response.data.slice(0, 3));
         }
     });
 

@@ -1,8 +1,6 @@
 // add a collection choice
-async function addCollectionChoice(data, useTopOrder=true)
+async function addCollectionChoice(data, useTopOrder=true, tokenId=1)
 {
-    console.log(data);
-
     if (useTopOrder)
     {
         // use ajax to set the collection image as the most expensive listing
@@ -20,19 +18,34 @@ async function addCollectionChoice(data, useTopOrder=true)
                 sort: 'PRICE_DESC'
             },
             success: function (response) {
-                console.log(response);
+                if (response.data.length == 0)
+                {
+                    // call the function but use token id 1
+                    addCollectionChoice(data, useTopOrder=false);
+
+                }
+                else
+                {
+                    // add a collection choice with the correct tokenId
+                    addCollectionChoice(data, useTopOrder=false, tokenId=response.data[0].tokenId);
+                }
+
             }
         });
+
+        // end the function
+        return;
     }
     else
     {
+        console.log(data);
         // use ajax to get a collection image (await it for synchronous operation)
         $.ajax({
-            url: LOOKSRARE_API_BASE + 'token',
+            url: LOOKSRARE_API_BASE + 'tokens',
             method: 'GET',
-            headers: {
+            data: {
                 collection: data.address,
-                tokenId: 1
+                tokenId: tokenId
             },
             success: function(response) {
                 // append the data with the image information
@@ -51,7 +64,7 @@ async function addCollectionsChoices(choices)
     // iterate over all the choices and call add collection choice (want this to be sequential to maintain structure)
     for (var i = 0; i < choices.length; i += 1)
     {
-        await addCollectionChoice(choices[i]);
+        await addCollectionChoice(choices[i].collection);
     }
 }
 

@@ -96,6 +96,12 @@ async function previousNFTs()
 
 }
 
+// default for load nft hook (meant to be overrridden)
+function loadNFT(address, id)
+{
+
+}
+
 // select an nft (cannot be asynchronous because other data depends on it)
 // important to be able to select data
 function selectNFT(address, id)
@@ -117,4 +123,7 @@ function selectNFT(address, id)
     nftData['address'] = address;
     nftData['id'] = id;
     nftData['name'] = selected.text();  // for the modal
+
+    // load the nft (this is a hook)
+    loadNFT(address, id);
 }

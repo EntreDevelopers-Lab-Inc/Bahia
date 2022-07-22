@@ -1,3 +1,6 @@
+const COLLECTION_TEMPLATE = $('#collection-template').html();
+var COLLECTION_OBJECTS = $('#collection-objects');
+
 // add a collection choice
 async function addCollectionChoice(data, useTopOrder=true, tokenId=1)
 {
@@ -22,7 +25,6 @@ async function addCollectionChoice(data, useTopOrder=true, tokenId=1)
                 {
                     // call the function but use token id 1
                     addCollectionChoice(data, useTopOrder=false);
-
                 }
                 else
                 {
@@ -38,7 +40,6 @@ async function addCollectionChoice(data, useTopOrder=true, tokenId=1)
     }
     else
     {
-        console.log(data);
         // use ajax to get a collection image (await it for synchronous operation)
         $.ajax({
             url: LOOKSRARE_API_BASE + 'tokens',
@@ -50,12 +51,15 @@ async function addCollectionChoice(data, useTopOrder=true, tokenId=1)
             success: function(response) {
                 // append the data with the image information
                 data.image = response.data.imageURI;
+
+                // use mustache to render the data from the collection choice
+                var newCollection = Mustache.render(COLLECTION_TEMPLATE, data);
+
+                // add the collection to the collections
+                COLLECTION_OBJECTS.append(newCollection);
             }
         });
     }
-
-    // use mustache to render the data from the collection choice
-
 }
 
 // add many collection choices --> can be used when loading the document and searching collections (just writing a for loop once instead of twice)
@@ -86,13 +90,34 @@ async function showCollectionNFTs(nfts)
 async function searchCollection()
 {
     // get the input
+    var searchPhrase = $('#collection-search').val();
 
     // make sure that the input is non-null (else, show an alert)
+    if (searchPhrase == '')
+    {
+        alert('Must search for something!');
+        return;
+    }
 
     // clear the past results (want to do this here instead of later, as you wouldn't want to clear the collections unnecessarily when opening the document)
+    COLLECTION_OBJECTS.empty();
 
     // search blockdaemon for a collection using its name
-        // add the top 3 results to the page by calling addCollectionChoices
+    $.ajax({
+        url: BLOCKDAEMON_API_BASE + 'collections/search',
+        method: 'GET',
+        data: {
+            name: searchPhrase,
+            apiKey: BLOCKDAEMON_API_KEY,
+            verified: true
+        },
+        success: function (response) {
+            console.log(response);
+            // add the top 3 results to the page by calling addCollectionChoices
+        }
+    });
+
+    return false;
 }
 
 // select a collection

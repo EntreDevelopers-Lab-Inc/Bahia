@@ -16,7 +16,7 @@ def whitepaper():
 
 @pool.route('/start')
 def start():
-    return render_template('pool/start.html', title='Start', dapp=True)
+    return render_template('pool/start.html', title='Start', mustache=True, dapp=True)
 
 
 @pool.route('/join')

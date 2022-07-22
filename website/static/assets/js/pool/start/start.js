@@ -1,21 +1,47 @@
 // add a collection choice
-async function addCollectionChoice(data)
+async function addCollectionChoice(data, useTopOrder=true)
 {
     console.log(data);
 
-    // use ajax to get a collection image (await it for synchronous operation)
-    await $.ajax({
-        url: LOOKSRARE_API_BASE + 'tokens',
-        method: 'GET',
-        headers: {
-            collection: data.address,
-            tokenId: 1
-        },
-        success: function(response) {
-            // use mustache to render the data from the collection choice
+    if (useTopOrder)
+    {
+        // use ajax to set the collection image as the most expensive listing
+        $.ajax({
+            url: LOOKSRARE_API_BASE + 'orders',
+            method: 'GET',
+            data: {
+                isOrderAsk: true,
+                collection: data.address,
+                strategy: LOOKSRARE_BUY_NOW_STRATEGY,
+                startTime: LR_ORIGIN_TIME,
+                endTime: parseInt((Date.now() / 1000)).toString(),
+                status: ['EXECUTED', 'VALID'],
+                pagination: {'first': 1},
+                sort: 'PRICE_DESC'
+            },
+            success: function (response) {
+                console.log(response);
+            }
+        });
+    }
+    else
+    {
+        // use ajax to get a collection image (await it for synchronous operation)
+        $.ajax({
+            url: LOOKSRARE_API_BASE + 'token',
+            method: 'GET',
+            headers: {
+                collection: data.address,
+                tokenId: 1
+            },
+            success: function(response) {
+                // append the data with the image information
+                data.image = response.data.imageURI;
+            }
+        });
+    }
 
-        }
-    });
+    // use mustache to render the data from the collection choice
 
 }
 

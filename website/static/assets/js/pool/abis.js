@@ -817,31 +817,6 @@ const POOL_DATA_ABI = [
     "type": "constructor"
   },
   {
-    "inputs": [],
-    "name": "IncorrectParticipantId",
-    "type": "error"
-  },
-  {
-    "inputs": [],
-    "name": "IncorrectPoolId",
-    "type": "error"
-  },
-  {
-    "inputs": [],
-    "name": "NoPoolFound",
-    "type": "error"
-  },
-  {
-    "inputs": [],
-    "name": "NotAllowed",
-    "type": "error"
-  },
-  {
-    "inputs": [],
-    "name": "NotParticipant",
-    "type": "error"
-  },
-  {
     "anonymous": false,
     "inputs": [
       {

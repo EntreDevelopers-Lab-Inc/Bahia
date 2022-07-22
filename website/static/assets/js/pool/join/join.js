@@ -1,5 +1,3 @@
-const { ethers } = require("ethers");
-
 // load the nft template and objects
 const POOL_TEMPLATE = $('#pool-template').html();
 var POOL_OBJECTS = $('#pool-objects');
@@ -24,11 +22,11 @@ function renameKey ( obj, oldKey, newKey ) {
   }
 
 // synchronous function for adding pool (will want to do this sequentially to maintain structure for the user)
-function addPool(pool)
+async function addPool(pool)
 {
     var collection_address = pool[1];
 
-    var getCall = await Moralis.Web3API.token.getNFTMetadata({address: collection_address, chain: CHAIN_ID_STR});
+    var getCall = Moralis.Web3API.token.getNFTMetadata({address: collection_address, chain: CHAIN_ID_STR});
     var metadata = getCall.result();
 
     // Get necessary metadata from token_uri

@@ -2,6 +2,7 @@ const COLLECTION_TEMPLATE = $('#collection-template').html();
 var COLLECTION_OBJECTS = $('#collection-objects');
 
 // add a collection choice
+// data is a dictionary with one required field: address
 async function addCollectionChoice(data, useTopOrder=true, tokenId=1)
 {
     if (useTopOrder)
@@ -40,7 +41,7 @@ async function addCollectionChoice(data, useTopOrder=true, tokenId=1)
     }
     else
     {
-        // use ajax to get a collection image (await it for synchronous operation)
+        // use ajax to get a collection image
         $.ajax({
             url: LOOKSRARE_API_BASE + 'tokens',
             method: 'GET',
@@ -63,7 +64,7 @@ async function addCollectionChoice(data, useTopOrder=true, tokenId=1)
 }
 
 // add many collection choices --> can be used when loading the document and searching collections (just writing a for loop once instead of twice)
-async function addCollectionsChoices(choices)
+async function addCollectionChoices(choices)
 {
     // iterate over all the choices and call add collection choice (want this to be sequential to maintain structure)
     for (var i = 0; i < choices.length; i += 1)
@@ -109,11 +110,23 @@ async function searchCollection()
         data: {
             name: searchPhrase,
             apiKey: BLOCKDAEMON_API_KEY,
+            page_size: 3,
             verified: true
         },
         success: function (response) {
-            console.log(response);
+            // format the collection data
+            var collections = [];
+            for (var i = 0; i < response.data.length; i += 1)
+            {
+                collections.push({
+                    collection: {
+                        address: response.data[i].contracts[0]
+                    }
+                });
+            }
+
             // add the top 3 results to the page by calling addCollectionChoices
+            addCollectionChoices(collections);
         }
     });
 
@@ -123,28 +136,65 @@ async function searchCollection()
 // select a collection
 async function selectCollection(address)
 {
-    // highlight the appropriate collection
+    // get all the collections
+    var selections = COLLECTION_OBJECTS.find('a');
 
-    // clear the existing NFTs
+    // deselect the other seections
+    for (var i = 0; i < selections.length; i += 1)
+    {
+        $(selections[i]).attr('class', 'tab-link')
+    }
+
+    // enable the selected
+    var selected = COLLECTION_OBJECTS.find("a[collection-address='" + address + "']");
+    selected.attr('class', 'tab-link active');
 
     // get the collection's available NFTs from LR
+    getNFTsFromLR(address);
 
 }
 
 // function to get NFTs from looksrare
 async function getNFTsFromLR(address)
 {
+    // clear all the existing nfts
+    NFT_OBJECTS.empty();
+
     // call the looksrare API with the appropriate settings (should only show NFTs that can be pooled)
+    $.ajax({
+        url: LOOKSRARE_API_BASE + 'orders',
+        method: 'GET',
+        data: {
+            isOrderAsk: true,
+            collection: address,
+            strategy: LOOKSRARE_BUY_NOW_STRATEGY,
+            startTime: LR_ORIGIN_TIME,
+            endTime: parseInt((Date.now() / 1000)).toString(),
+            status: ['VALID'],
+            pagination: {
+                'first': NFT_LIMIT
+            },
+            sort: 'PRICE_ASC'
+        },
+        success: function (response) {
+            console.log(response);
+            if (response.data.length == 0)
+            {
+                // note that there are no NFTs
+                alert('No NFTs eligible for search with selected collection.')
+                return;
+            }
+
+            // format the data to the moralis standard
+            var nfts = [];
+
+
+            // add the nfts using the function
+
+
+        }
+    });
         // iterate over the NFTs and add them to the page
-}
-
-
-// reformat an NFT from looksrare (synchronous, as it returns something for other functions)
-function reformatNFTFromLR(data)
-{
-    // take data, reformat it
-
-    // return the data
 }
 
 // loadNFTs function to be handled in the previous & next buttons
@@ -161,16 +211,20 @@ async function loadNFTs()
 // function to load the document
 async function loadDocument()
 {
-    // get the top NFT collections from looksrare using AJAX
-    $.ajax({
-        url: LOOKSRARE_API_BASE + 'collections/listing-rewards',
-        method: "GET",
-        success: function (response) {
-            addCollectionsChoices(response.data.slice(0, 3));
-        }
-    });
+    if (CHAIN_ID_INT == 1)
+    {
+        // clear the current collections
+        COLLECTION_OBJECTS.empty();
 
-        // add each collection to the page using mustache
+        // get the top NFT collections from looksrare using AJAX
+        $.ajax({
+            url: LOOKSRARE_API_BASE + 'collections/listing-rewards',
+            method: "GET",
+            success: function (response) {
+                addCollectionChoices(response.data.slice(0, 3));
+            }
+        });
+    }
 
     // select the top collection on the page
 }

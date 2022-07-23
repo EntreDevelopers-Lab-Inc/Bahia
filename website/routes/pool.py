@@ -24,6 +24,6 @@ def join():
     return render_template('pool/join.html', title='Join', mustache=True, dapp=True)
 
 
-@pool.route('/manage')
-def manage():
-    return render_template('pool/manage.html', title='Manage', mustache=True, dapp=True)
+@pool.route('/my-pools')
+def my_pools():
+    return render_template('pool/my-pools.html', title='My Pools', mustache=True, dapp=True)

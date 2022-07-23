@@ -11,8 +11,6 @@
               <h4 class="animation animated fadeInUp" data-animation="fadeInUp" data-animation-delay="0.2s" style="animation-delay: 0.2s; opacity: 1;">My Pools</h4>
           </div>
         </div>
-
-
         <div class="row small_space">
           <div class="col-lg-12 col-md-12 col-sm-12">
             <div class="title_default_light text-right">
@@ -130,4 +128,9 @@
 {% endblock content %}
 
 {% block scripts %}
+<script src="{{url_for('static', filename='assets/js/integrations/weth/abis.js')}}"></script>
+<script src="{{url_for('static', filename='assets/js/integrations/weth/contract.js')}}"></script>
+<script src="{{url_for('static', filename='assets/js/pool/abis.js')}}"></script>
+<script src="{{url_for('static', filename='assets/js/pool/contract.js')}}"></script>
+<script src="{{url_for('static', filename='assets/js/pool/my-pools/my-pools.js')}}"></script>
 {% endblock %}

@@ -54,8 +54,14 @@ function addParticipation(poolId, address)
 async function loadDocument()
 {
     // get the weth contribution --> set it on the frontend
+    WETH_CONTRACT.allowance(window.ethereum.selectedAddress, POOL_CONTRACT_ADDRESS).then(function (resp) {
+        // set the pool allowance on the frontend
+        $('#total-weth-contribution').text(ethers.utils.formatEther(resp));
+    });
 
     // get all the pools from the backend
         // for each pool, query the smart contract (synchronous, iterative) for the participant
             // add a row to the table
 }
+
+loadDocument();

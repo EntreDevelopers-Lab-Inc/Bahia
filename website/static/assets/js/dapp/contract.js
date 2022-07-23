@@ -14,3 +14,4 @@ let SIGNER = CONTRACT_PROVIDER.getSigner();
 // make contract
 let CONTRACT = new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, SIGNER);
 
+let DEFAULT_IPFS_RAWLINK = 'ipfs://QmRoSSwt1KJdE8x5pvUVE8KZKKcFubBWtKqAtaXwrzzhjP/1.jpg/'

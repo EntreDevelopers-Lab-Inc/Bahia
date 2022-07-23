@@ -13,27 +13,26 @@ var poolData = {};
 var POOL_OFFSET = 0;
 var POOL_LIMIT = 20;
 var pools = [];
-var getcall;
+var getCall;
 
-
-function renameKey ( obj, oldKey, newKey ) {
-    obj[newKey] = obj[oldKey];
-    delete obj[oldKey];
-  }
 
 // synchronous function for adding pool (will want to do this sequentially to maintain structure for the user)
-async function addPool(pool)
+function addPool(pool, nftData)
 {
-    var collection_address = pool[1];
-
-    var getCall = Moralis.Web3API.token.getNFTMetadata({address: collection_address, chain: CHAIN_ID_STR});
-    var metadata = getCall.result();
-
+    console.log(nftData['name'])
     // Get necessary metadata from token_uri
-    pool['name'] = metadata['name'];
-    pool['link'] = getIPFSLink(metadata.image);
+    pool['name'] = nftData['name'];
 
-    // refer to blockchain/contracts/NFT/Pool/libraries/BahiaNFTPoolTypes.sol
+
+    if (nftData['metadata'] === null) {
+        pool['link'] = getIPFSLink(DEFAULT_IPFS_RAWLINK)
+        pool['description'] = ''
+    }
+    else {
+        var metadata = JSON.parse(nftData['metadata'])
+        pool['link'] = getIPFSLink(metadata['image']);
+        pool['description'] = metadata['description']
+    }
 
     // render the template
     var newPool = Mustache.render(POOL_TEMPLATE, pool);
@@ -44,12 +43,18 @@ async function addPool(pool)
 
 async function addAllPools(pools)
 {
+    console.log("All pools:  " + pools)
     // iterate over the nfts and add them to the list
     for (var i = 0; i < pools_count; i += 1)
     {
         // Only add pools that aren't completed...
-        if (!pools[0]['completed']) {
-            addPool(pools[i]);
+        if (!pools[i]['completed']) {
+            var collection_address = pools[i]['collection_address'];
+            var token_id = pools[i]['token_id']
+            nftData = await Moralis.Web3API.token.getTokenIdMetadata( {address: collection_address, token_id: token_id, chain: CHAIN_ID_STR});
+            console.log("Data: " + JSON.stringify(nftData))
+            addPool(pools[i], nftData);
+
         }
     }
 
@@ -76,14 +81,15 @@ async function loadPools()
 
     for (var i = 0; i < pools_count; i++) {
         var pool_array = await POOL_DATA_CONTRACT.getPool(i);
-        var pool_json = JSON.stringify(pool_array);
 
-        renameKey(pool_json, '0', 'pool_id');
-        renameKey(pool_json, '1', 'collection_address');
-        renameKey(pool_json, '2', 'token_id');
-        renameKey(pool_json, '3', 'maxContributions');
-        renameKey(pool_json, '5', 'creator');
-        renameKey(pool_json, '6', 'completed');
+        var pool_json = {
+            "pool_id": pool_array[0].toString(),
+            "collection_address": pool_array[1],
+            "token_id": pool_array[2].toString(),
+            "maxContributions": pool_array[3].toString(),
+            "creator": pool_array[5],
+            "completed": pool_array[6]
+        }
 
         pools.push(pool_json);
         // See what this looks like in the console for debugging...
@@ -92,11 +98,6 @@ async function loadPools()
 
     // add all the nfts
     addAllPools(pools);
-}
-
-function random()
-{
-    console.log('random');
 }
 
 // show modal
@@ -148,3 +149,32 @@ function selectPool(address, id)
     poolData['id'] = id;
     poolData['name'] = selected.text();  // for the modal
 }
+
+// load document function
+async function loadDocument()
+{
+    // wait until the wallet is connected
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    let currentBlock = await provider.getBlockNumber();
+
+    // set the date attribute
+    var today = new Date();
+    var dd = today.getDate();
+    var mm = today.getMonth() + 1; //January is 0!
+    var yyyy = today.getFullYear();
+
+    if (dd < 10) {
+       dd = '0' + dd;
+    }
+
+    if (mm < 10) {
+       mm = '0' + mm;
+    }
+
+    today = yyyy + '-' + mm + '-' + dd;
+    document.getElementById("date").setAttribute("min", today);
+
+    loadPools();
+}
+
+loadDocument();

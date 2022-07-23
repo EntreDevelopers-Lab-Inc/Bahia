@@ -31,14 +31,14 @@
                   <td class="text-center"><h5></h5></td>
 
                 </tr>
-                </tbody><tbody id="sale-objects">
+                </tbody><tbody id="pool-objects">
 
                   <tr class="animation animated fadeInUp" data-animation="fadeInUp" data-animation-delay="0.2s" style="animation-delay: 0.2s; opacity: 1;">
                     <td class="text-center">Fish #188 (PUT PICTURE HERE)</td>
                     <td class="text-center">0.5 ETH</td>
                     <td class="text-center">0.6 ETH</td>
                     <td class="text-center">0.3 ETH</td>
-                    <td class="text-center"><a type="approval-btn" class="btn btn-info btn-radius" approved="true" trade-address="0x0d" onclick="">Join</a></td>
+                    <td class="text-center"><a type="approval-btn" class="btn btn-info btn-radius trigger" approved="true" trade-address="0x0d" onclick="showJoinModal();">Join</a></td>
                     <td class="text-center"><a type="approval-btn" class="btn btn-info btn-radius" approved="true" trade-address="0x0d" onclick="">LooksRare</a></td>
                   </tr>
                 </tbody>
@@ -48,7 +48,7 @@
 
         </div>
       <!--modal-->
-      <div id="sell-nft-modal" class="modal">
+      <div id="join-modal" class="modal">
         <div class="modal-content blue_dark_bg">
           <div class="row">
             <div class="col-10"></div>
@@ -63,20 +63,20 @@
             <div class="row">
               <div class="form-group col-md-12">
                 <p>
-                  <span id="sell-nft-name"></span>
+                  <span id="join-pool-name"></span>
                   <br>
                   <br>
-                  <span>Collection Address: </span><span id="sell-nft-collection-address"></span>
+                  <span>Collection Address: </span><span id="pool-nft-collection-address"></span>
                 </p>
               </div>
             </div>
             <div class="row">
               <div class="col-6">
-                <a class="btn btn-info btn-radius" id="sell-nft-etherscan" href="https://etherscan.io" target="_blank">Etherscan</a>
+                <a class="btn btn-info btn-radius" id="pool-nft-etherscan" href="https://etherscan.io" target="_blank">Etherscan</a>
               </div>
-              <div class="col-6">
+              <!-- <div class="col-6">
                 <a class="btn btn-info btn-radius" id="sell-nft-looksrare" href="https://looksrare.org" target="_blank">LooksRare</a>
-              </div>
+              </div> -->
               <div class="form-group col-3"></div>
             </div>
             <div class="row small_space">
@@ -116,12 +116,34 @@
 
 <!--templates-->
 {% raw %}
+<template id="pool-template">
+  <div class="col-lg-3 col-md-6 col-sm-6 res_md_mb_30 res_sm_mb_20 text-center">
+    <a class="tab-link" onclick="selectPool('{{collection_address}}', '{{pool_id}}');" pool-id="{{pool_id}}">
+      <img class="center" src="{{link}}">
+      <h4><span>{{name}}</span> #<span>{{token_id}}</h4>
+    </a>
+  </div>
+</template>
+<template id="join-template">
+  <tr class="animation animated fadeInUp" data-animation="fadeInUp" data-animation-delay="0.2s" style="animation-delay: 0.2s; opacity: 1;">
+    <td>{{name}}</td>
+    <td>{{maxContributions}}</td>
+    <td>{{creator}}</td>
+    <td>{{collection}}</td>
+    <td>
+      <a onclick="copyAddress('{{tradeAddress}}');"><span trade-address="{{tradeAddress}}">{{tradeAddress}}</span><span> </span><i trade-address="{{tradeAddress}}" class="fa fa-copy" style="font-size:12px"></i></a>
+    </td>
+    <td>{{completed}}</td>
+    <td><a type="approval-btn" class="btn btn-info btn-radius" approved="{{approved}}" trade-address="{{tradeAddress}}" onclick="toggleApproval('{{tradeAddress}}');">{{approvedString}}</a></td>
+  </tr>
+</template>
 {% endraw %}
 
 {% endblock content %}
 
 {% block scripts %}
   <script src="{{url_for('static', filename='assets/js/modal.js')}}"></script>
+  <script src="{{url_for('static', filename='assets/js/pool/ABIS.js')}}"></script>
   <script src="{{url_for('static', filename='assets/js/pool/contract.js')}}"></script>
   <script src="{{url_for('static', filename='assets/js/pool/join/join.js')}}"></script>
 {% endblock %}

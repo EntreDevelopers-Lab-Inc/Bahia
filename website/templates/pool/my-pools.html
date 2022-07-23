@@ -16,7 +16,7 @@
         <div class="row small_space">
           <div class="col-lg-12 col-md-12 col-sm-12">
             <div class="title_default_light text-right">
-              <h5 class="animation animated fadeInUp" data-animation="fadeInUp" data-animation-delay="0.2s" style="animation-delay: 0.2s; opacity: 1;">Total Pooling Contributions: <span id="total-contribution">0.1</span> ETH</h5>
+              <h5 class="animation animated fadeInUp" data-animation="fadeInUp" data-animation-delay="0.2s" style="animation-delay: 0.2s; opacity: 1;">Total Pooling Contributions: <span id="total-weth-contribution">0.1</span> ETH <i trade-address="0x01" class="fa fa-pencil" style="font-size: 1.25rem"></i></h5>
             </div>
             <div class="token_info_table_s2 scroll">
               <table class="table table-blue m-0 h-100">
@@ -30,7 +30,6 @@
 
                 </tr>
                 </tbody><tbody id="sale-objects">
-
                   <tr class="animation animated fadeInUp" data-animation="fadeInUp" data-animation-delay="0.2s" style="animation-delay: 0.2s; opacity: 1;">
                     <td class="text-center">Fish #188 (PUT PICTURE HERE)</td>
                     <td class="text-center">0</td>
@@ -38,7 +37,6 @@
                     <td class="text-center">0.6 ETH</td>
                     <td class="text-center">100,000</td>
                     <td class="text-center">0.1 ETH</td>
-                    <td class="text-center"><a type="approval-btn" class="btn btn-info btn-radius" approved="true" trade-address="0x0d" onclick="">Join</a></td>
                     <td class="text-center"><a type="approval-btn" class="btn btn-info btn-radius" approved="true" trade-address="0x0d" onclick="">LooksRare</a></td>
                   </tr>
                 </tbody>
@@ -116,6 +114,17 @@
 
 <!--templates-->
 {% raw %}
+<template id="pool-row">
+  <tr class="animation animated fadeInUp" data-animation="fadeInUp" data-animation-delay="0.2s" style="animation-delay: 0.2s; opacity: 1;">
+    <td class="text-center">Fish #188 (PUT PICTURE HERE)</td>
+      <td class="text-center">0</td>
+      <td class="text-center">0.5 ETH</td>
+      <td class="text-center">0.6 ETH</td>
+      <td class="text-center">100,000</td>
+      <td class="text-center">0.1 ETH</td>
+      <td class="text-center"><a type="approval-btn" class="btn btn-info btn-radius" approved="true" trade-address="0x0d" onclick="">LooksRare</a></td>
+  </tr>
+</template>
 {% endraw %}
 
 {% endblock content %}

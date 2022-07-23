@@ -1,8 +1,9 @@
 from api.site_secrets import RINKEBY_WEBHOOK_AUTH
-from api.models import db, ParticipationModel
+from api.models import db, ParticipationModel, object_as_dict
 from api.resources import load_json
 from api.tools.pool import POOL_CONTRACT
 from flask_restful import Resource
+from flask import request
 
 
 class BaseParticipationResource(Resource):
@@ -20,12 +21,12 @@ class BaseParticipationResource(Resource):
             data['input'])
 
         # if it is not our webhook, deny it
-        if (input_data.get('apiKey') != RINKEBY_WEBHOOK_AUTH):
+        if (data['apiKey'] != RINKEBY_WEBHOOK_AUTH):
             return {'message': 'write access not permitted'}, 401
 
         # if the function name is not joinging the pool, just return
-        if (function.fn_name != 'joinPool') or (input_data['status'] != 'confirmed'):
-            return {'status': 'no computation necessary'}, 202
+        if (function.fn_name != 'joinPool') or (data['status'] != 'confirmed'):
+            return {'status': f"no computation necessary (function: {function.fn_name})"}, 202
 
         # if the participation exists, exit
         if ParticipationModel.query.filter_by(transaction_hash=data['hash']).first():
@@ -33,13 +34,29 @@ class BaseParticipationResource(Resource):
 
         # log a new partipation if it does not exist
         participation = ParticipationModel(
-            network=self.network, transaction_hash=data['hash'], address=data['from'], pool_id=input_data['poolId'])
+            network=self.network, transaction_hash=data['hash'], address=data['from'].lower(), pool_id=input_data['poolId'])
 
         # add the participation to the database
         db.session.add(participation)
         db.session.commit()
 
         return {'status': 'success'}, 201
+
+    # a way to get information (can build pagination in later)
+    def get(self):
+        # get the address
+        address = request.headers.get('address')
+
+        # if there is no address return that this is a bad request
+        if not address:
+            return {'status': 'failed', 'message': 'Must include request'}, 400
+
+        # get all the pools at the address is a part of
+        pools = [object_as_dict(pool) for pool in ParticipationModel.query.filter_by(
+            address=address.lower()).all()]
+
+        # return the pools
+        return {'status': 'success', 'data': pools}, 201
 
 
 # make a mainnet resource

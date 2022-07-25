@@ -85,9 +85,9 @@ async function loadPools()
         // is this improper JSON formattiing?
         var pool_json = {
             "pool_id": pool_array[0].toString(),
-            "address": pool_array[1],
-            "token-id": pool_array[2].toString(),
-            "cap": pool_array[3].toString(),
+            "address": pool_array[4],
+            "token-id": pool_array[1].toString(),
+            "cap": pool_array[2].toString(),
             "creator": pool_array[5],
             "completed": pool_array[6]
         }

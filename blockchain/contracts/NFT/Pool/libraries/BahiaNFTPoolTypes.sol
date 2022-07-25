@@ -5,12 +5,12 @@ library BahiaNFTPoolTypes {
     // pool data
     struct Pool {
         uint256 poolId;  // self-aware
-        address collection;
         uint256 nftId;
         uint256 maxContributions;  // limits NFT owner from manipulating markets
 
         uint256 shareSupply;  // fractional art
-
+        
+        address collection;
         address creator; // make sure that the creator is recognized
         bool completed;
         uint256 endPurchasePrice;  // logs what the contract was executed at

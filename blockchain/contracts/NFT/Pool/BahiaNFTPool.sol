@@ -67,9 +67,9 @@ contract BahiaNFTPool is
         // create a new pool
         BahiaNFTPoolTypes.Pool memory newPool = BahiaNFTPoolTypes.Pool({
                 poolId: poolData.getPoolCount(),
-                collection: collection_,
                 nftId: nftId_,
                 maxContributions: maxContributions_,
+                collection: collection_,
                 shareSupply: shareSupply_,
                 creator: msg.sender,
                 completed: false,
@@ -127,6 +127,9 @@ contract BahiaNFTPool is
         poolData.setContribution(poolId, participant.participantId, newContribution);
     }
 
+    function exitPool(uint256 poolId, uint256 participantId) external whenNotPaused {
+        poolData._exitPool(poolId, participantId);
+    }
 
 
     // function to claim the fractionalized shares (anyone can call, allowing people to lead pooling and airdrop shares)

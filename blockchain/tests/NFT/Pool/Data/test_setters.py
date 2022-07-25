@@ -6,10 +6,10 @@ from brownie import BahiaNFTPoolData
 
 POOL = (
     0,  # poolId
-    "0x0000000000000000000000000000000000000001",  # collection address
     0,  # nftId
     0,  # maxContributions
     0,  # shareSupply
+    "0x0000000000000000000000000000000000000001",  # collection address
     "0x0000000000000000000000000000000000000002",  # creator address
         False,  # completed bool
         0,  # endPurchasePrice
@@ -19,10 +19,10 @@ POOL = (
 
 POOL2 = (
     1,  # poolId
-    "0x0000000000000000000000000000000000000001",  # collection address
     0,  # nftId
     0,  # maxContributions
     0,  # shareSupply
+    "0x0000000000000000000000000000000000000001",  # collection address
     "0x0000000000000000000000000000000000000002",  # creator address
         False,  # completed bool
         0,  # endPurchasePrice
@@ -83,10 +83,10 @@ def test_update_pool():
     # Create new pool with the same ID...
     new_pool = [
         0,  # poolId
-        "0x0000000000000000000000000000000000000003",  # collection address
         1,  # nftId
         1,  # maxContributions
         1,  # shareSupply
+        "0x0000000000000000000000000000000000000003",  # collection address
         "0x0000000000000000000000000000000000000004",  # creator address
         False,  # completed bool
         1,  # endPurchasePrice

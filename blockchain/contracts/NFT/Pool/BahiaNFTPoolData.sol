@@ -16,7 +16,7 @@ contract BahiaNFTPoolData is
     // events
     event PoolCreated(BahiaNFTPoolTypes.Pool newPool);
     event ParticipantAdded(uint256 poolId, BahiaNFTPoolTypes.Participant);
-    event ContributionSet(uint256 poolId, BahiaNFTPoolTypes.Participant);
+    event ContributionSet(uint256 poolId, uint256 participantId);
 
     // PoolIdz
     mapping(uint256 => BahiaNFTPoolTypes.Pool) public pools;
@@ -144,18 +144,28 @@ contract BahiaNFTPoolData is
         // check if the pool exists
         if (poolId >= _currentIndex) revert NoPoolFound();
 
-        // get the participant
-        BahiaNFTPoolTypes.Participant storage participant = poolIdToParticipants[poolId][participantId];
-
         // check that the participant is the transaction sender
-        if (participant.participantAddress != tx.origin) revert NotParticipant();
+        if (poolIdToParticipants[poolId][participantId].participantAddress != tx.origin) revert NotParticipant();
 
         // set the contribution
-        participant.contribution = newContribution;
+        poolIdToParticipants[poolId][participantId].contribution = newContribution;
 
         // emit that the contribution has been set
-        emit ContributionSet(poolId, participant);
+        emit ContributionSet(poolId, participantId);
     }
+
+    function _exitPool(uint256 poolId, uint256 participantId) external onlyAllowed {
+        // check if the pool exists
+        if (poolId >= _currentIndex) revert NoPoolFound();
+
+        // check that the participant is the transaction sender
+        if (poolIdToParticipants[poolId][participantId].participantAddress != tx.origin) revert NotParticipant(); 
+
+        delete poolIdToParticipants[poolId][participantId].contribution;
+        delete addressToParticipantId[poolId][tx.origin];
+
+    }
+
 
     // set the allowed permission
     function setAllowedPermission(address address_, bool permission_) external onlyAllowed

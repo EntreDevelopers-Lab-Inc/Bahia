@@ -44,9 +44,6 @@ contract BahiaNFTPool_LR is
         // internally count the amount of WETH that the contract has access to
         uint256 accessibleWETH;
 
-        // boolean to track success of transfer
-        bool success;
-
         // iterate over all the addresses in the pool
         // participantIds should always start @ 1...
         for (uint256 i = 1; (i < nextParticipantId) && (accessibleWETH <= totalPrice);)
@@ -70,7 +67,7 @@ contract BahiaNFTPool_LR is
                     accessibleWETH += participant.paid;
 
                     // collect weth from the participant up to their contribution OR taker order (this is optimal if we guarantee that the contract has enough WETH to buy it --> check off-chain)
-                    success = weth.transferFrom(participant.participantAddress, address(this), participant.paid);
+                    bool success = weth.transferFrom(participant.participantAddress, address(this), participant.paid);
 
                     if (!success) revert FailedWETHTransfer();
                 }
@@ -93,7 +90,6 @@ contract BahiaNFTPool_LR is
     {
         // pool storage variable
         BahiaNFTPoolTypes.Pool memory pool = _safePool(poolId);
-
 
         // calculate total price including fees
         uint256 totalPrice = makerAsk.price + (makerAsk.price * devRoyalty / 100000);

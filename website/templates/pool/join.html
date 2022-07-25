@@ -23,7 +23,7 @@
             <div class="token_info_table_s2 scroll">
               <table class="table table-blue m-0 h-100">
                 <tbody><tr>
-                  <td class="text-center"><h5>NFT</h5></td>
+                  <td class="text-center"><h5></h5></td>
                   <td class="text-center"><h5>Market Price</h5></td>
                   <td class="text-center"><h5>Pool Cap</h5></td>
                   <td class="text-center"><h5>Current Contributions</h5></td>
@@ -117,12 +117,27 @@
 <!--templates-->
 {% raw %}
 <template id="pool-template">
-  <div class="col-lg-3 col-md-6 col-sm-6 res_md_mb_30 res_sm_mb_20 text-center">
+
+  <tr class="animation animated fadeInUp" data-animation="fadeInUp" data-animation-delay="0.2s" style="animation-delay: 0.2s; opacity: 1;">
+    <td class="tab-link" pool-id="{{pool_id}}">
+      <img class="center" src="{{link}}">$
+      <h5><span>{{name}}</span> #<span>{{token_id}}</span></h5>
+      </td>
+    <td class="text-center">0.5 ETH</td>
+    <td class="text-center">{{maxContributions}} ETH</td>
+    <td class="text-center">0.3 ETH</td>
+    <td class="text-center"><a type="approval-btn" class="btn btn-info btn-radius trigger" 
+      approved="true" onclick="selectPool('{{pool_id}}', '{{collection_address}}', '{{cap}}'), showJoinModal();">Join</a></td>
+    <td class="text-center"><a type="approval-btn" class="btn btn-info btn-radius" approved="true" onclick="">LooksRare</a></td>
+  </tr>
+
+  <!-- <div class="col-lg-3 col-md-6 col-sm-6 res_md_mb_30 res_sm_mb_20 text-center">
     <a class="tab-link" onclick="selectPool('{{collection_address}}', '{{pool_id}}');" pool-id="{{pool_id}}">
       <img class="center" src="{{link}}">
-      <h4><span>{{name}}</span> #<span>{{token_id}}</h4>
+      <h5><span>{{name}}</span> #<span>{{token_id}}</h5>
     </a>
-  </div>
+  </div> -->
+
 </template>
 <template id="join-template">
   <tr class="animation animated fadeInUp" data-animation="fadeInUp" data-animation-delay="0.2s" style="animation-delay: 0.2s; opacity: 1;">

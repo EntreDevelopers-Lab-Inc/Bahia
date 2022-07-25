@@ -76,6 +76,8 @@ async function loadPools()
 {
     // clear all nfts
     $('#pool-objects').empty();
+    console.log(POOL_DATA_CONTRACT);
+    console.log(POOL_DATA_CONTRACT_ADDRESS);
 
     pools_count = await POOL_DATA_CONTRACT.getPoolCount();
 

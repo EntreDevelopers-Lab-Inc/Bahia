@@ -1,4 +1,4 @@
-const POOL_CONTRACT_ABI = [
+const POOL_CONTRACT_ABI =[
   {
     "inputs": [
       {
@@ -35,81 +35,81 @@ const POOL_CONTRACT_ABI = [
     "stateMutability": "nonpayable",
     "type": "constructor"
   },
-  {
-    "inputs": [],
-    "name": "AlreadyJoinedPool",
-    "type": "error"
-  },
-  {
-    "inputs": [],
-    "name": "ContributionNotAllowed",
-    "type": "error"
-  },
-  {
-    "inputs": [],
-    "name": "FailedLooksTransfer",
-    "type": "error"
-  },
-  {
-    "inputs": [],
-    "name": "FailedWETHTransfer",
-    "type": "error"
-  },
-  {
-    "inputs": [],
-    "name": "InsufficientFunds",
-    "type": "error"
-  },
-  {
-    "inputs": [],
-    "name": "NoParticipantFound",
-    "type": "error"
-  },
-  {
-    "inputs": [],
-    "name": "NoPoolFound",
-    "type": "error"
-  },
-  {
-    "inputs": [],
-    "name": "NoShares",
-    "type": "error"
-  },
-  {
-    "inputs": [],
-    "name": "NotAllowed",
-    "type": "error"
-  },
-  {
-    "inputs": [],
-    "name": "NotDev",
-    "type": "error"
-  },
-  {
-    "inputs": [],
-    "name": "NotParticipant",
-    "type": "error"
-  },
-  {
-    "inputs": [],
-    "name": "NotUser",
-    "type": "error"
-  },
-  {
-    "inputs": [],
-    "name": "PoolCompleted",
-    "type": "error"
-  },
-  {
-    "inputs": [],
-    "name": "PoolIncomplete",
-    "type": "error"
-  },
-  {
-    "inputs": [],
-    "name": "PriceTooHigh",
-    "type": "error"
-  },
+  // // {
+  // //   "inputs": [],
+  // //   "name": "AlreadyJoinedPool",
+  // //   "type": "error"
+  // // },
+  // {
+  //   "inputs": [],
+  //   "name": "ContributionNotAllowed",
+  //   "type": "error"
+  // },
+  // {
+  //   "inputs": [],
+  //   "name": "FailedLooksTransfer",
+  //   "type": "error"
+  // },
+  // {
+  //   "inputs": [],
+  //   "name": "FailedWETHTransfer",
+  //   "type": "error"
+  // },
+  // {
+  //   "inputs": [],
+  //   "name": "InsufficientFunds",
+  //   "type": "error"
+  // },
+  // {
+  //   "inputs": [],
+  //   "name": "NoParticipantFound",
+  //   "type": "error"
+  // },
+  // {
+  //   "inputs": [],
+  //   "name": "NoPoolFound",
+  //   "type": "error"
+  // },
+  // {
+  //   "inputs": [],
+  //   "name": "NoShares",
+  //   "type": "error"
+  // },
+  // {
+  //   "inputs": [],
+  //   "name": "NotAllowed",
+  //   "type": "error"
+  // },
+  // {
+  //   "inputs": [],
+  //   "name": "NotDev",
+  //   "type": "error"
+  // },
+  // {
+  //   "inputs": [],
+  //   "name": "NotParticipant",
+  //   "type": "error"
+  // },
+  // {
+  //   "inputs": [],
+  //   "name": "NotUser",
+  //   "type": "error"
+  // },
+  // {
+  //   "inputs": [],
+  //   "name": "PoolCompleted",
+  //   "type": "error"
+  // },
+  // {
+  //   "inputs": [],
+  //   "name": "PoolIncomplete",
+  //   "type": "error"
+  // },
+  // {
+  //   "inputs": [],
+  //   "name": "PriceTooHigh",
+  //   "type": "error"
+  // },
   {
     "anonymous": false,
     "inputs": [
@@ -1042,31 +1042,31 @@ const POOL_DATA_ABI = [
     "stateMutability": "nonpayable",
     "type": "constructor"
   },
-  {
-    "inputs": [],
-    "name": "IncorrectParticipantId",
-    "type": "error"
-  },
-  {
-    "inputs": [],
-    "name": "IncorrectPoolId",
-    "type": "error"
-  },
-  {
-    "inputs": [],
-    "name": "NoPoolFound",
-    "type": "error"
-  },
-  {
-    "inputs": [],
-    "name": "NotAllowed",
-    "type": "error"
-  },
-  {
-    "inputs": [],
-    "name": "NotParticipant",
-    "type": "error"
-  },
+  // {
+  //   "inputs": [],
+  //   "name": "IncorrectParticipantId",
+  //   "type": "error"
+  // },
+  // {
+  //   "inputs": [],
+  //   "name": "IncorrectPoolId",
+  //   "type": "error"
+  // },
+  // {
+  //   "inputs": [],
+  //   "name": "NoPoolFound",
+  //   "type": "error"
+  // },
+  // {
+  //   "inputs": [],
+  //   "name": "NotAllowed",
+  //   "type": "error"
+  // },
+  // {
+  //   "inputs": [],
+  //   "name": "NotParticipant",
+  //   "type": "error"
+  // },
   {
     "anonymous": false,
     "inputs": [

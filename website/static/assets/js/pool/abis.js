@@ -1043,6 +1043,31 @@ const POOL_DATA_ABI = [
     "type": "constructor"
   },
   {
+    "inputs": [],
+    "name": "IncorrectParticipantId",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "IncorrectPoolId",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "NoPoolFound",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "NotAllowed",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "NotParticipant",
+    "type": "error"
+  },
+  {
     "anonymous": false,
     "inputs": [
       {
@@ -1052,32 +1077,10 @@ const POOL_DATA_ABI = [
         "type": "uint256"
       },
       {
-        "components": [
-          {
-            "internalType": "uint256",
-            "name": "participantId",
-            "type": "uint256"
-          },
-          {
-            "internalType": "address",
-            "name": "participantAddress",
-            "type": "address"
-          },
-          {
-            "internalType": "uint256",
-            "name": "contribution",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "paid",
-            "type": "uint256"
-          }
-        ],
         "indexed": false,
-        "internalType": "struct BahiaNFTPoolTypes.Participant",
-        "name": "",
-        "type": "tuple"
+        "internalType": "uint256",
+        "name": "participantId",
+        "type": "uint256"
       }
     ],
     "name": "ContributionSet",
@@ -1135,11 +1138,6 @@ const POOL_DATA_ABI = [
             "type": "uint256"
           },
           {
-            "internalType": "address",
-            "name": "collection",
-            "type": "address"
-          },
-          {
             "internalType": "uint256",
             "name": "nftId",
             "type": "uint256"
@@ -1153,6 +1151,11 @@ const POOL_DATA_ABI = [
             "internalType": "uint256",
             "name": "shareSupply",
             "type": "uint256"
+          },
+          {
+            "internalType": "address",
+            "name": "collection",
+            "type": "address"
           },
           {
             "internalType": "address",
@@ -1188,6 +1191,24 @@ const POOL_DATA_ABI = [
     ],
     "name": "PoolCreated",
     "type": "event"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "poolId",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "participantId",
+        "type": "uint256"
+      }
+    ],
+    "name": "_exitPool",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
   },
   {
     "inputs": [
@@ -1239,11 +1260,6 @@ const POOL_DATA_ABI = [
             "type": "uint256"
           },
           {
-            "internalType": "address",
-            "name": "collection",
-            "type": "address"
-          },
-          {
             "internalType": "uint256",
             "name": "nftId",
             "type": "uint256"
@@ -1257,6 +1273,11 @@ const POOL_DATA_ABI = [
             "internalType": "uint256",
             "name": "shareSupply",
             "type": "uint256"
+          },
+          {
+            "internalType": "address",
+            "name": "collection",
+            "type": "address"
           },
           {
             "internalType": "address",
@@ -1444,11 +1465,6 @@ const POOL_DATA_ABI = [
             "type": "uint256"
           },
           {
-            "internalType": "address",
-            "name": "collection",
-            "type": "address"
-          },
-          {
             "internalType": "uint256",
             "name": "nftId",
             "type": "uint256"
@@ -1462,6 +1478,11 @@ const POOL_DATA_ABI = [
             "internalType": "uint256",
             "name": "shareSupply",
             "type": "uint256"
+          },
+          {
+            "internalType": "address",
+            "name": "collection",
+            "type": "address"
           },
           {
             "internalType": "address",
@@ -1565,11 +1586,6 @@ const POOL_DATA_ABI = [
         "type": "uint256"
       },
       {
-        "internalType": "address",
-        "name": "collection",
-        "type": "address"
-      },
-      {
         "internalType": "uint256",
         "name": "nftId",
         "type": "uint256"
@@ -1583,6 +1599,11 @@ const POOL_DATA_ABI = [
         "internalType": "uint256",
         "name": "shareSupply",
         "type": "uint256"
+      },
+      {
+        "internalType": "address",
+        "name": "collection",
+        "type": "address"
       },
       {
         "internalType": "address",
@@ -1704,11 +1725,6 @@ const POOL_DATA_ABI = [
             "type": "uint256"
           },
           {
-            "internalType": "address",
-            "name": "collection",
-            "type": "address"
-          },
-          {
             "internalType": "uint256",
             "name": "nftId",
             "type": "uint256"
@@ -1722,6 +1738,11 @@ const POOL_DATA_ABI = [
             "internalType": "uint256",
             "name": "shareSupply",
             "type": "uint256"
+          },
+          {
+            "internalType": "address",
+            "name": "collection",
+            "type": "address"
           },
           {
             "internalType": "address",
@@ -1759,4 +1780,4 @@ const POOL_DATA_ABI = [
     "stateMutability": "nonpayable",
     "type": "function"
   }
-] 
+]

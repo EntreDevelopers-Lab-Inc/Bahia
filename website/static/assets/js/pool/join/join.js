@@ -49,8 +49,8 @@ async function addAllPools(pools)
     {
         // Only add pools that aren't completed...
         if (!pools[i]['completed']) {
-            var collection_address = pools[i]['collection_address'];
-            var token_id = pools[i]['token_id'];
+            var collection_address = pools[i]['address'];
+            var token_id = pools[i]['token-id'];
             nftData = await Moralis.Web3API.token.getTokenIdMetadata( {address: collection_address, token_id: token_id, chain: CHAIN_ID_STR});
             console.log("Data: " + JSON.stringify(nftData));
             addPool(pools[i], nftData);
@@ -187,27 +187,5 @@ async function loadDocument()
 
     loadPools();
 }
-
-async function loadSamplePool(){
-    
-    var pool_json = {
-        "pool_id": "0",
-        "collection_address": "0x0000000000000000000000",
-        "token_id": "3",
-        "maxContributions": "80",
-        "creator": "0x0000000000000000000",
-        "completed": false,
-        "name": "Fish",  
-        "link": "google.com"
-    };
-    
-    // render the template
-    var newPool = Mustache.render(POOL_TEMPLATE, pool_json);
-
-    // add the pool to POOL_OBJECTS
-    POOL_OBJECTS.append(newPool);
-}
-
-loadSamplePool();
 
 loadDocument();

@@ -1,8 +1,6 @@
 // a function to edit set the weth contribution (when the pencil is clicked)
 async function openSetWETHContribution()
 {
-    console.log($('#total-weth-contribution').text());
-
     // fill the input with the correct data
     $('#total-contribution-input').val($('#total-weth-contribution').text());
 
@@ -38,30 +36,43 @@ async function closeSetWETHContribution()
     spinner.show();
 
     // get the input data
-    var newContribution = $('#total-contribution-input').val()
-    console.log(newContribution);
+    var newContribution = parseFloat(($('#total-contribution-input').val()));
 
     // make sure that the input is the appropriate
-    var totalBalance = ethers.utils.formatEther(await WETH_CONTRACT.balanceOf(window.ethereum.selectedAddress));
+    var totalBalance = parseFloat(ethers.utils.formatEther(await WETH_CONTRACT.balanceOf(window.ethereum.selectedAddress)));
 
     if (newContribution > totalBalance)
     {
         alert('Your balance is ' + totalBalance + ' WETH. You cannot contribute ' + newContribution + ' WETH.');
         return;
     }
-
-    // call the weth contract to set the weth contribution (make sure it is stored in wei)
-    await WETH_CONTRACT.approve(POOL_CONTRACT_ADDRESS, ethers.utils.parseEther(newContribution)).then(function (resp) {
+    else if (newContribution == parseFloat($('#total-weth-contribution').text()))
+    {
+        // just revert the block to normal
         // switch the input to text
         $('#total-contribution-data-block').show();
         $('#total-contribution-input-block').hide();
 
+        // revert the spinner and check
+        spinner.hide();
+        check.show()
+
+        return;
+    }
+
+    // call the weth contract to set the weth contribution (make sure it is stored in wei)
+    await WETH_CONTRACT.approve(POOL_CONTRACT_ADDRESS, ethers.utils.parseEther(newContribution)).then(function (resp) {
         // set the weth amount to the new contribution
         $('#total-weth-contribution').text(newContribution);
     }).catch(function (resp) {
+        // switch the input to text
+        $('#total-contribution-data-block').show();
+        $('#total-contribution-input-block').hide();
+
         // alert the user
-        alert('Error: ' + error.message);
+        alert('Error: ' + resp.message);
     });
+
 
     // revert the spinner and check
     spinner.hide();
@@ -110,6 +121,9 @@ async function loadDocument()
     getWETH();
 
     // get all the pools from the backend
+    $.ajax({
+
+    });
         // for each pool, query the smart contract (synchronous, iterative) for the participant
             // add a row to the table
 }

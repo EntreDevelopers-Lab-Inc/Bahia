@@ -48,6 +48,42 @@ def test_join_pool():
         assert data_contract.getNumberOfParticipants(0) == i
         assert data_contract.poolIdToParticipants(0, i) == (i, accounts[i], contribution, 0)
 
+def test_exit_pool():
+    pool_contract = BahiaNFTPool[-1]
+    data_contract = BahiaNFTPoolData[-1]
+    contribution = Web3.toWei(0.5, "ether")
+
+    # join the pool
+    for i in range(1,5):
+           # allow the contract to manage WETH balance
+        WETH10[-1].approve(pool_contract, contribution, {'from': accounts[i]})
+        pool_contract.joinPool(0, contribution, {'from': accounts[i]})
+
+        # make sure the participant has been added to the data contract
+        assert data_contract.getNumberOfParticipants(0) == i
+        assert data_contract.poolIdToParticipants(0, i) == (i, accounts[i], contribution, 0)
+        
+        participantId = data_contract.getParticipantIdFromAddress(0, accounts[i])
+        pool_contract.exitPool(0, participantId, {'from': accounts[i]})
+
+        assert data_contract.getParticipant(0, participantId)[2] == 0
+
+    for i in range(1,5):
+        # make sure you can rejoin
+        WETH10[-1].approve(pool_contract, contribution, {'from': accounts[i]})
+        num_participants_before = data_contract.getNumberOfParticipants(0)
+        pool_contract.joinPool(0, contribution, {'from': accounts[i]})
+
+        participantId = data_contract.getParticipantIdFromAddress(0, accounts[i])
+        assert participantId == data_contract.getNumberOfParticipants(0) 
+        assert data_contract.getParticipant(0, participantId)[2] == contribution
+        assert data_contract.getNumberOfParticipants(0) == num_participants_before + 1
+    
+    # make sure you can join pool again
+
+
+        
+
 
 # test joining a pool
 def test_join_pool_twice():

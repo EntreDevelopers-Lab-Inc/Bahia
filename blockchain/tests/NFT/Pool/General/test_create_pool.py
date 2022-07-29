@@ -4,10 +4,10 @@ from scripts.NFT.Pool.General.helpful_scripts import deploy
 
 POOL = [
     0,  # poolId
-    "0x0000000000000000000000000000000000000001",  # collection address
     0,  # nftId
     0,  # maxContributions
     0,  # shareSupply
+    "0x0000000000000000000000000000000000000001",  # collection address
     "0x0000000000000000000000000000000000000002",  # creator address
         False,  # completed bool
         0,  # endPurchasePrice
@@ -33,8 +33,7 @@ def test_create_pool():
 
     # make sure the pool has been added to the data contract
     pool = data_contract.pools(0)
-    assert pool == (0, fish_contract.address, 0,
-                    3, 9, accounts[2], False, 0, 0, 1)
+    assert pool == (0, 0, 3, 9, fish_contract.address, accounts[2], False, 0, 0, 1)
 
     with brownie.reverts():
         data_contract.addPool(POOL, {'from': accounts[3]})

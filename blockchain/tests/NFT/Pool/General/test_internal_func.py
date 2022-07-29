@@ -7,10 +7,10 @@ from scripts.NFT.Pool.General.helpful_scripts import deploy
 
 BLANK_POOL = [
     1,  # next poolId after initial pool added...
-    "0x0000000000000000000000000000000000000000",  # collection address
     0,  # nftId
     0,  # maxContributions
     0,  # shareSupply
+    "0x0000000000000000000000000000000000000000",  # collection address
     "0x0000000000000000000000000000000000000000",  # creator address
     False,  # completed bool
     0,  # endPurchasePrice

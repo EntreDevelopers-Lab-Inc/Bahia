@@ -39,6 +39,7 @@
                   <td class="text-center"><h5>Pool Cap</h5></td>
                   <td class="text-center"><h5>Total Shares</h5></td>
                   <td class="text-center"><h5>Contribution</h5></td>
+                  <td class="text-center"><h5>Funding</h5></td>
 
                 </tr>
                 </tbody><tbody id="sale-objects">
@@ -49,6 +50,8 @@
                     <td class="text-center">0.6 ETH</td>
                     <td class="text-center">100,000</td>
                     <td class="text-center">0.1 ETH</td>
+                    <td class="text-center">0.5 ETH</td>
+                    <td class="text-center"><a type="approval-btn" class="btn btn-info btn-radius" approved="true" trade-address="0x0d" onclick="">Execute</a></td>
                     <td class="text-center"><a type="approval-btn" class="btn btn-info btn-radius" approved="true" trade-address="0x0d" onclick="">LooksRare</a></td>
                   </tr>
                 </tbody>
@@ -82,5 +85,7 @@
 <script src="{{url_for('static', filename='assets/js/integrations/weth/contract.js')}}"></script>
 <script src="{{url_for('static', filename='assets/js/pool/abis.js')}}"></script>
 <script src="{{url_for('static', filename='assets/js/pool/contract.js')}}"></script>
+<script src="{{url_for('static', filename='assets/js/pool/real-contributions.js')}}"></script>
+<script src="{{url_for('static', filename='assets/js/integrations/backend.js')}}"></script>
 <script src="{{url_for('static', filename='assets/js/pool/my-pools/my-pools.js')}}"></script>
 {% endblock %}

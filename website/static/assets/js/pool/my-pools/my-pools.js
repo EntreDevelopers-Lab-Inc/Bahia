@@ -102,11 +102,14 @@ async function closeSetter(poolId)
 }
 
 // may be best to rewrite this to just query by participant address & pool id (will be more efficient on the fronted)
-function addParticipation(poolId, address)
+function addParticipation(poolId)
 {
-    // query the chain: getParticipantIdFromAddress(poolId, address)
+    // query the chain: getParticipantIdFromAddress(poolId, window.ethereum.selectedAddress)
+
             // on success, query the chain: getParticipant(poolId, participantId)
                 // on success, render mustache.js to show the row
+
+                // after loading the row, call totalContributions, and set it on the frontend on success
 
     // any failures --> just add a popup that the eth node failed to get data for this pool id
 }
@@ -122,7 +125,19 @@ async function loadDocument()
 
     // get all the pools from the backend
     $.ajax({
-
+        url: API_BASE + 'pool/Participation',
+        method: 'POST',
+        data: {
+            address: window.ethereum.selectedAddress
+        },
+        success: function(resp) {
+            // iterate over the pools
+            for (var i = 0; i < resp.data.length; i += 1)
+            {
+                // add each participation
+                addParticipation(resp.data[i].pool_id);
+            }
+        }
     });
         // for each pool, query the smart contract (synchronous, iterative) for the participant
             // add a row to the table

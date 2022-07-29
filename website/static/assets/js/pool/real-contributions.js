@@ -30,5 +30,5 @@ async function totalContributions(poolId)
     }
 
     // return the count
-    return {totalPoolContributions: count};
+    return count;
 }

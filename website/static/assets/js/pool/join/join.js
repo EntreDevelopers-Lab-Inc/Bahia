@@ -19,7 +19,6 @@ var getCall;
 // synchronous function for adding pool (will want to do this sequentially to maintain structure for the user)
 function addPool(pool, nftData)
 {
-    console.log(nftData['name']);
     // Get necessary metadata from token_uri
     pool['name'] = nftData['name'];
 
@@ -43,7 +42,6 @@ function addPool(pool, nftData)
 
 async function addAllPools(pools)
 {
-    console.log("All pools:  " + pools)
     // iterate over the nfts and add them to the list
     for (var i = 0; i < pools_count; i += 1)
     {
@@ -52,7 +50,6 @@ async function addAllPools(pools)
             var collection_address = pools[i]['address'];
             var token_id = pools[i]['token-id'];
             nftData = await Moralis.Web3API.token.getTokenIdMetadata( {address: collection_address, token_id: token_id, chain: CHAIN_ID_STR});
-            console.log("Data: " + JSON.stringify(nftData));
             addPool(pools[i], nftData);
 
         }
@@ -76,8 +73,6 @@ async function loadPools()
 {
     // clear all nfts
     $('#pool-objects').empty();
-    console.log(POOL_DATA_CONTRACT);
-    console.log(POOL_DATA_CONTRACT_ADDRESS);
 
     pools_count = await POOL_DATA_CONTRACT.getPoolCount();
 
@@ -107,8 +102,6 @@ async function loadPools()
 function showJoinModal()
 {   
 
-    console.log("WHEN DOES THIS E");
-
     if (poolData['name'] == undefined)
     {
         alert('Must select a pool to join first');
@@ -129,8 +122,8 @@ function showJoinModal()
     $('#join-modal').show();
 
     // show the right stuff
-    $('#create-sale').show();
-    $('#sale-loading').hide();
+    $('#join-pool').show();
+    $('#joining-loading').hide();
 }
 
 // select a pool (cannot be asynchronous because other data depends on it)
@@ -158,7 +151,8 @@ function selectPool(id, address, cap)
     // # will give temp name for now
     poolData['name'] = "Temp Name";  // for the modal
 
-    console.log("Does this execute first?");
+
+    poolData['name'] = selected.text();
 }
 
 // load document function

@@ -81,7 +81,7 @@
             </div>
             <div class="row small_space">
               <div class="form-group col-md-12 input-group-append">
-                <input type="number" class="form-control" id="cost" style="padding-right:20px;" placeholder="Cost" step="0.000000001" required="">
+                <input type="number" class="form-control" id="contribution" style="padding-right:20px;" placeholder="Contribution" step="0.000000001" required="">
                 <div class="input-group-append">
                    <span class="input-group-text form-control" style="opacity: 1;"> ETH </span>
                 </div>
@@ -92,13 +92,10 @@
                 </div>
                 <input type="date" id="date" class="form-control" required="" min="2022-07-08">
               </div>
-              <div class="form-group col-md-12">
-                <input type="text" placeholder="Buyer Address (optional)" id="buyer-address" class="form-control">
-              </div>
               <div class="col-12">
-                <a class="btn btn-default btn-radius btn-block text-center" id="create-sale" onclick="createSale();">Create Sale</a>
-                <div class="row" id="sale-loading">
-                  <div class="col-9"><p>Creating trade. Please wait to activate transaction (do not close this popup)</p></div>
+                <a class="btn btn-default btn-radius btn-block text-center" id="join-pool" onclick="joinPool();">Join Pool</a>
+                <div class="row" id="joining-loading">
+                  <div class="col-9"><p>Joining pool. Please wait to activate transaction (do not close this popup)</p></div>
                   <div class="col-3">
                     <div class="spinner-border text-light"></div>
                   </div>

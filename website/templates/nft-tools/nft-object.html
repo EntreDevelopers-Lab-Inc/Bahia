@@ -1,0 +1,10 @@
+{% raw %}
+<template id="nft-template">
+  <div class="col-lg-3 col-md-6 col-sm-6 res_md_mb_30 res_sm_mb_20 text-center">
+    <a class="tab-link" onclick="selectNFT('{{token_address}}', {{token_id}});" nft-id="{{token_id}}">
+      <img class="center" src="{{link}}">
+      <h4><span>{{name}}</span> #<span>{{token_id}}</h4>
+    </a>
+  </div>
+</template>
+{% endraw %}

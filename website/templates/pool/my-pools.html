@@ -1,0 +1,86 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<link href="{{url_for('static', filename='assets/css/pool/my-pools/my-pools.css')}}" rel="stylesheet"/>
+<section id="my-pools">
+  <canvas class="transparent_effect fixed" id="banner_canvas" width="1278" height="875">
+   </canvas>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-md-12 offset-lg-2">
+            <div class="title_default_light title_border text-center">
+              <h4 class="animation animated fadeInUp" data-animation="fadeInUp" data-animation-delay="0.2s" style="animation-delay: 0.2s; opacity: 1;">My Pools</h4>
+          </div>
+        </div>
+        <div class="row small_space">
+          <div class="col-lg-12 col-md-12 col-sm-12">
+            <div class="title_default_light text-right">
+              <h5 class="animation animated fadeInUp" data-animation="fadeInUp" data-animation-delay="0.2s" style="animation-delay: 0.2s; opacity: 1;" >
+                  <span class="">
+                    Total Pooling Contributions:
+                    <span class="" id="total-contribution-data-block">
+                      <span id="total-weth-contribution">?</span> ETH <a class="fa fa-pencil" style="font-size: 1.25rem" onclick="openSetWETHContribution();"></a>
+                      <div class="spinner-border text-light" style="display: none;"></div>
+                    </span>
+                    <span id="total-contribution-input-block" style="display: none;">
+                      <input id="total-contribution-input" type="number" class="form-control" id="cost" style="width:  5rem;" placeholder="Cost" step="0.01" required=""> ETH
+                      <a class="fa fa-check" style="font-size: 1.25rem" onclick="closeSetWETHContribution();"></a>
+                      <div class="spinner-border text-light" style="display: none;"></div>
+                    </span>
+                  </span>
+              </h5>
+            </div>
+            <div class="token_info_table_s2 scroll">
+              <table class="table table-blue m-0 h-100">
+                <tbody><tr>
+                  <td class="text-center"><h5>NFT</h5></td>
+                  <td class="text-center"><h5>Pool ID</h5></td>
+                  <td class="text-center"><h5>Market Price</h5></td>
+                  <td class="text-center"><h5>Pool Cap</h5></td>
+                  <td class="text-center"><h5>Total Shares</h5></td>
+                  <td class="text-center"><h5>Contribution</h5></td>
+
+                </tr>
+                </tbody><tbody id="sale-objects">
+                  <tr class="animation animated fadeInUp" data-animation="fadeInUp" data-animation-delay="0.2s" style="animation-delay: 0.2s; opacity: 1;">
+                    <td class="text-center">Fish #188 (PUT PICTURE HERE)</td>
+                    <td class="text-center">0</td>
+                    <td class="text-center">0.5 ETH</td>
+                    <td class="text-center">0.6 ETH</td>
+                    <td class="text-center">100,000</td>
+                    <td class="text-center">0.1 ETH</td>
+                    <td class="text-center"><a type="approval-btn" class="btn btn-info btn-radius" approved="true" trade-address="0x0d" onclick="">LooksRare</a></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        </div>
+    </div>
+</section>
+
+<!--templates-->
+{% raw %}
+<template id="pool-row">
+  <tr class="animation animated fadeInUp" data-animation="fadeInUp" data-animation-delay="0.2s" style="animation-delay: 0.2s; opacity: 1;">
+    <td class="text-center">Fish #188 (PUT PICTURE HERE)</td>
+      <td class="text-center">0</td>
+      <td class="text-center">0.5 ETH</td>
+      <td class="text-center">0.6 ETH</td>
+      <td class="text-center">100,000</td>
+      <td class="text-center">0.1 ETH</td>
+      <td class="text-center"><a type="approval-btn" class="btn btn-info btn-radius" approved="true" trade-address="0x0d" onclick="">LooksRare</a></td>
+  </tr>
+</template>
+{% endraw %}
+
+{% endblock content %}
+
+{% block scripts %}
+<script src="{{url_for('static', filename='assets/js/integrations/weth/abis.js')}}"></script>
+<script src="{{url_for('static', filename='assets/js/integrations/weth/contract.js')}}"></script>
+<script src="{{url_for('static', filename='assets/js/pool/abis.js')}}"></script>
+<script src="{{url_for('static', filename='assets/js/pool/contract.js')}}"></script>
+<script src="{{url_for('static', filename='assets/js/pool/my-pools/my-pools.js')}}"></script>
+{% endblock %}

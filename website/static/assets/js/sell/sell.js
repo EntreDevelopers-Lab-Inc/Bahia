@@ -1,55 +1,9 @@
-// load the nft template and objects
-const NFT_TEMPLATE = $('#nft-template').html();
-var NFT_OBJECTS = $('#nft-objects');
-
 // load the sale tempalte and objects
 const SALE_TEMPLATE = '';
 var SALE_OBJECTS = $('#sale-objects');
 
-// keep the sale data on hand
-var saleData = {};
-
-// keep track of the offset
-var NFT_OFFSET = 0;
-var NFT_LIMIT = 20;
+// loading information from moralis --> keep with get call
 var getcall;
-
-
-// synchronous function for adding an nft (will want to do this sequentially to maintain structure for the user)
-function addNFT(data)
-{
-    // add the link
-    var metadata = JSON.parse(data.metadata);
-
-    data['link'] = getIPFSLink(metadata.image);
-
-    // render the template
-    var newNft = Mustache.render(NFT_TEMPLATE, data);
-
-    // add the nft to the objects
-    NFT_OBJECTS.append(newNft);
-}
-
-async function addAllNFTs(nfts)
-{
-    // iterate over the nfts and add them to the list
-    for (var i = 0; i < nfts.length; i += 1)
-    {
-        addNFT(nfts[i]);
-    }
-
-    // if the number of children less than the limit, there not another page, so hide the next button
-    if ($('#nft-objects').children().length < NFT_LIMIT)
-    {
-        $('#next-btn').hide();
-    }
-    // else, show the button
-    else
-    {
-        $('#next-btn').show();
-    }
-}
-
 
 // load the nfts
 async function loadNFTs()
@@ -69,51 +23,6 @@ async function loadNFTs()
     // add all the nfts
     addAllNFTs(getCall.result);
 }
-
-
-// get the next nfts
-async function nextNFTs()
-{
-     // increment the offset
-    NFT_OFFSET += NFT_LIMIT;
-
-    // call the load nfts function
-    loadNFTs();
-
-    // if the nft offset is now only 1 unit, show the previous button
-    if (NFT_OFFSET == NFT_LIMIT)
-    {
-        $('#previous-btn').show();
-    }
-}
-
-
-// get the previous nfts
-async function previousNFTs()
-{
-    if (NFT_OFFSET > 0)
-    {
-        // decrement the nft offset
-        NFT_OFFSET -= NFT_LIMIT;
-    }
-    else
-    {
-        // just set the nft offset to 0 and remove the button
-        NFT_OFFSET -= NFT_LIMIT;
-        $('#previous-btn').hide();
-    }
-
-    // if the nft offset is now 0, hide the previous button
-    if (NFT_OFFSET <= 0)
-    {
-        $('#previous-btn').hide();
-    }
-
-    // load the nfts
-    loadNFTs();
-
-}
-
 
 // add a sale
 async function addSale(purchaseHex, prepend=true)
@@ -197,37 +106,13 @@ async function loadSales()
     }
 }
 
-
-// select an nft (cannot be asynchronous because other data depends on it)
-function selectNFT(address, id)
-{
-    // deselect the other selections
-    var selections = NFT_OBJECTS.find('a');
-
-    // select this tab as active
-    for (var i = 0; i < selections.length; i += 1)
-    {
-        $(selections[i]).attr('class', 'tab-link')
-    }
-
-    // enable the selected
-    var selected = NFT_OBJECTS.find("a[nft-id='" + id + "']");
-    selected.attr('class', 'tab-link active');
-
-    // write the sale dict
-    saleData['address'] = address;
-    saleData['id'] = id;
-    saleData['name'] = selected.text();  // for the modal
-}
-
-
 // create a sale
 async function createSale()
 {
     // get all the information necessary for the sale from the frontend
     var expTime = Date.parse($('#date').val()) / 1000;  // originally in miliseconds --> need seconds for eth evmx
-    var collectionAddress = saleData['address'];
-    var nftId = saleData['id'];
+    var collectionAddress = nftData['address'];
+    var nftId = nftData['id'];
     var cost = $('#cost').val();
     var buyerAddress = $('#buyer-address').val();
 
@@ -422,23 +307,23 @@ async function copyAddress(address)
 // show modal
 function showSellModal()
 {
-    if (saleData['name'] == undefined)
+    if (nftData['name'] == undefined)
     {
         alert('Must select an NFT to sell first');
         return;
     }
 
     // set the name
-    $('#sell-nft-name').text(saleData['name'])
+    $('#sell-nft-name').text(nftData['name'])
 
     // set the collection address
-    $('#sell-nft-collection-address').text(saleData['address']);
+    $('#sell-nft-collection-address').text(nftData['address']);
 
     // set the etherscan
-    $('#sell-nft-etherscan').attr('href', ETHERSCAN_BASE + saleData['address']);
+    $('#sell-nft-etherscan').attr('href', ETHERSCAN_BASE + nftData['address']);
 
     // set the looksrare
-    $('#sell-nft-looksrare').attr('href', LOOKSRARE_BASE + saleData['address']);
+    $('#sell-nft-looksrare').attr('href', LOOKSRARE_BASE + nftData['address']);
 
     // show the modal
     toggleModal();

@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 
 {% block content %}
-<link href="{{url_for('static', filename='assets/css/sell/sell.css')}}" rel="stylesheet"/>
+<link href="{{url_for('static', filename='assets/css/nftTools/nftObjects.css')}}" rel="stylesheet"/>
 <link href="{{url_for('static', filename='assets/css/modal.css')}}" rel="stylesheet"/>
 <!-- START SECTION SELL -->
 <section id="sell">
@@ -125,15 +125,8 @@
 
 
 <!--templates-->
+{% include "nft-tools/nft-object.html" %}
 {% raw %}
-<template id="nft-template">
-  <div class="col-lg-3 col-md-6 col-sm-6 res_md_mb_30 res_sm_mb_20 text-center">
-    <a class="tab-link" onclick="selectNFT('{{token_address}}', {{token_id}});" nft-id="{{token_id}}">
-      <img class="center" src="{{link}}">
-      <h4><span>{{name}}</span> #<span>{{token_id}}</h4>
-    </a>
-  </div>
-</template>
 <template id="sale-template">
   <tr class="animation animated fadeInUp" data-animation="fadeInUp" data-animation-delay="0.2s" style="animation-delay: 0.2s; opacity: 1;">
     <td>{{name}}</td>
@@ -153,5 +146,6 @@
 
 {% block scripts %}
     <script src="{{url_for('static', filename='assets/js/modal.js')}}"></script>
+    <script src="{{url_for('static', filename='assets/js/nftTools/nftObjects.js')}}"></script>
     <script src="{{url_for('static', filename='assets/js/sell/sell.js')}}"></script>
 {% endblock %}

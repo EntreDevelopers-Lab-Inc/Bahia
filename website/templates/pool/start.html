@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 
 {% block content %}
-<link href="{{url_for('static', filename='assets/css/buy/buy.css')}}" rel="stylesheet"/>
+<link href="{{url_for('static', filename='assets/css/nftTools/nftObjects.css')}}" rel="stylesheet"/>
 <section>
   <canvas class="transparent_effect fixed" id="banner_canvas">
   </canvas>
@@ -13,55 +13,91 @@
         </div>
       </div>
    </div>
-    <div class="row field_form">
-      <div class="form-group col-12 animation animated fadeInUp" data-animation="fadeInUp" data-animation-delay="0.4" style="animation-delay: 0.4s; opacity: 1;">
-        <input type="text" required="required" placeholder="Collection Address" id="collection-address" class="form-control">
-      </div>
+    <div class="row newsletter_form col-12">
+        <input class="input-rounded" type="text" placeholder="Collection" id="collection-search">
+        <button class="btn-info" style="margin-right: 1rem;" onclick="searchCollection();">Search</button>
     </div>
-    <div id="nft-data">
-      <div class="row small_space">
-        <div class="col-lg-6 col-md-6 col-sm-12 res_md_mb_30 res_sm_mb_20 text-center animation animated fadeInUp" data-animation="fadeInUp" data-animation-delay="0.4" style="animation-delay: 0.4s; opacity: 1;">
-          <a class="tab-link">
-            <img class="center" src="{{ url_for('static', filename='assets/images/qmark.png') }}" id="image">
-            <h4 class="small_space" id="name"></h4>
+    <div class="row small_space" id="collection-objects">
+      <div class="col-4 text-center">
+          <a class="tab-link" onclick="selectCollection('0xE4B3363827962982fab7d9d255d9aE248e80db6c');" collection-address="0xE4B3363827962982fab7d9d255d9aE248e80db6c">
+            <img class="center" src="https://looksrare.mo.cloudinary.net/rinkeby/0xE4B3363827962982fab7d9d255d9aE248e80db6c/0xf244330699bd0ff6a9e4801d2c37dd7d77d15537ff27f1b4275df8eea8e1d2d7?resource_type=image&f=auto&c=limit&w=1600&q=auto">
+            <h4><span>LooksRare JPGs</h4>
           </a>
-        </div>
-        <div class="col-lg-6 col-md-6 col-sm-12">
-          <div class="row small_space field_form">
-            <div class="col-6">
-              <input type="number" required="required" placeholder="Token ID" id="token-id" class="form-control">
-            </div>
-            <div class="col-6">
-              <a class="btn btn-default btn-radius btn-block" onclick="">Preview</a>
-            </div>
-          </div>
-          <div class="row small_space field_form">
-            <div class="col-6">
-              <input type="number" required="required" placeholder="Max Price" id="max-price" class="form-control">
-            </div>
-            <div class="col-6">
-              <input type="number" required="required" placeholder="Total Shares" id="total-shares" class="form-control">
-            </div>
-          </div>
-          <div class="row small_space">
-            <div class="col-12">
-              <a class="btn btn-default btn-radius btn-block disabled" onclick="">Create Pool</a>
-              </div>
-            </div>
-          </div>
-
-        </div>
+      </div>
+      <div class="col-4 text-center">
+          <a class="tab-link" onclick="selectCollection('0xd4C4643053E46eacffa06E2573641907a54125Fb');" collection-address="0xd4C4643053E46eacffa06E2573641907a54125Fb">
+            <img class="center" src="https://looksrare.mo.cloudinary.net/rinkeby/0xd4C4643053E46eacffa06E2573641907a54125Fb/0xe4a1d08f4cd3e8a8b89975d5245af7b26b8e412068a053e6ce78930d7f5c6dc9?resource_type=image&f=auto&c=limit&w=1600&q=auto">
+            <h4><span>Sample Store</h4>
+          </a>
+      </div>
+      <div class="col-4 text-center">
+          <a class="tab-link" onclick="selectCollection('0xd79cC737A3a69183AF67f960612e5E01c8414782');" collection-address="0xd79cC737A3a69183AF67f960612e5E01c8414782">
+            <img class="center" src="https://looksrare.mo.cloudinary.net/rinkeby/0xd79cC737A3a69183AF67f960612e5E01c8414782/0x322752a371e5b563c903bc98f005536efe9c54384a5c22a9d42b516d1ba21fbd?resource_type=image&f=auto&c=limit&w=1600&q=auto">
+            <h4><span>Hippo Goddness</h4>
+          </a>
       </div>
     </div>
+    <div class="row small_space">
+      <div class="col-lg-9 col-md-9 col-sm-6"></div>
+    </div>
+    <div class="row small_space" id="nft-objects">
+      <div class="col-lg-3 col-md-6 col-sm-6 res_md_mb_30 res_sm_mb_20 text-center">
+        <a class="tab-link" onclick="selectNFT('0x86881e9aa63b63114a34f539f7b779244b0e1033', 29);" nft-id="29">
+          <img class="center" src="https://arweave.net/1raYAbLBM-JaKTkmnPfoS5vT6VhJb6gkUW6RZXKiGnQ">
+          <h4><span>Bored Ape Fake Club</span> #<span>29</span></h4>
+        </a>
+      </div>
+      <div class="col-lg-3 col-md-6 col-sm-6 res_md_mb_30 res_sm_mb_20 text-center">
+        <a class="tab-link" onclick="selectNFT('0x86881e9aa63b63114a34f539f7b779244b0e1033', 29);" nft-id="29">
+          <img class="center" src="https://arweave.net/1raYAbLBM-JaKTkmnPfoS5vT6VhJb6gkUW6RZXKiGnQ">
+          <h4><span>Bored Ape Fake Club</span> #<span>29</span></h4>
+        </a>
+      </div>
+      <div class="col-lg-3 col-md-6 col-sm-6 res_md_mb_30 res_sm_mb_20 text-center">
+        <a class="tab-link" onclick="selectNFT('0x86881e9aa63b63114a34f539f7b779244b0e1033', 29);" nft-id="29">
+          <img class="center" src="https://arweave.net/1raYAbLBM-JaKTkmnPfoS5vT6VhJb6gkUW6RZXKiGnQ">
+          <h4><span>Bored Ape Fake Club</span> #<span>29</span></h4>
+        </a>
+      </div>
+      <div class="col-lg-3 col-md-6 col-sm-6 res_md_mb_30 res_sm_mb_20 text-center">
+        <a class="tab-link" onclick="selectNFT('0x86881e9aa63b63114a34f539f7b779244b0e1033', 29);" nft-id="29">
+          <img class="center" src="https://arweave.net/1raYAbLBM-JaKTkmnPfoS5vT6VhJb6gkUW6RZXKiGnQ">
+          <h4><span>Bored Ape Fake Club</span> #<span>29</span></h4>
+        </a>
+      </div>
+    </div>
+
+    <div class="row small_space">
+      <div class="col-2">
+        <a class="pagination-btn btn-default" id="previous-btn" onclick="previousNFTs();" style="display: none;"><i class="pagination-icon ion-ios-arrow-left"></i></a>
+      </div>
+      <div class="col-8"></div>
+      <div class="col-2">
+        <a class="pagination-btn btn-default" style="float: right;" id="next-btn" onclick="nextNFTs();"><i class="pagination-icon ion-ios-arrow-right"></i></a>
+      </div>
+      </div>
    </div>
 
 </section>
 
 <!--templates-->
+{% include "nft-tools/nft-object.html" %}
 {% raw %}
+<template id="collection-template">
+  <div class="col-4 text-center">
+      <a class="tab-link" onclick="selectCollection('{{address}}');" collection-address="{{address}}">
+        <img class="center" src="{{image}}">
+        <h4><span>{{name}}</h4>
+      </a>
+  </div>
+</template>
 {% endraw %}
 
 {% endblock content %}
 
 {% block scripts %}
+  <script src="{{url_for('static', filename='assets/js/nftTools/nftObjects.js')}}"></script>
+  <script src="{{url_for('static', filename='assets/js/integrations/blockdaemon.js')}}"></script>
+  <script src="{{url_for('static', filename='assets/js/integrations/looksrare.js')}}"></script>
+  <script src="{{url_for('static', filename='assets/js/pool/start/start.js')}}"></script>
 {% endblock %}

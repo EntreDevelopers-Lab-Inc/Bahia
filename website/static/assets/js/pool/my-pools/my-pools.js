@@ -61,14 +61,15 @@ async function closeSetWETHContribution()
     }
 
     // call the weth contract to set the weth contribution (make sure it is stored in wei)
-    await WETH_CONTRACT.approve(POOL_CONTRACT_ADDRESS, ethers.utils.parseEther(newContribution)).then(function (resp) {
+    await WETH_CONTRACT.approve(POOL_CONTRACT_ADDRESS, ethers.utils.parseEther(newContribution.toString())).then(function (resp) {
         // set the weth amount to the new contribution
         $('#total-weth-contribution').text(newContribution);
-    }).catch(function (resp) {
+
         // switch the input to text
         $('#total-contribution-data-block').show();
         $('#total-contribution-input-block').hide();
 
+    }).catch(function (resp) {
         // alert the user
         alert('Error: ' + resp.message);
     });
@@ -105,11 +106,22 @@ async function closeSetter(poolId)
 function addParticipation(poolId)
 {
     // query the chain: getParticipantIdFromAddress(poolId, window.ethereum.selectedAddress)
-
+    POOL_DATA_CONTRACT.getParticipantIdFromAddress(poolId, window.ethereum.selectedAddress).then(function (participantId) {
             // on success, query the chain: getParticipant(poolId, participantId)
-                // on success, render mustache.js to show the row
+            POOL_DATA_CONTRACT.getParticipant(poolId, participantId).then(function (resp) {
+                // make the data for mustache to render
+                var data = {
+
+                };
+
+                // render mustache.js to show the row
+
+            });
 
                 // after loading the row, call totalContributions, and set it on the frontend on success
+    });
+
+
 
     // any failures --> just add a popup that the eth node failed to get data for this pool id
 }
@@ -126,8 +138,8 @@ async function loadDocument()
     // get all the pools from the backend
     $.ajax({
         url: API_BASE + 'pool/Participation',
-        method: 'POST',
-        data: {
+        method: 'GET',
+        headers: {
             address: window.ethereum.selectedAddress
         },
         success: function(resp) {

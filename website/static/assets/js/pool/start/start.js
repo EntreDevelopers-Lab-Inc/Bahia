@@ -15,8 +15,6 @@ async function addCollectionChoice(data, useTopOrder=true, tokenId=1)
                 isOrderAsk: true,
                 collection: data.address,
                 strategy: LOOKSRARE_BUY_NOW_STRATEGY,
-                startTime: LR_ORIGIN_TIME,
-                endTime: parseInt((Date.now() / 1000)).toString(),
                 status: ['EXECUTED', 'VALID'],
                 pagination: {'first': 1},
                 sort: 'PRICE_DESC'
@@ -168,8 +166,6 @@ async function getNFTsFromLR(address)
             isOrderAsk: true,
             collection: address,
             strategy: LOOKSRARE_BUY_NOW_STRATEGY,
-            startTime: LR_ORIGIN_TIME,
-            endTime: parseInt((Date.now() / 1000)).toString(),
             status: ['VALID'],
             pagination: {
                 'first': NFT_LIMIT
@@ -177,7 +173,7 @@ async function getNFTsFromLR(address)
             sort: 'PRICE_ASC'
         },
         success: function (response) {
-            console.log(response);
+            console.log(response.data);
             if (response.data.length == 0)
             {
                 // note that there are no NFTs

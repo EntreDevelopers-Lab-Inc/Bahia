@@ -86,31 +86,117 @@ async function closeSetWETHContribution()
 async function openSetter(poolId)
 {
     // get the correct contribution tag
+    var poolRow = $('tr[pool-id="' + poolId + '"]');
+    var contributionData = poolRow.find('[name="contribution-data-block"]');
+    var contributionInput = poolRow.find('[name="contribution-input-block"]');
+
+    // fill the input with the correct amount
+    contributionInput.find('input').val(contributionData.find('[name="contribution"]').text());
 
     // switch from text to input
+    contributionData.hide();
+    contributionInput.show();
 }
 
 async function closeSetter(poolId)
 {
-    // replace the edit with a spinning ball
+    // get the correct contribution tag
+    var poolRow = $('tr[pool-id="' + poolId + '"]');
+    var contributionData = poolRow.find('[name="contribution-data-block"]');
+    var contributionInput = poolRow.find('[name="contribution-input-block"]');
+
+    // get the check and spinning ball
+    var check = poolRow.find('[class="fa fa-check"]');
+    var spinner = poolRow.find('[class="spinner-border text-light"]');
+
+    // hide the check, show the spinning ball (will be reverted at end of function)
+    check.hide();
+    spinner.show();
 
     // get the input data
+    var newContribution = parseFloat(contributionInput.find('input').val());
+    var participantId = poolRow.find('poolId').text();
 
-    // check that the weth contribution is sufficient
-        // if not, set it up to the max (the amount in the input)
+    // get the weth balance
+    var wethBalance = parseFloat(ethers.utils.formatEther(await WETH_CONTRACT.balanceOf(window.ethereum.selectedAddress)));
 
-    // call the pool contract: setContract
-        // on success, update the frontend
-        // on failure, alert that it failed & replace the spinning ball with a check mark
+    // get the weth allowance
+    var wethAllowance = parseFloat(ethers.utils.formatEther(await WETH_CONTRACT.allowance(window.ethereum.selectedAddress, POOL_CONTRACT_ADDRESS)));
+
+    console.log(newContribution);
+    console.log(wethAllowance);
+
+    // if the input is the same as the old value, do nothing
+    if (newContribution == parseFloat(contributionData.find('[name="contribution"]').text()))
+    {
+        // hide input, show data
+        contributionInput.hide();
+        contributionData.show();
+    }
+    // else if the input is 0, exit the pool
+    else if (newContribution == 0)
+    {
+        POOL_DATA_CONTRACT.exitPool().then(function (resp) {
+            // hide input, show data
+            contributionInput.hide();
+            contributionData.show();
+        }).catch(function (resp) {
+            alert(resp.message);
+        });
+    }
+    // else if the contribution is greater than the weth balance, alert the user
+    else if (newContribution > wethBalance)
+    {
+        alert('Cannot set a contribution of ' + newContribution + ' WETH, as your WETH balance is ' + wethBalance + ' WETH.');
+    }
+    // else if the contribution is more than the weth allowance, increase the weth allowance and then set hte contribution
+    else if (newContribution > wethAllowance)
+    {
+        WETH_CONTRACT.approve(POOL_CONTRACT_ADDRESS, ethers.utils.parseEther(newContribution.toString())).then(function (resp) {
+            // on success, set the contribution
+            POOL_CONTRACT.setContribution(poolId, participantId, ethers.utils.parseEther(newContribution.toString())).then(function (resp) {
+                // set the new contribution data number
+                contributionData.find('[name="contribution"]').text(newContribution);
+
+                contributionInput.hide();
+                contributionData.show();
+            });
+        }).catch(function (resp) {
+            // on error, alert that the user must increase their weth contributino
+            alert('Error: ' + resp.message);
+        });
+    }
+    // else, set the contribution
+    else
+    {
+        // set the contribution on the pooling contract
+        POOL_CONTRACT.setContribution(poolId, participantId, ethers.utils.parseEther(newContribution.toString())).then(function (resp) {
+                // set the new contribution data number
+                contributionData.find('[name="contribution"]').text(newContribution);
+
+                contributionInput.hide();
+                contributionData.show();
+            });
+    }
+
+    // hide spinner, show check
+    spinner.hide();
+    check.show();
+
 }
 
 // function to execute a pool
 async function execute(poolId)
 {
-    // check to ensure that total contributions (on frontend) exceed funding (on frontend)
-
     // call buyNow on smart contract
+    POOL_CONTRACT.buyNow(poolId, makerAsk, minPercentageToAsk, params).then(function (resp) {
         // on success, update the frontend and show a message
+        alert('Congratulations! You can view your shares of the pool on LooksRare or OpenSea (viewing shares on bahia is under development)');
+
+        // disable the execute button
+
+        // make the contribution non-editable
+    });
 }
 
 // may be best to rewrite this to just query by participant address & pool id (will be more efficient on the fronted)
@@ -123,7 +209,7 @@ async function addParticipation(poolId)
     var nftData = await Moralis.Web3API.token.getTokenIdMetadata({chain: CHAIN_ID_STR, address: pool.collection, token_id: pool.nftId.toNumber()});
 
     // query the chain: getParticipantIdFromAddress(poolId, window.ethereum.selectedAddress)
-    var participantId = await POOL_DATA_CONTRACT.getParticipantIdFromAddress(poolId, window.ethereum.selectedAddress);
+    var participantId = (await POOL_DATA_CONTRACT.getParticipantIdFromAddress(poolId, window.ethereum.selectedAddress)).toNumber();
     var participant = await POOL_DATA_CONTRACT.getParticipant(poolId, participantId);
 
     // get the market price from looksrare
@@ -155,27 +241,60 @@ async function addParticipation(poolId)
     // format the mustache information
     var data = {
         uri: nftData.token_uri,
-        name: nftData.name + " " + nftData.token_id,
+        name: nftData.name + ' #' + nftData.token_id,
         poolId: poolId,
         marketPrice: marketPrice,
         poolCap: ethers.utils.formatEther(pool.maxContributions),
         totalShares: pool.shareSupply.toNumber().toLocaleString('en-US'),
-        contribution: Math.max(parseFloat(ethers.utils.formatEther(participant.contribution)), parseFloat(ethers.utils.formatEther(participant.paid))) // contributions will be set to 0 if not used
+        participantId: participantId,
+        lrLink: LOOKSRARE_BASE + pool.collection + '/' + pool.nftId
         // funding will be set later, so don't worry about it
     }
 
-    Mustache.render(POOL_TEMPLATE, data);
+    // make a new row
+    var newRow = Mustache.render(POOL_TEMPLATE, data);
 
-    // get the total contributions --> whenever it finishes, update it on the frontend
-    totalContributions(poolId).then(function (maxContributions) {
-        // get the pool row by pool id
+    // prepend the new row to the table
+    $('#sale-objects').prepend(newRow);
 
-        // set the funding
+    // get the pool row by pool id
+    var poolRow = $('tr[pool-id="' + poolId + '"]');
+    var contributionTag = poolRow.find('[name="contribution"]');
+    var fundingTag = poolRow.find('[name="funding"]');
 
-        // set the execute button to the correct text
+    // if the pool is completed, just show that it is fully funded
+    if (pool.completed)
+    {
+        fundingTag.text('[FULLY FUNDED]');
+        contributionTag.text(participant.paid);
+    }
+    // else, show the total contributions
+    else
+    {
+        // get the total contributions --> whenever it finishes, update it on the frontend
+        totalContributions(poolId).then(function (resp) {
+            // if the participant id is less than or equal to the cutoff, set the contribution to the correct amount
+            if (participantId <= resp.cutoff)
+            {
+                contributionTag.text(ethers.utils.formatEther(participant.contribution));
+            }
+            // else, note that the pool has been "outfunded" (will need to explain this)
+            else
+            {
+                contributionTag.text('[OUTFUNDED AT TICKET # ' + resp.cutoff + ']');
+            }
 
-        // enable the execute button if necessary
-    });
+            // set the funding
+            fundingTag.text(resp.contributions);
+
+            // enable the execute button IF there is sufficient funding
+            if (resp.contributions >= parseFloat(poolRow.find('[name="marketPrice"]').text()))
+            {
+                poolRow.find('[name="execute-btn"]').attr('class', 'btn btn-info btn-radius');;
+            }
+        });
+    }
+
 
     // any failures --> just add a popup that the eth node failed to get data for this pool id
 }
@@ -197,7 +316,6 @@ async function loadDocument()
             address: window.ethereum.selectedAddress
         },
         success: function(resp) {
-            console.log(resp);
             // iterate over the pools
             for (var i = 0; i < resp.data.length; i += 1)
             {

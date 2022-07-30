@@ -19,11 +19,11 @@
                   <span class="">
                     Total Pooling Contributions:
                     <span class="" id="total-contribution-data-block">
-                      <span id="total-weth-contribution">?</span> ETH <a class="fa fa-pencil" style="font-size: 1.25rem" onclick="openSetWETHContribution();"></a>
+                      <span id="total-weth-contribution">?</span> WETH <a class="fa fa-pencil" style="font-size: 1.25rem" onclick="openSetWETHContribution();"></a>
                       <div class="spinner-border text-light" style="display: none;"></div>
                     </span>
                     <span id="total-contribution-input-block" style="display: none;">
-                      <input id="total-contribution-input" type="number" class="form-control" id="cost" style="width:  5rem;" placeholder="Cost" step="0.01" required=""> ETH
+                      <input id="total-contribution-input" type="number" class="form-control" id="cost" style="width:  5rem;" placeholder="Cost" step="0.01" required=""> WETH
                       <a class="fa fa-check" style="font-size: 1.25rem" onclick="closeSetWETHContribution();"></a>
                       <div class="spinner-border text-light" style="display: none;"></div>
                     </span>
@@ -40,20 +40,11 @@
                   <td class="text-center"><h5>Total Shares</h5></td>
                   <td class="text-center"><h5>Contribution</h5></td>
                   <td class="text-center"><h5>Funding</h5></td>
-
+                  <td class="text-center"><h5>Ticket #</h5></td>
+                  <td></td>
+                  <td></td>
                 </tr>
                 </tbody><tbody id="sale-objects">
-                  <tr class="animation animated fadeInUp" data-animation="fadeInUp" data-animation-delay="0.2s" style="animation-delay: 0.2s; opacity: 1;">
-                    <td class="text-center">Fish #188 (PUT PICTURE HERE)</td>
-                    <td class="text-center">0</td>
-                    <td class="text-center">0.5 ETH</td>
-                    <td class="text-center">0.6 ETH</td>
-                    <td class="text-center">100,000</td>
-                    <td class="text-center">0.1 ETH</td>
-                    <td class="text-center">0.5 ETH</td>
-                    <td class="text-center"><a type="approval-btn" class="btn btn-info btn-radius" approved="true" trade-address="0x0d" onclick="">Execute</a></td>
-                    <td class="text-center"><a type="approval-btn" class="btn btn-info btn-radius" approved="true" trade-address="0x0d" onclick="">LooksRare</a></td>
-                  </tr>
                 </tbody>
               </table>
             </div>
@@ -66,16 +57,27 @@
 <!--templates-->
 {% raw %}
 <template id="pool-template">
-  <tr class="animation animated fadeInUp" data-animation="fadeInUp" data-animation-delay="0.2s" style="animation-delay: 0.2s; opacity: 1;">
+  <tr class="animation animated fadeInUp" data-animation="fadeInUp" data-animation-delay="0.2s" style="animation-delay: 0.2s; opacity: 1;" pool-id="{{poolId}}">
     <td class="text-center">{{name}}</td>
       <td class="text-center" name="poolId">{{poolId}}</td>
-      <td class="text-center" name="marketPrice">{{marketPrice}} ETH</td>
-      <td class="text-center" name="poolCap">{{poolCap}} ETH</td>
+      <td class="text-center"><span name="marketPrice">{{marketPrice}}</span> WETH</td>
+      <td class="text-center" name="poolCap">{{poolCap}} WETH</td>
       <td class="text-center" name="totalShares">{{totalShares}}</td>
-      <td class="text-center" name="contribution">{{contribution}} ETH</td>
-      <td class="text-center" name="funding">...</td>
-      <td class="text-center" name="execute-btn"><a type="approval-btn" class="btn btn-info btn-radius" approved="true" trade-address="0x0d" onclick="" disabled>Execute</a></td>
-      <td class="text-center" name="lr-btn"><a type="lr-btn" class="btn btn-info btn-radius" onclick="">LooksRare</a></td>
+      <td class="text-center">
+        <span class="" name="contribution-data-block">
+          <span name="contribution">...</span> WETH<a class="fa fa-pencil" style="font-size: 0.9rem; margin-left: 0.25rem;" onclick="openSetter({{poolId}});"></a>
+          <div class="spinner-border text-light" style="display: none;"></div>
+        </span>
+        <span name="contribution-input-block" style="display: none;">
+          <input name="contribution-input" type="number" class="form-control" style="width: 4rem;" placeholder="Cost" step="0.01" required=""> WETH
+          <a class="fa fa-check" style="font-size: 0.9rem; margin-left: 0.25rem;" onclick="closeSetter({{poolId}});"></a>
+          <div class="spinner-border text-light" style="display: none;"></div>
+        </span>
+      </td>
+      <td class="text-center"><span name="funding">...</span> WETH</td>
+      <td class="text-center" name="ticketNumber">{{participantId}}</td>
+      <td class="text-center"><a name="execute-btn" type="approval-btn" class="btn btn-info btn-radius disabled" approved="true" onclick="execute({{poolId}});">Execute</a></td>
+      <td class="text-center" name="lr-btn"><a href="{{lrLink}}" target="_blank"><img type="lr-btn" src="/static/assets/images/looksrare/icon-darkbg@512.png"></img></a></td>
   </tr>
 </template>
 {% endraw %}

@@ -1,8 +1,9 @@
 // a function to get a pool's real contributions
-async function totalContributions(poolId)
+async function totalContributions(poolId, marketPrice=0)
 {
     // track total contributions
     var count = 0;
+    var cutoff = 1;
 
     // get the max participant Id
     var maxParticipantId = (await POOL_DATA_CONTRACT.getNumberOfParticipants(poolId)).toNumber();
@@ -27,8 +28,18 @@ async function totalContributions(poolId)
 
         // increment the count by the minimum of the three numebrs
         count += Math.min(poolContibution, wethAllowance, wethBalance);
+
+        // if the market price is non-zero and the count is greater than the pool contribution, set the participant cutoff
+        if ((marketPrice != 0) && (count > marketPrice))
+        {
+            // set the participant cutoff
+            cutoff = i;
+
+            // set the market price to 0 to stop checking
+            marketPrice = 0;
+        }
     }
 
     // return the count
-    return count;
+    return {contributions: count, cutoff: cutoff};
 }

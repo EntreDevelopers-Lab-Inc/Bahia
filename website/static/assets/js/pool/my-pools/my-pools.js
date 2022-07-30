@@ -1,3 +1,5 @@
+const POOL_TEMPLATE = $('#pool-template').html()
+
 // a function to edit set the weth contribution (when the pencil is clicked)
 async function openSetWETHContribution()
 {
@@ -102,6 +104,15 @@ async function closeSetter(poolId)
         // on failure, alert that it failed & replace the spinning ball with a check mark
 }
 
+// function to execute a pool
+async function execute(poolId)
+{
+    // check to ensure that total contributions (on frontend) exceed funding (on frontend)
+
+    // call buyNow on smart contract
+        // on success, update the frontend and show a message
+}
+
 // may be best to rewrite this to just query by participant address & pool id (will be more efficient on the fronted)
 async function addParticipation(poolId)
 {
@@ -148,10 +159,12 @@ async function addParticipation(poolId)
         poolId: poolId,
         marketPrice: marketPrice,
         poolCap: ethers.utils.formatEther(pool.maxContributions),
-        totalShares: pool.shareSupply,
-        contribution: participant.contribution
+        totalShares: pool.shareSupply.toNumber().toLocaleString('en-US'),
+        contribution: Math.max(parseFloat(ethers.utils.formatEther(participant.contribution)), parseFloat(ethers.utils.formatEther(participant.paid))) // contributions will be set to 0 if not used
         // funding will be set later, so don't worry about it
     }
+
+    Mustache.render(POOL_TEMPLATE, data);
 
     // get the total contributions --> whenever it finishes, update it on the frontend
     totalContributions(poolId).then(function (maxContributions) {

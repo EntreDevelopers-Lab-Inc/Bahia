@@ -27,17 +27,19 @@ function addPool(pool, nftData)
         pool['link'] = getIPFSLink(DEFAULT_IPFS_RAWLINK);
         pool['description'] = '';
     }
-    else {
+    else { 
         var metadata = JSON.parse(nftData['metadata']);
         pool['link'] = getIPFSLink(metadata['image']);
         pool['description'] = metadata['description'];
     }
 
+    pool['looksRare-href'] = LOOKSRARE_BASE + "/" + pool['address'] + "/" + pool["token-id"];
+
     // render the template
     var newPool = Mustache.render(POOL_TEMPLATE, pool);
 
     // add the pool to POOL_OBJECTS
-    POOL_OBJECTS.append(newPool);
+    POOL_OBJECTS.prepend(newPool);
 }
 
 async function addAllPools(pools)
@@ -80,18 +82,19 @@ async function loadPools()
         var pool = await POOL_DATA_CONTRACT.getPool(i);
         console.log(pool);
 
-
-        pool_json['current-contributions'] = totalContributions(pool[0])
-
         // is this improper JSON formattiing?
         var pool_json = {
             "pool_id": pool[0].toString(),
             "address": pool[4],
             "token-id": pool[1].toString(),
-            "cap": pool[2].toString(),
+            "cap": ethers.utils.formatEther(pool[2]),
             "creator": pool[5],
             "completed": pool[6]
         }
+
+        var totalContributionsObj = await totalContributions(pool[0]);
+
+        pool_json['current-contributions'] = totalContributionsObj.contributions; 
 
         await $.ajax({
             url: LOOKSRARE_API_BASE + 'orders',

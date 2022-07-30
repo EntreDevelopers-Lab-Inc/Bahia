@@ -120,9 +120,9 @@
       <img class="center" src="{{link}}">$
       <h5><span>{{name}}</span> #<span>{{token_id}}</span></h5>
       </td>
-    <td class="text-center">0.5 ETH</td>
+    <td class="text-center">{{market-price}} ETH</td>
     <td class="text-center">{{maxContributions}} ETH</td>
-    <td class="text-center">0.3 ETH</td>
+    <td class="text-center">{{current-contributions}} ETH</td>
     <td class="text-center"><a type="approval-btn" class="btn btn-info btn-radius trigger" 
       approved="true" onclick="selectPool('{{pool_id}}', '{{collection_address}}', '{{cap}}'), showJoinModal();">Join</a></td>
     <td class="text-center"><a type="approval-btn" class="btn btn-info btn-radius" approved="true" onclick="">LooksRare</a></td>
@@ -154,8 +154,11 @@
 {% endblock content %}
 
 {% block scripts %}
+  <script src="{{url_for('static', filename='assets/js/integrations/looksrare.js')}}"></script>
   <script src="{{url_for('static', filename='assets/js/modal.js')}}"></script>
   <script src="{{url_for('static', filename='assets/js/pool/ABIS.js')}}"></script>
   <script src="{{url_for('static', filename='assets/js/pool/contract.js')}}"></script>
+  <script src="{{url_for('static', filename='assets/js/pool/real-contributions.js')}}"></script>
+  <script src="{{url_for('static', filename='assets/js/integrations/weth/contract.js')}}"></script>
   <script src="{{url_for('static', filename='assets/js/pool/join/join.js')}}"></script>
 {% endblock %}

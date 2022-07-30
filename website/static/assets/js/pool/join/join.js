@@ -77,17 +77,45 @@ async function loadPools()
     pools_count = await POOL_DATA_CONTRACT.getPoolCount();
 
     for (var i = 0; i < pools_count; i++) {
-        var pool_array = await POOL_DATA_CONTRACT.getPool(i);
-        
+        var pool = await POOL_DATA_CONTRACT.getPool(i);
+        console.log(pool);
+
+
+        pool_json['current-contributions'] = totalContributions(pool[0])
+
         // is this improper JSON formattiing?
         var pool_json = {
-            "pool_id": pool_array[0].toString(),
-            "address": pool_array[4],
-            "token-id": pool_array[1].toString(),
-            "cap": pool_array[2].toString(),
-            "creator": pool_array[5],
-            "completed": pool_array[6]
+            "pool_id": pool[0].toString(),
+            "address": pool[4],
+            "token-id": pool[1].toString(),
+            "cap": pool[2].toString(),
+            "creator": pool[5],
+            "completed": pool[6]
         }
+
+        await $.ajax({
+            url: LOOKSRARE_API_BASE + 'orders',
+            method: 'GET',
+            data: {
+                isOrderAsk: true,
+                collection: pool_json['address'],
+                tokenId: pool_json['token-id'],
+                strategy: LOOKSRARE_BUY_NOW_STRATEGY,
+                status: ['VALID'],
+                pagination: {'first': 1},
+                sort: 'PRICE_DESC'
+            },
+            success: function (resp) {
+                if (resp.data.length == 0)
+                {
+                    pool_json['market-price'] = 'N/A';
+                }
+                else
+                {
+                    pool_json['market-price'] = ethers.utils.formatEther(resp.data[0].price);
+                }
+            }
+        });
 
         pools.push(pool_json);
         // See what this looks like in the console for debugging...

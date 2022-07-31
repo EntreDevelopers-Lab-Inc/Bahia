@@ -80,7 +80,6 @@ async function loadPools()
 
     for (var i = 0; i < pools_count; i++) {
         var pool = await POOL_DATA_CONTRACT.getPool(i);
-        console.log(pool);
 
         // is this improper JSON formattiing?
         var pool_json = {
@@ -119,10 +118,8 @@ async function loadPools()
                 }
             }
         });
-
+        console.log(pool_json)
         pools.push(pool_json);
-        // See what this looks like in the console for debugging...
-        console.log(pool_json);
     }
 
     // add all the nfts
@@ -143,10 +140,12 @@ function showJoinModal()
     $('#join-pool-name').text(poolData['name']);
 
     // set the collection address
-    $('#pool-nft-collection-address').text(poolData['collection_address']);
+    $('#pool-nft-collection-address').text(poolData['address']);
 
     // set the etherscan
-    $('#pool-nft-etherscan').attr('href', ETHERSCAN_BASE + poolData['collection_address']);
+    $('#pool-nft-looksrare').attr('href', LOOKSRARE_BASE + poolData['address'] + '/' + poolData['token-id']);
+    $('#pool-nft-etherscan').attr('href', ETHERSCAN_BASE + poolData['address']);
+
 
     // show the modal
     toggleModal();
@@ -158,16 +157,16 @@ function showJoinModal()
 }
 
 // select a pool (cannot be asynchronous because other data depends on it)
-function selectPool(id, address, cap)
+function selectPool(id, address, cap, collectionName, tokenId)
 {
-    // deselect the other selections
-    var selections = POOL_OBJECTS.find('tr');
+    // // deselect the other selections
+    // var selections = POOL_OBJECTS.find('tr');
 
-    // select this tab as active
-    for (var i = 0; i < selections.length; i += 1)
-    {
-        $(selections[i]).attr('class', 'tab-link');
-    }
+    // // select this tab as active
+    // for (var i = 0; i < selections.length; i += 1)
+    // {
+    //     $(selections[i]).attr('class', 'tab-link');
+    // }
 
     // enable the selected
     var selected = POOL_OBJECTS.find("tr[pool-id='" + id + "']");
@@ -176,14 +175,13 @@ function selectPool(id, address, cap)
     // write the sale dict
     poolData['address'] = address;
     poolData['id'] = id;
+    poolData['token-id'] = tokenId;
+    poolData['collection-name'] = collectionName;
     poolData['cap'] = cap;
 
-    // Need to traverse the dom to get the name
-    // # will give temp name for now
-    poolData['name'] = "Temp Name";  // for the modal
+    poolData['name'] = collectionName + " #" + tokenId;
 
-
-    poolData['name'] = selected.text();
+    console.log(poolData);
 }
 
 // load document function
@@ -192,23 +190,6 @@ async function loadDocument()
     // wait until the wallet is connected
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     let currentBlock = await provider.getBlockNumber();
-
-    // set the date attribute
-    var today = new Date();
-    var dd = today.getDate();
-    var mm = today.getMonth() + 1; //January is 0!
-    var yyyy = today.getFullYear();
-
-    if (dd < 10) {
-       dd = '0' + dd;
-    }
-
-    if (mm < 10) {
-       mm = '0' + mm;
-    }
-
-    today = yyyy + '-' + mm + '-' + dd;
-    document.getElementById("date").setAttribute("min", today);
 
     loadPools();
 }

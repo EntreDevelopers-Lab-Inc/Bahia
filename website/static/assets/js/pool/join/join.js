@@ -92,7 +92,7 @@ async function loadPools()
         }
 
         var totalContributionsObj = await totalContributions(pool[0]);
-
+        console.log(totalContributionsObj.contributions.toString())
         pool_json['current-contributions'] = totalContributionsObj.contributions; 
 
         await $.ajax({

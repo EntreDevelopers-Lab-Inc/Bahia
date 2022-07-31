@@ -113,7 +113,7 @@
 <template id="pool-template">
 
   <tr class="animation animated fadeInUp" data-animation="fadeInUp" data-animation-delay="0.2s" style="animation-delay: 0.2s; opacity: 1;" pool-id="{{pool_id}}">
-    <td class="tab-link">
+    <td>
       <img class="join-img" src="{{link}}">
       <h5 name="nft-name" class="text-center"><span>{{name}}</span> #<span>{{token-id}}</span></h5>
       </td>
@@ -121,7 +121,7 @@
     <td class="text-center">{{cap}} ETH</td>
     <td class="text-center"><span name="current-contributions">...</span> ETH</td>
     <td class="text-center"><a type="approval-btn" class="btn btn-info btn-radius trigger" 
-      approved="true" onclick="selectPool('{{pool_id}}', '{{address}}', '{{cap}}', '{{name}}', '{{token-id}}'), showJoinModal();">Join</a></td>
+      approved="true" onclick="selectPool('{{pool_id}}', '{{address}}', '{{cap}}', '{{name}}', '{{token-id}}'); showJoinModal();">Join</a></td>
     <td class = "text-center"><a class="btn btn-info btn-radius" id="join-nft-looksrare" href="{{looksRare-href}}" target="_blank">LooksRare</a></td>
   </tr>
 

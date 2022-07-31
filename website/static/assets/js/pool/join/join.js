@@ -176,8 +176,7 @@ function selectPool(id, address, cap, collectionName, tokenId)
     // }
 
     // enable the selected
-    var selected = POOL_OBJECTS.find("tr[pool-id='" + id + "']");
-    selected.attr('class', 'tab-link active');
+    var selected = POOL_OBJECTS.find("tr[pool-id='" + id + "']"); 
 
     // write the sale dict
     poolData['address'] = address;

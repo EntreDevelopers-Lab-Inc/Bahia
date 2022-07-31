@@ -1,4 +1,5 @@
 const POOL_TEMPLATE = $('#pool-template').html()
+const MIN_PERCENTAGE_TO_ASK = 8500;
 
 // a function to edit set the weth contribution (when the pencil is clicked)
 async function openSetWETHContribution()
@@ -197,7 +198,7 @@ async function closeSetter(poolId)
                 contributionData.show();
             }).catch(function (resp) {
                 alert('Error: ' + resp.message);
-            });;
+            });
     }
 
     // hide spinner, show check
@@ -209,15 +210,68 @@ async function closeSetter(poolId)
 // function to execute a pool
 async function execute(poolId)
 {
-    // call buyNow on smart contract
-    POOL_CONTRACT.buyNow(poolId, makerAsk, minPercentageToAsk, params).then(function (resp) {
-        // on success, update the frontend and show a message
-        alert('Congratulations! You can view your shares of the pool on LooksRare or OpenSea (viewing shares on bahia is under development)');
+    // get the pool from the contract
+    var pool = await POOL_DATA_CONTRACT.getPool(poolId);
 
-        // disable the execute button
+    // get the ask from the looksrare api
+    await $.ajax({
+        url: LOOKSRARE_API_BASE + 'orders',
+        method: 'GET',
+        data: {
+            isOrderAsk: true,
+            collection: pool.collection,
+            tokenId: pool.nftId.toNumber(),
+            strategy: LOOKSRARE_BUY_NOW_STRATEGY,
+            status: ['VALID'],
+            pagination: {'first': 1},
+            sort: 'PRICE_DESC'
+        },
+        success: function (resp) {
+            // shortcut variable
+            var data = resp.data[0];
+            console.log(data);
 
-        // make the contribution non-editable
+            // format the params
+            var params = ethers.utils.formatBytes32String(data.params);
+
+            // get the maker ask (if it fails as an array, just use the AbiCoder from ethers)
+            var makerAsk = [
+                data.isOrderAsk,
+                data.signer,
+                data.collectionAddress,
+                data.price,
+                data.tokenId,
+                data.amount,
+                data.strategy,
+                data.currencyAddress,
+                data.nonce,
+                data.startTime, // string?
+                data.endTime, // string
+                data.minPercentageToAsk, // string?
+                params,
+                data.v, // string?
+                data.r,
+                data.s
+            ];
+
+            console.log(makerAsk);
+
+            // call buyNow on smart contract
+            POOL_CONTRACT.buyNow(poolId, makerAsk, MIN_PERCENTAGE_TO_ASK, params).then(function (resp) {
+                // on success, update the frontend and show a message
+                alert('Congratulations! You can view your shares of the pool on LooksRare or OpenSea (viewing shares on Bahia is under development)');
+
+                // disable the execute button
+                var poolRow = $('tr[pool-id="' + poolId + '"]');
+                poolRow.find('[name="execute-btn"]').attr('class', 'btn btn-info btn-radius disabled');
+
+                // make the contribution non-editable
+                poolRow.find('[class="fa fa-pencil"]').hide();
+            });
+
+        }
     });
+
 }
 
 // function to update the funding
@@ -319,8 +373,9 @@ async function addParticipation(poolId)
     // if the pool is completed, just show that it is fully funded
     if (pool.completed)
     {
-        fundingTag.text('[FULLY FUNDED]');
+        poolRow.find('[name="funding-block"]').text('[FULLY FUNDED]');
         contributionTag.text(participant.paid);
+        poolRow.find('[class="fa fa-pencil"]').hide();
     }
     // else, show the total contributions
     else

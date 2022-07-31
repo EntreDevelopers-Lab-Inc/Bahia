@@ -17,8 +17,14 @@ var getCall;
 
 
 // synchronous function for adding pool (will want to do this sequentially to maintain structure for the user)
-function addPool(pool, nftData)
+async function addPool(pool)
 {
+    var collection_address = pool['address'];
+    var token_id = pool['token-id'];
+
+    // get the nftData
+    nftData = await Moralis.Web3API.token.getTokenIdMetadata( {address: collection_address, token_id: token_id, chain: CHAIN_ID_STR});
+
     // Get necessary metadata from token_uri
     pool['name'] = nftData['name'];
 
@@ -40,6 +46,16 @@ function addPool(pool, nftData)
 
     // add the pool to POOL_OBJECTS
     POOL_OBJECTS.prepend(newPool);
+
+    // get the total contributions
+    totalContributions(pool.pool_id).then(function (resp) {
+        // find the object
+        var poolRow = $('tr[pool-id= ' + pool.pool_id + ']');
+        console.log(poolRow);
+
+        // write the total contributions
+        poolRow.find('[name="current-contributions"]').text(resp.contributions);
+    });
 }
 
 async function addAllPools(pools)
@@ -47,14 +63,7 @@ async function addAllPools(pools)
     // iterate over the nfts and add them to the list
     for (var i = 0; i < pools_count; i += 1)
     {
-        // Only add pools that aren't completed...
-        if (!pools[i]['completed']) {
-            var collection_address = pools[i]['address'];
-            var token_id = pools[i]['token-id'];
-            nftData = await Moralis.Web3API.token.getTokenIdMetadata( {address: collection_address, token_id: token_id, chain: CHAIN_ID_STR});
-            addPool(pools[i], nftData);
-
-        }
+        addPool(pools[i]);
     }
 
     // if the number of children less than the limit, there not another page, so hide the next button
@@ -80,7 +89,6 @@ async function loadPools()
 
     for (var i = 0; i < pools_count; i++) {
         var pool = await POOL_DATA_CONTRACT.getPool(i);
-        console.log(pool);
 
         // is this improper JSON formattiing?
         var pool_json = {
@@ -91,10 +99,6 @@ async function loadPools()
             "creator": pool[5],
             "completed": pool[6]
         }
-
-        var totalContributionsObj = await totalContributions(pool[0]);
-
-        pool_json['current-contributions'] = totalContributionsObj.contributions; 
 
         await $.ajax({
             url: LOOKSRARE_API_BASE + 'orders',
@@ -120,13 +124,13 @@ async function loadPools()
             }
         });
 
-        pools.push(pool_json);
-        // See what this looks like in the console for debugging...
-        console.log(pool_json);
+        // if the pool isn't completed, add it
+        if (!pool_json.completed)
+        {
+            // add the pool
+            addPool(pool_json)
+        }
     }
-
-    // add all the nfts
-    addAllPools(pools);
 }
 
 // show modal

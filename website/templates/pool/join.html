@@ -1,6 +1,9 @@
 {% extends "layout.html" %}
 
 {% block content %}
+<link href="{{url_for('static', filename='assets/css/pool/join/join.css')}}" rel="stylesheet"/>
+<link href="{{url_for('static', filename='assets/css/nftTools/nftObjects.css')}}" rel="stylesheet"/>
+<link href="{{url_for('static', filename='assets/css/modal.css')}}" rel="stylesheet"/>
 <section id="sell">
   <canvas class="transparent_effect fixed" id="banner_canvas" width="1278" height="875">
    </canvas>
@@ -72,10 +75,10 @@
             </div>
             <div class="row">
               <div class="col-6">
-                <a class="btn btn-info btn-radius" id="pool-nft-etherscan" href="https://etherscan.io" target="_blank">Etherscan</a>
+                <a class="btn btn-info btn-radius" id="pool-nft-etherscan" href="" target="_blank">Etherscan</a>
               </div>
               <div class="col-6">
-                <a class="btn btn-info btn-radius" id="sell-nft-looksrare" href="https://looksrare.org" target="_blank">LooksRare</a>
+                <a class="btn btn-info btn-radius" id="pool-nft-looksrare" href="" target="_blank">LooksRare</a>
               </div>
               <div class="form-group col-3"></div>
             </div>
@@ -85,12 +88,6 @@
                 <div class="input-group-append">
                    <span class="input-group-text form-control" style="opacity: 1;"> ETH </span>
                 </div>
-              </div>
-              <div class="form-group col-md-12 input-group-append">
-                <div class="input-group-append">
-                   <span class="input-group-text form-control" style="opacity: 1;"> Expiration: </span>
-                </div>
-                <input type="date" id="date" class="form-control" required="" min="2022-07-08">
               </div>
               <div class="col-12">
                 <a class="btn btn-default btn-radius btn-block text-center" id="join-pool" onclick="joinPool();">Join Pool</a>
@@ -117,14 +114,14 @@
 
   <tr class="animation animated fadeInUp" data-animation="fadeInUp" data-animation-delay="0.2s" style="animation-delay: 0.2s; opacity: 1;" pool-id="{{pool_id}}">
     <td class="tab-link">
-      <img class="center" src="{{link}}">
-      <h5><span>{{name}}</span> #<span>{{token-id}}</span></h5>
+      <img class="join-img" src="{{link}}">
+      <h5 name="nft-name" class="text-center"><span>{{name}}</span> #<span>{{token-id}}</span></h5>
       </td>
     <td class="text-center">{{market-price}} ETH</td>
     <td class="text-center">{{cap}} ETH</td>
     <td class="text-center"><span name="current-contributions">...</span> ETH</td>
     <td class="text-center"><a type="approval-btn" class="btn btn-info btn-radius trigger" 
-      approved="true" onclick="selectPool('{{pool_id}}', '{{collection_address}}', '{{cap}}'), showJoinModal();">Join</a></td>
+      approved="true" onclick="selectPool('{{pool_id}}', '{{address}}', '{{cap}}', '{{name}}', '{{token-id}}'), showJoinModal();">Join</a></td>
     <td class = "text-center"><a class="btn btn-info btn-radius" id="join-nft-looksrare" href="{{looksRare-href}}" target="_blank">LooksRare</a></td>
   </tr>
 

@@ -1,3 +1,5 @@
+
+
 // load the nft template and objects
 const POOL_TEMPLATE = $('#pool-template').html();
 var POOL_OBJECTS = $('#pool-objects');
@@ -166,16 +168,6 @@ function showJoinModal()
 // select a pool (cannot be asynchronous because other data depends on it)
 function selectPool(id, address, cap, collectionName, tokenId)
 {
-    // // deselect the other selections
-    // var selections = POOL_OBJECTS.find('tr');
-
-    // // select this tab as active
-    // for (var i = 0; i < selections.length; i += 1)
-    // {
-    //     $(selections[i]).attr('class', 'tab-link');
-    // }
-
-    // enable the selected
     var selected = POOL_OBJECTS.find("tr[pool-id='" + id + "']"); 
 
     // write the sale dict
@@ -188,6 +180,66 @@ function selectPool(id, address, cap, collectionName, tokenId)
     poolData['name'] = collectionName + " #" + tokenId;
 
     console.log(poolData);
+}
+
+async function joinPool()
+{
+    var poolId = poolData['id'];
+    var contribution = $('#contribution').val(); 
+
+    // get the weth balance
+    var wethBalance = parseFloat(ethers.utils.formatEther(await WETH_CONTRACT.balanceOf(window.ethereum.selectedAddress)));
+
+    // get the weth allowance
+    var wethAllowance = parseFloat(ethers.utils.formatEther(await WETH_CONTRACT.allowance(window.ethereum.selectedAddress, POOL_CONTRACT_ADDRESS)));
+    
+    if (poolId == undefined)
+    {
+        alert('Must select pool');
+        return;
+    }
+
+    if (!Boolean(parseFloat(contribution)) || contribution == undefined) {
+        alert('Must contribute more than 0 WETH.');
+        return;
+    }
+
+    if (contribution > wethBalance)
+    {
+        alert('Cannot set a contribution of ' + contribution + ' WETH, as your WETH balance is ' + wethBalance + ' WETH.');
+        return;
+    }
+
+    // show the right stuff
+    $('#join-pool').hide();
+    $('#joining-loading').show();
+
+    var newWETHAllowance = (parseFloat(contribution) + parseFloat(wethAllowance)).toString();
+    console.log(newWETHAllowance); 
+
+    await WETH_CONTRACT.approve(POOL_CONTRACT_ADDRESS, ethers.utils.parseEther(newWETHAllowance)).then( function (resp) {
+        resp.wait(CONFIRMED_BLOCKS);
+    }).catch((error) => {
+        alert (error.message);
+    });
+
+    await POOL_CONTRACT.joinPool(poolId, ethers.utils.parseEther(contribution.toString())).then( async function (resp) { 
+        console.log("Does this execute?");
+        toggleModal();
+
+        // clear the form
+        $('#join-form')[0].reset();
+
+        $('#join-pool').show();
+        $('#joining-loading').hide();  
+
+    }).catch((error) => {
+        alert(error.message);
+
+        // put the button back
+        $('#join-pool').show();
+        $('#joining-loading').hide(); 
+    });
 }
 
 // load document function

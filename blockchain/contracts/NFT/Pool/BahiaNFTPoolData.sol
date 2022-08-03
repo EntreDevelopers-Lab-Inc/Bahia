@@ -57,6 +57,7 @@ contract BahiaNFTPoolData is
 
     /**
      @notice returns pool information from a poolId
+     @param poolId the Pool ID
      */
     function getPool(uint256 poolId) public view returns (BahiaNFTPoolTypes.Pool memory)
     {
@@ -77,6 +78,11 @@ contract BahiaNFTPoolData is
         emit PoolCreated(newPool);
     }
 
+    /**
+     @notice returns a participant id from an address
+     @param poolId the pool ID
+     @param _address an address
+     */
     function getParticipantIdFromAddress(uint256 poolId, address _address) external view returns (uint256) {
         return addressToParticipantId[poolId][_address];
     }
@@ -89,10 +95,19 @@ contract BahiaNFTPoolData is
         return poolIdToParticipants[poolId][_participantId];
     }
 
+    /**
+     @notice returns participant information from an address
+     @param poolId the pool ID
+     @param _address an address
+     */
     function getParticipantFromAddress (uint256 poolId, address _address) external view returns (BahiaNFTPoolTypes.Participant memory) {
         return _getParticipantFromAddress(poolId, _address);
     } 
 
+    /**
+    @notice returns participant information of the function caller
+    @param poolId the pool ID
+     */
     function getMyParticipantInfo (uint256 poolId) external view returns (BahiaNFTPoolTypes.Participant memory) {
         return _getParticipantFromAddress(poolId, msg.sender);
     }
@@ -106,19 +121,32 @@ contract BahiaNFTPoolData is
         pools[_pool.poolId] = _pool;
     }
 
-    // getter funtion to get the nextParticipantId of a pool
+    /**
+     @notice returns the next participant ID of a pool
+     @param poolId the pool ID
+     */
     function getNextParticipantId(uint256 poolId) external view returns (uint256)
     {
         return pools[poolId].nextParticipantId;
     } 
 
 
-    // Adjusted by 1 considering all pool.count are indexed @ 1 
+    
+    /**
+     @notice returns the number of participants in a given pool
+     @param poolId the pool ID
+     */
     function getNumberOfParticipants(uint256 poolId) external view returns(uint256) {
+        // Adjusted by 1 considering all pool.count are indexed @ 1 
        return pools[poolId].nextParticipantId - 1; 
     }
 
     // getter function to get a pool's participant (based on an index)
+    /**
+     @notice returns a participant information of a pool given a participant ID
+     @param poolId the pool ID
+     @param participantId the participant ID 
+     */
     function getParticipant(uint256 poolId, uint256 participantId) public view returns (BahiaNFTPoolTypes.Participant memory)
     {    
         // Return the participant; 

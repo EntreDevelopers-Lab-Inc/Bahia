@@ -46,12 +46,18 @@ contract BahiaNFTPoolData is
     }
 
     // ability to see pool count
+
+    /**
+     @notice returns the number of pools
+     */
     function getPoolCount() public view returns (uint256)
     {
         return _currentIndex;
     }
 
-    // getter function for the pool
+    /**
+     @notice returns pool information from a poolId
+     */
     function getPool(uint256 poolId) public view returns (BahiaNFTPoolTypes.Pool memory)
     {
         if (poolId >= _currentIndex) revert NoPoolFound();
@@ -69,6 +75,26 @@ contract BahiaNFTPoolData is
         unchecked { _currentIndex++; }
 
         emit PoolCreated(newPool);
+    }
+
+    function getParticipantIdFromAddress(uint256 poolId, address _address) external view returns (uint256) {
+        return addressToParticipantId[poolId][_address];
+    }
+
+    // function to get id from pool
+    function _getParticipantFromAddress (uint256 poolId, address _address) internal view returns (BahiaNFTPoolTypes.Participant memory) {
+        if (poolId >= _currentIndex) revert NoPoolFound(); 
+
+        uint256 _participantId = addressToParticipantId[poolId][_address];
+        return poolIdToParticipants[poolId][_participantId];
+    }
+
+    function getParticipantFromAddress (uint256 poolId, address _address) external view returns (BahiaNFTPoolTypes.Participant memory) {
+        return _getParticipantFromAddress(poolId, _address);
+    } 
+
+    function getMyParticipantInfo (uint256 poolId) external view returns (BahiaNFTPoolTypes.Participant memory) {
+        return _getParticipantFromAddress(poolId, msg.sender);
     }
 
     // function to update a pool
@@ -98,10 +124,6 @@ contract BahiaNFTPoolData is
         // Return the participant; 
         // Since participantIDs are indexed @ 1 and mappings are indexed @ 0, need to add 1 to the participantId
         return poolIdToParticipants[poolId][participantId];
-    }
-
-    function getParticipantIdFromAddress(uint256 poolId, address _address) external view returns (uint256) {
-        return addressToParticipantId[poolId][_address];
     }
 
     // ability to add a participant to a pool (allows another sequential bid)

@@ -50,7 +50,7 @@ contract BahiaNFTPoolData is
     /**
      @notice returns the number of pools
      */
-    function getPoolCount() public view returns (uint256)
+    function getPoolCount() external view returns (uint256)
     {
         return _currentIndex;
     }
@@ -59,7 +59,7 @@ contract BahiaNFTPoolData is
      @notice returns pool information from a poolId
      @param poolId the Pool ID
      */
-    function getPool(uint256 poolId) public view returns (BahiaNFTPoolTypes.Pool memory)
+    function getPool(uint256 poolId) external view returns (BahiaNFTPoolTypes.Pool memory)
     {
         if (poolId >= _currentIndex) revert NoPoolFound();
         // else return a real pool
@@ -147,7 +147,7 @@ contract BahiaNFTPoolData is
      @param poolId the pool ID
      @param participantId the participant ID 
      */
-    function getParticipant(uint256 poolId, uint256 participantId) public view returns (BahiaNFTPoolTypes.Participant memory)
+    function getParticipant(uint256 poolId, uint256 participantId) external view returns (BahiaNFTPoolTypes.Participant memory)
     {    
         // Return the participant; 
         // Since participantIDs are indexed @ 1 and mappings are indexed @ 0, need to add 1 to the participantId

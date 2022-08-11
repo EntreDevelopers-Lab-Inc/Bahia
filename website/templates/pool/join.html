@@ -62,7 +62,7 @@
           <div class="title_default_light text-center">
             <h5>Sale Information</h5>
           </div>
-          <form id="sell-form" class="field_form">
+          <form id="join-form" class="field_form">
             <div class="row">
               <div class="form-group col-md-12">
                 <p>
@@ -86,7 +86,7 @@
               <div class="form-group col-md-12 input-group-append">
                 <input type="number" class="form-control" id="contribution" style="padding-right:20px;" placeholder="Contribution" step="0.000000001" required="">
                 <div class="input-group-append">
-                   <span class="input-group-text form-control" style="opacity: 1;"> ETH </span>
+                   <span class="input-group-text form-control" style="opacity: 1;"> WETH </span>
                 </div>
               </div>
               <div class="col-12">
@@ -117,9 +117,9 @@
       <img class="join-img" src="{{link}}">
       <h5 name="nft-name" class="text-center"><span>{{name}}</span> #<span>{{token-id}}</span></h5>
       </td>
-    <td class="text-center">{{market-price}} ETH</td>
-    <td class="text-center">{{cap}} ETH</td>
-    <td class="text-center"><span name="current-contributions">...</span> ETH</td>
+    <td class="text-center">{{market-price}} WETH</td>
+    <td class="text-center">{{cap}} WETH</td>
+    <td class="text-center"><span name="current-contributions">...</span> WETH</td>
     <td class="text-center"><a type="approval-btn" class="btn btn-info btn-radius trigger" 
       approved="true" onclick="selectPool('{{pool_id}}', '{{address}}', '{{cap}}', '{{name}}', '{{token-id}}'); showJoinModal();">Join</a></td>
     <td class = "text-center"><a class="btn btn-info btn-radius" id="join-nft-looksrare" href="{{looksRare-href}}" target="_blank">LooksRare</a></td>
@@ -155,7 +155,7 @@
   <script src="{{url_for('static', filename='assets/js/integrations/weth/abis.js')}}"></script>
   <script src="{{url_for('static', filename='assets/js/integrations/weth/contract.js')}}"></script>
   <script src="{{url_for('static', filename='assets/js/modal.js')}}"></script>
-  <script src="{{url_for('static', filename='assets/js/pool/ABIS.js')}}"></script>
+  <script src="{{url_for('static', filename='assets/js/pool/abis.js')}}"></script>
   <script src="{{url_for('static', filename='assets/js/pool/contract.js')}}"></script>
   <script src="{{url_for('static', filename='assets/js/pool/real-contributions.js')}}"></script>
   <script src="{{url_for('static', filename='assets/js/pool/join/join.js')}}"></script>

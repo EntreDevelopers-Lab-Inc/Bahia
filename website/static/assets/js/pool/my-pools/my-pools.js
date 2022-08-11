@@ -248,13 +248,11 @@ async function execute(poolId)
                 data.startTime, // string?
                 data.endTime, // string
                 data.minPercentageToAsk, // string?
-                params,
+                [],
                 data.v, // string?
                 data.r,
                 data.s
             ];
-
-            console.log(makerAsk);
 
             // call buyNow on smart contract
             POOL_CONTRACT.buyNow(poolId, makerAsk, MIN_PERCENTAGE_TO_ASK, params).then(function (resp) {
@@ -264,6 +262,7 @@ async function execute(poolId)
                 // disable the execute button
                 var poolRow = $('tr[pool-id="' + poolId + '"]');
                 poolRow.find('[name="execute-btn"]').attr('class', 'btn btn-info btn-radius disabled');
+                poolRow.find('[name="funding-block"]').text('FULLY FUNDED');
 
                 // make the contribution non-editable
                 poolRow.find('[class="fa fa-pencil"]').hide();

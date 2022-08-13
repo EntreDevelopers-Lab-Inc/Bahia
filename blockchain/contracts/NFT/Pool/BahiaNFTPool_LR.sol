@@ -37,7 +37,7 @@ contract BahiaNFTPool_LR is
     function _collectWETH(uint256 poolId, uint256 totalPrice) internal returns (uint256)
     {
         // get the next participant id, which should be 1 + number of participants
-        uint256 nextParticipantId = poolData.getNextParticipantId(poolId);(poolId);
+        uint256 nextParticipantId = poolData.getNextParticipantId(poolId);
 
         // have a participant data member to which to store data
         BahiaNFTPoolTypes.Participant memory participant;
@@ -60,7 +60,7 @@ contract BahiaNFTPool_LR is
                 {
                     // set the paid amount to the minimum
                     participant.paid = _min(participant.contribution, (totalPrice - accessibleWETH));
-
+ 
                     // push payment update to data contract (no neeed to check success, as we got the participant from the contract)
                     poolData.setParticipant(poolId, participant);
 
@@ -73,6 +73,9 @@ contract BahiaNFTPool_LR is
                     if (!success) revert FailedWETHTransfer();
                 }
             }
+            
+            // Delete all unnecessary info
+            poolData._exitPool(poolId, i);
             
             unchecked{ i++; }
         }
@@ -94,7 +97,8 @@ contract BahiaNFTPool_LR is
     function buyNow(uint256 poolId, OrderTypes.MakerOrder calldata makerAsk, uint256 minPercentageToAsk, bytes calldata params) external whenNotPaused callerIsUser
     {
         // pool storage variable
-        BahiaNFTPoolTypes.Pool memory pool = _safePool(poolId);
+        BahiaNFTPoolTypes.Pool memory pool = poolData.getPool(poolId);
+        _safePool(pool);   
 
         if ((pool.collection != makerAsk.collection) || (pool.nftId != makerAsk.tokenId)) revert IncorrectMakerAsk();
 

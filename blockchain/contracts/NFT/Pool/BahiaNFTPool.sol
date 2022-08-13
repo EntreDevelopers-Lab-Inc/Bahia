@@ -88,10 +88,11 @@ contract BahiaNFTPool is
         // NOTE: no reason to check for a non-zero contribution, as this wastes gas, and a malicious attempt could just set their contribution to 0 later (which cannot be changed, as people need to maintain the ability to leave the pool)
 
         // get the actual pool
-        BahiaNFTPoolTypes.Pool memory pool = _safePool(poolId);
+        BahiaNFTPoolTypes.Pool memory _pool = poolData.getPool(poolId);
+        _safePool(_pool);
 
         // if the pool has been completed, it cannot be joined
-        if (pool.completed) revert PoolCompleted();
+        if (_pool.completed) revert PoolCompleted();
 
         if(poolData.getParticipantIdFromAddress(poolId, msg.sender) != 0) revert AlreadyJoinedPool(); 
 
@@ -114,21 +115,27 @@ contract BahiaNFTPool is
     function setContribution(uint256 poolId, uint256 participantId, uint256 newContribution) external whenNotPaused
     {
         // get the participant
-        BahiaNFTPoolTypes.Participant memory participant = _safeParticipant(poolId, participantId);
+        BahiaNFTPoolTypes.Participant memory _participant = poolData.getParticipant(poolId, participantId);
+        
+        _safeParticipant(_participant);
         
         // ensure that the participant is the only one who can setContribution
-        if(msg.sender != participant.participantAddress) revert NotParticipant();
+        if(msg.sender != _participant.participantAddress) revert NotParticipant();
 
         // ensure that the balance is at least the contribution
         _checkAllowance(newContribution);
 
         // set the contribution if it passes the above constraints
         // this setter checks that the participant is the origin of this transaction
-        poolData.setContribution(poolId, participant.participantId, newContribution);
+        poolData.setContribution(poolId, _participant.participantId, newContribution);
     }
 
-    function exitPool(uint256 poolId, uint256 participantId) external whenNotPaused {
-        poolData._exitPool(poolId, participantId);
+    function exitPool(uint256 poolId) external whenNotPaused {
+        
+        BahiaNFTPoolTypes.Participant memory _participant = poolData.getParticipantFromAddress(poolId, msg.sender);
+        
+        if (_participant.participantAddress != msg.sender) revert NotParticipant(); 
+        poolData._exitPool(poolId, _participant.participantId);
     }
 
 
@@ -136,59 +143,51 @@ contract BahiaNFTPool is
     function claimShares(uint256 poolId, uint256 participantId) external whenNotPaused callerIsUser
     {
         // get the pool (used to get the end purchase price and completion information)
-        BahiaNFTPoolTypes.Pool memory pool = _safePool(poolId);
+        BahiaNFTPoolTypes.Pool memory _pool = poolData.getPool(poolId);
+        _safePool(_pool);
 
         // revert if not completed
-        if (!pool.completed) revert PoolIncomplete();
+        if (!_pool.completed) revert PoolIncomplete();
 
         // get the participant
-        BahiaNFTPoolTypes.Participant memory participant = _safeParticipant(poolId, participantId);
+        BahiaNFTPoolTypes.Participant memory _participant = poolData.getParticipant(poolId, participantId);
+         _safeParticipant(_participant);
 
         // revert if paid is 0 (for BOTH participants that were not needed to fund AND participants that have already collected their share)
-        if (participant.paid == 0) revert NoShares();
+        if (_participant.paid == 0) revert NoShares();
 
         // mark that the shares have been distributed by setting paid to 0
-        participant.paid = 0;
+        _participant.paid = 0;
 
         // upload the participant to the data contract
-        poolData.setParticipant(poolId, participant);
+        poolData.setParticipant(poolId, _participant);
 
         // get the vault
-        IVault vault = IVault(fractionalArt.vaults(pool.vaultId));
+        IVault vault = IVault(fractionalArt.vaults(_pool.vaultId));
 
         // distribute these fractionalized shares
         IFERC1155 sharesContract = IFERC1155(fractionalArt.fnft());
         
-        sharesContract.safeTransferFrom(address(this), participant.participantAddress, vault.fractionsID(), (pool.shareSupply * participant.paid / pool.endPurchasePrice), bytes(""));
+        sharesContract.safeTransferFrom(address(this), _participant.participantAddress, vault.fractionsID(), (_pool.shareSupply * _participant.paid / _pool.endPurchasePrice), bytes(""));
     }
 
     // function to calculate minimums
-    function _min(uint256 a, uint256 b) internal returns (uint256)
+    function _min(uint256 a, uint256 b) internal pure returns (uint256)
     {
         return a <= b ? a : b;
     }
 
     // get a pool safely
-    function _safePool(uint256 poolId) internal returns (BahiaNFTPoolTypes.Pool memory)
+    function _safePool(BahiaNFTPoolTypes.Pool memory _pool) internal 
     {
-        BahiaNFTPoolTypes.Pool memory pool = poolData.getPool(poolId);
-
         // if there is no pool, revert
-        if (pool.creator == address(0)) revert NoPoolFound();
-
-        // else, just return the pool
-        return pool;
+        if (_pool.creator == address(0)) revert NoPoolFound();
     }
 
     // get a participant safely (no checks needed, out of range throws immediate reversion)
-    function _safeParticipant(uint256 poolId, uint256 participantId) internal returns (BahiaNFTPoolTypes.Participant memory)
+    function _safeParticipant(BahiaNFTPoolTypes.Participant memory _participant) internal 
     {
-        BahiaNFTPoolTypes.Participant memory participant = poolData.getParticipant(poolId, participantId);
-
-        if (participant.participantAddress == address(0)) revert NoParticipantFound();
-
-        // if it passes checks, return the participant
-        return participant;
+        if (_participant.participantAddress == address(0)) revert NoParticipantFound();
     }
 
     // function to check the allowance

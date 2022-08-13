@@ -208,12 +208,9 @@ contract BahiaNFTPoolData is
         // check if the pool exists
         if (poolId >= _currentIndex) revert NoPoolFound();
 
-        // check that the participant is the transaction sender
-        if (poolIdToParticipants[poolId][participantId].participantAddress != tx.origin) revert NotParticipant(); 
-
         delete poolIdToParticipants[poolId][participantId].contribution;
+        delete poolIdToParticipants[poolId][participantId].participantId;
         delete addressToParticipantId[poolId][tx.origin];
-
     }
 
 

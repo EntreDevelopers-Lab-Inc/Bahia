@@ -38,5 +38,7 @@ interface IBahiaNFTPoolData {
     // set the contribution
     function setContribution(uint256 poolId, uint256 participantId, uint256 newContribution) external;
 
-    function _exitPool(uint256 poolId, uint256 participantId) external; 
+    function _exitPool(uint256 poolId, uint256 participantId) external;
+
+    function getParticipantFromAddress (uint256 poolId, address _address) external view returns (BahiaNFTPoolTypes.Participant memory);
 }

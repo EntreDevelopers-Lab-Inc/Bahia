@@ -64,7 +64,7 @@ def test_exit_pool():
         assert data_contract.poolIdToParticipants(0, i) == (i, accounts[i], contribution, 0)
         
         participantId = data_contract.getParticipantIdFromAddress(0, accounts[i])
-        pool_contract.exitPool(0, participantId, {'from': accounts[i]})
+        pool_contract.exitPool(0, {'from': accounts[i]})
 
         assert data_contract.getParticipant(0, participantId)[2] == 0
 

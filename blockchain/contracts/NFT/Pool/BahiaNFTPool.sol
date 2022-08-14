@@ -133,9 +133,10 @@ contract BahiaNFTPool is
     function exitPool(uint256 poolId) external whenNotPaused {
         
         BahiaNFTPoolTypes.Participant memory _participant = poolData.getParticipantFromAddress(poolId, msg.sender);
+        _safeParticipant(_participant);
         
         if (_participant.participantAddress != msg.sender) revert NotParticipant(); 
-        poolData._exitPool(poolId, _participant.participantId);
+        poolData.deleteParticipantData(poolId, _participant.participantId);
     }
 
 
@@ -156,11 +157,8 @@ contract BahiaNFTPool is
         // revert if paid is 0 (for BOTH participants that were not needed to fund AND participants that have already collected their share)
         if (_participant.paid == 0) revert NoShares();
 
-        // mark that the shares have been distributed by setting paid to 0
-        _participant.paid = 0;
-
-        // upload the participant to the data contract
-        poolData.setParticipant(poolId, _participant);
+        // mark the participant's payment as 0
+        poolData.setParticipantPayment(poolId, _participant.participantId, 0);
 
         // get the vault
         IVault vault = IVault(fractionalArt.vaults(_pool.vaultId));

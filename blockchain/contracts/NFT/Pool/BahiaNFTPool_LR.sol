@@ -44,6 +44,10 @@ contract BahiaNFTPool_LR is
 
         // internally count the amount of WETH that the contract has access to
         uint256 accessibleWETH;
+        
+        bool success;
+
+        uint256 paid;
 
         // iterate over all the addresses in the pool
         // participantIds should always start @ 1...
@@ -52,6 +56,9 @@ contract BahiaNFTPool_LR is
             // get the participant 
             participant = poolData.getParticipant(poolId, i);
 
+            // reset here to prevent re-entrancy
+            paid = 0;
+
             // check if the participant is contributing at all (cheaper if you check iteratively)
             if (participant.contribution > 0)
             {
@@ -59,24 +66,28 @@ contract BahiaNFTPool_LR is
                 if ((weth.allowance(participant.participantAddress, address(this)) >= participant.contribution) && (weth.balanceOf(participant.participantAddress) >= participant.contribution))
                 {
                     // set the paid amount to the minimum
-                    participant.paid = _min(participant.contribution, (totalPrice - accessibleWETH));
- 
+                    paid = _min(participant.contribution, (totalPrice - accessibleWETH));
+
                     // push payment update to data contract (no neeed to check success, as we got the participant from the contract)
-                    poolData.setParticipant(poolId, participant);
+                    poolData.setParticipantPayment(poolId, participant.participantId, paid);
+
+                    // Set contribution in data contract to 0 to prevent re-entrancy
+                    poolData.deleteParticipantData(poolId, i);
 
                     // add the paid amount to the accessible weth
-                    accessibleWETH += participant.paid;
+                    accessibleWETH += paid;
 
                     // collect weth from the participant up to their contribution OR taker order (this is optimal if we guarantee that the contract has enough WETH to buy it --> check off-chain)
-                    bool success = weth.transferFrom(participant.participantAddress, address(this), participant.paid);
-
+                    success = false;
+                    success = weth.transferFrom(participant.participantAddress, address(this), paid);
                     if (!success) revert FailedWETHTransfer();
                 }
             }
-            
-            // Delete all unnecessary info
-            poolData._exitPool(poolId, i);
-            
+            else {
+                // Delete all unnecessary info
+                poolData.deleteParticipantData(poolId, i);
+            }
+
             unchecked{ i++; }
         }
 

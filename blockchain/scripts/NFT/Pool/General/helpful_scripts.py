@@ -14,7 +14,9 @@ def deploy():
     WETH10.deploy({'from': admin})
 
     # deploy the data contract
-    BahiaNFTPoolData.deploy({'from': admin})
+    data_contract = BahiaNFTPoolData.deploy({'from': admin})
+
+    data_contract.setAllowedPermission(admin, True, {'from': admin})
 
     # deploy the bahia nft pool and fish contracts
     Fish.deploy({'from': admin})

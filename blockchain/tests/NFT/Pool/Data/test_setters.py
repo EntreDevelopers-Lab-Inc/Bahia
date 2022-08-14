@@ -41,6 +41,7 @@ POOL2 = (
 def deploy_contracts():
     admin_account = get_admin_account()
     data_contract = BahiaNFTPoolData.deploy({"from": admin_account})
+    data_contract.setAllowedPermission(admin_account, True, {"from": admin_account})
 
 
 def test_add_pool():
@@ -138,7 +139,7 @@ def test_add_participants():
     pool_id = 0
 
     participants = [
-        [1, "0x0000000000000000000000000000000000000007", 0, 0],
+        [1, admin_account.address, 0, 0],
         [2, "0x0000000000000000000000000000000000000008", 0, 0],
         [3, "0x0000000000000000000000000000000000000009", 0, 0]
     ]
@@ -187,28 +188,6 @@ def test_add_participants():
     assert data_contract.getNumberOfParticipants(0) == 3
 
 
-# Number of participants should be 3 from prior tests...
-
-def test_set_participant():
-    data_contract = BahiaNFTPoolData[-1]
-    admin_account = get_admin_account()
-    other_account = get_dev_account()
-    pool_id = 0
-
-    assert data_contract.getNumberOfParticipants(0) == 3
-
-    new_participant_one = [1, admin_account, 1000, 100]
-
-    # Pool must exist to set participant...
-    with brownie.reverts():
-        data_contract.setParticipant(5, new_participant_one, {
-                                     "from": admin_account})
-
-    data_contract.setParticipant(pool_id, new_participant_one, {
-                                 "from": admin_account})
-    assert data_contract.getParticipant(pool_id, new_participant_one[0]) == new_participant_one
-
-
 def test_set_contribution():
     data_contract = BahiaNFTPoolData[-1]
     admin_account = get_admin_account()
@@ -237,9 +216,6 @@ def test_set_contribution():
     with brownie.reverts():
         data_contract.setContribution(
             10, participant_id, contribution, {"from": admin_account})
-    
-
-
 
 
 def test_set_allowed_permission():

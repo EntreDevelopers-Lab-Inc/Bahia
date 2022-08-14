@@ -3,6 +3,7 @@
 pragma solidity ^0.8.12;
 
 import "../../../interfaces/NFT/Pool/IBahiaNFTPoolData.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 
 error NoPoolFound();
 error NotAllowed();
@@ -11,7 +12,8 @@ error IncorrectParticipantId();
 error IncorrectPoolId();
 
 contract BahiaNFTPoolData is
-    IBahiaNFTPoolData
+    IBahiaNFTPoolData,
+    Ownable
 {
     // events
     event PoolCreated(BahiaNFTPoolTypes.Pool newPool);
@@ -33,10 +35,7 @@ contract BahiaNFTPoolData is
 
     uint256 private _currentIndex; 
 
-    constructor()
-    {
-        allowedContracts[msg.sender] = true;
-    }
+    constructor(){}
 
     // a modifier that allows contracts to access
     modifier onlyAllowed()
@@ -176,17 +175,11 @@ contract BahiaNFTPoolData is
         emit ParticipantAdded(poolId, newParticipant);
     }
 
-    // setter function to update participant information
-    function setParticipant(uint256 poolId, BahiaNFTPoolTypes.Participant memory participant) external onlyAllowed
-    {
+    function setParticipantPayment(uint256 poolId, uint256 participantId, uint256 payment) external onlyAllowed {
         // if there is no matching pool, return false
-        if (poolId >= _currentIndex) revert NoPoolFound();
-
-        // otherwise, set the participant
-        // if no participant exists, the assignment will revert...
-        poolIdToParticipants[poolId][participant.participantId] = participant;
+        if (poolId >= _currentIndex) revert NoPoolFound(); 
+        poolIdToParticipants[poolId][participantId].paid = payment;
     }
-
 
     // option to change contribution
     function setContribution(uint256 poolId, uint256 participantId, uint256 newContribution) external onlyAllowed
@@ -204,7 +197,7 @@ contract BahiaNFTPoolData is
         emit ContributionSet(poolId, participantId);
     }
 
-    function _exitPool(uint256 poolId, uint256 participantId) external onlyAllowed {
+    function deleteParticipantData(uint256 poolId, uint256 participantId) external onlyAllowed {
         // check if the pool exists
         if (poolId >= _currentIndex) revert NoPoolFound();
 
@@ -213,10 +206,10 @@ contract BahiaNFTPoolData is
         delete addressToParticipantId[poolId][tx.origin];
     }
 
-
     // set the allowed permission
-    function setAllowedPermission(address address_, bool permission_) external onlyAllowed
+    function setAllowedPermission(address address_, bool permission_) external onlyOwner
     {
         allowedContracts[address_] = permission_;
     }
+
 }

@@ -32,13 +32,12 @@ interface IBahiaNFTPoolData {
     // ability to add a participant to a pool
     function addParticipant(uint256 poolId, BahiaNFTPoolTypes.Participant memory newParticipant) external;
 
-    // set a participant
-    function setParticipant(uint256 poolId, BahiaNFTPoolTypes.Participant memory participant) external;
-
     // set the contribution
     function setContribution(uint256 poolId, uint256 participantId, uint256 newContribution) external;
 
-    function _exitPool(uint256 poolId, uint256 participantId) external;
+    function deleteParticipantData(uint256 poolId, uint256 participantId) external;
 
     function getParticipantFromAddress (uint256 poolId, address _address) external view returns (BahiaNFTPoolTypes.Participant memory);
+
+    function setParticipantPayment(uint256 poolId, uint256 participantId, uint256 payment) external;
 }
